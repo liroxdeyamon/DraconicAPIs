@@ -14,10 +14,21 @@ A collection of JavaScript modules designed for smooth and easy usage of human10
 - _eXeCutie - ideas & draconic font
 
 #### Made for:
-- SuPDuZz' Github Pages & Draconic Alphabet iframe
+- SuPDuZz' Draconic Learning Site
 - _eXeCutie's Dictionary tools' Github Pages
 - LiroxDeYamon's Draconic Games hosted on SuPDuZz' Github Pages
 - Everyone who want to use it!
+
+#### Want to controbute?
+You can ask to add new features, especially if you made one yourself!
+
+# Websites using the APIs:
+- https://SuPDuZz.github.io/Draconic/ - SuPDuZz' Draconic Learning Site & Draconic Alphabet iframe
+- https://executiettv.github.io/Draconic/ - _eXeCutie's Dictionary tools
+- https://supduzz.github.io/Draconic/lettrguessr.html - LiroxDeYamon's LettrGuessr
+
+#### Want to include your website?
+Open an issue/discussion!
 
 # Importing order
 ```html
@@ -48,7 +59,7 @@ tag {
 }
 ```
 
-The font was provided by _eXeCutie.
+The font was provided by _eXeCutie: https://github.com/eXeCutieTTV/Draconic/tree/main/fontdownload
 
 # MainMap.js
 ```js
