@@ -87,39 +87,39 @@ const SUFFIXES = {
 }
 
 const VERB_SUBJECT_PREFIXES = {
-        1: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "xen", [GENDERS.R.NAME]: "xef", [GENDERS.MON.NAME]: "χħô", [GENDERS.I.NAME]: "xellu", [GENDERS.MAG.NAME]: "xo", [GENDERS.MUN.NAME]: "xyr", [GENDERS.A.NAME]: "xy" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "xyn", [GENDERS.R.NAME]: "xyf", [GENDERS.MON.NAME]: "xóħ", [GENDERS.I.NAME]: "llu", [GENDERS.MAG.NAME]: "ho", [GENDERS.MUN.NAME]: "ry", [GENDERS.A.NAME]: "hy" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "hen", [GENDERS.R.NAME]: "hef", [GENDERS.MON.NAME]: "hô", [GENDERS.I.NAME]: "llu", [GENDERS.MAG.NAME]: "ho", [GENDERS.MUN.NAME]: "ry", [GENDERS.A.NAME]: "hy" }
-        },
-        2: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "syn", [GENDERS.R.NAME]: "sy", [GENDERS.MON.NAME]: "sô", [GENDERS.I.NAME]: "sucu", [GENDERS.MAG.NAME]: "su", [GENDERS.MUN.NAME]: "syr", [GENDERS.A.NAME]: "su" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "són", [GENDERS.R.NAME]: "sónlli", [GENDERS.MON.NAME]: "sónq̇ħó", [GENDERS.I.NAME]: "sóncu", [GENDERS.MAG.NAME]: "thâ", [GENDERS.MUN.NAME]: "thár", [GENDERS.A.NAME]: "thá" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "tháħ", [GENDERS.R.NAME]: "tháll", [GENDERS.MON.NAME]: "tháq̇ħó", [GENDERS.I.NAME]: "thácu", [GENDERS.MAG.NAME]: "thâ", [GENDERS.MUN.NAME]: "thár", [GENDERS.A.NAME]: "thá" }
-        },
-        3: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "ten", [GENDERS.R.NAME]: "tolli", [GENDERS.MON.NAME]: "tô", [GENDERS.I.NAME]: "tócu", [GENDERS.MAG.NAME]: "toħ", [GENDERS.MUN.NAME]: "try", [GENDERS.A.NAME]: "to" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "q̇yn", [GENDERS.R.NAME]: "q̇yll", [GENDERS.MON.NAME]: "q̇ħó", [GENDERS.I.NAME]: "q̇ácu", [GENDERS.MAG.NAME]: "tū", [GENDERS.MUN.NAME]: "tur", [GENDERS.A.NAME]: "tu" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "tyn", [GENDERS.R.NAME]: "tyf", [GENDERS.MON.NAME]: "tuħ", [GENDERS.I.NAME]: "tīll", [GENDERS.MAG.NAME]: "tū", [GENDERS.MUN.NAME]: "tur", [GENDERS.A.NAME]: "tu" }
-        }
+    1: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "xen", [GENDERS.R.NAME]: "xef", [GENDERS.MON.NAME]: "χħô", [GENDERS.I.NAME]: "xellu", [GENDERS.MAG.NAME]: "xo", [GENDERS.MUN.NAME]: "xyr", [GENDERS.A.NAME]: "xy" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "xyn", [GENDERS.R.NAME]: "xyf", [GENDERS.MON.NAME]: "xóħ", [GENDERS.I.NAME]: "llu", [GENDERS.MAG.NAME]: "ho", [GENDERS.MUN.NAME]: "ry", [GENDERS.A.NAME]: "hy" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "hen", [GENDERS.R.NAME]: "hef", [GENDERS.MON.NAME]: "hô", [GENDERS.I.NAME]: "llu", [GENDERS.MAG.NAME]: "ho", [GENDERS.MUN.NAME]: "ry", [GENDERS.A.NAME]: "hy" }
+    },
+    2: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "syn", [GENDERS.R.NAME]: "sy", [GENDERS.MON.NAME]: "sô", [GENDERS.I.NAME]: "sucu", [GENDERS.MAG.NAME]: "su", [GENDERS.MUN.NAME]: "syr", [GENDERS.A.NAME]: "su" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "són", [GENDERS.R.NAME]: "sónlli", [GENDERS.MON.NAME]: "sónq̇ħó", [GENDERS.I.NAME]: "sóncu", [GENDERS.MAG.NAME]: "thâ", [GENDERS.MUN.NAME]: "thár", [GENDERS.A.NAME]: "thá" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "tháħ", [GENDERS.R.NAME]: "tháll", [GENDERS.MON.NAME]: "tháq̇ħó", [GENDERS.I.NAME]: "thácu", [GENDERS.MAG.NAME]: "thâ", [GENDERS.MUN.NAME]: "thár", [GENDERS.A.NAME]: "thá" }
+    },
+    3: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "ten", [GENDERS.R.NAME]: "tolli", [GENDERS.MON.NAME]: "tô", [GENDERS.I.NAME]: "tócu", [GENDERS.MAG.NAME]: "toħ", [GENDERS.MUN.NAME]: "try", [GENDERS.A.NAME]: "to" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "q̇yn", [GENDERS.R.NAME]: "q̇yll", [GENDERS.MON.NAME]: "q̇ħó", [GENDERS.I.NAME]: "q̇ácu", [GENDERS.MAG.NAME]: "tū", [GENDERS.MUN.NAME]: "tur", [GENDERS.A.NAME]: "tu" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "tyn", [GENDERS.R.NAME]: "tyf", [GENDERS.MON.NAME]: "tuħ", [GENDERS.I.NAME]: "tīll", [GENDERS.MAG.NAME]: "tū", [GENDERS.MUN.NAME]: "tur", [GENDERS.A.NAME]: "tu" }
+    }
 }
 
 const VERB_OBJECT_SUFFIXES = {
-        1: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "(o)n", [GENDERS.R.NAME]: "(y)f", [GENDERS.MON.NAME]: "(u)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "(u)χ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(y)q̇" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "(')æ­n", [GENDERS.R.NAME]: "(')æf", [GENDERS.MON.NAME]: "(')ô", [GENDERS.I.NAME]: "(')allūl", [GENDERS.MAG.NAME]: "(')ōχ", [GENDERS.MUN.NAME]: "(')ar", [GENDERS.A.NAME]: "(y)q̇" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "(')æ­n", [GENDERS.R.NAME]: "(')æf", [GENDERS.MON.NAME]: "(')ô", [GENDERS.I.NAME]: "(')allūl", [GENDERS.MAG.NAME]: "(')ōχ", [GENDERS.MUN.NAME]: "(')ar", [GENDERS.A.NAME]: "(y)q̇" }
-        },
-        2: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "(u)n", [GENDERS.R.NAME]: "(u)f", [GENDERS.MON.NAME]: "(u)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "(u)χ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(u)q̇" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "(o)nēn", [GENDERS.R.NAME]: "nef", [GENDERS.MON.NAME]: "(á)ħó", [GENDERS.I.NAME]: "(á)llul", [GENDERS.MAG.NAME]: "(ó)nōχ", [GENDERS.MUN.NAME]: "(á)r", [GENDERS.A.NAME]: "ħóq̇" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "ħen", [GENDERS.R.NAME]: "ħáf", [GENDERS.MON.NAME]: "(á)ħó", [GENDERS.I.NAME]: "(á)llul", [GENDERS.MAG.NAME]: "(ó)nōχ", [GENDERS.MUN.NAME]: "(á)r", [GENDERS.A.NAME]: "ħóq̇" }
-        },
-        3: {
-            [NUMBERS.S]: { [GENDERS.E.NAME]: "tón", [GENDERS.R.NAME]: "ħyf", [GENDERS.MON.NAME]: "(o)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "ħuχ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(ú)q̇" },
-            [NUMBERS.D]: { [GENDERS.E.NAME]: "(q̇)ân", [GENDERS.R.NAME]: "(y)q̇ħáf", [GENDERS.MON.NAME]: "ħó", [GENDERS.I.NAME]: "(ú)cul", [GENDERS.MAG.NAME]: "ħúχ", [GENDERS.MUN.NAME]: "(ú)r", [GENDERS.A.NAME]: "(u)q̇" },
-            [NUMBERS.P]: { [GENDERS.E.NAME]: "tun", [GENDERS.R.NAME]: "if", [GENDERS.MON.NAME]: "ħó", [GENDERS.I.NAME]: "(ú)cul", [GENDERS.MAG.NAME]: "ħúχ", [GENDERS.MUN.NAME]: "(ú)r", [GENDERS.A.NAME]: "(u)q̇" }
-        }
+    1: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "(o)n", [GENDERS.R.NAME]: "(y)f", [GENDERS.MON.NAME]: "(u)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "(u)χ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(y)q̇" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "(')æ­n", [GENDERS.R.NAME]: "(')æf", [GENDERS.MON.NAME]: "(')ô", [GENDERS.I.NAME]: "(')allūl", [GENDERS.MAG.NAME]: "(')ōχ", [GENDERS.MUN.NAME]: "(')ar", [GENDERS.A.NAME]: "(y)q̇" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "(')æ­n", [GENDERS.R.NAME]: "(')æf", [GENDERS.MON.NAME]: "(')ô", [GENDERS.I.NAME]: "(')allūl", [GENDERS.MAG.NAME]: "(')ōχ", [GENDERS.MUN.NAME]: "(')ar", [GENDERS.A.NAME]: "(y)q̇" }
+    },
+    2: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "(u)n", [GENDERS.R.NAME]: "(u)f", [GENDERS.MON.NAME]: "(u)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "(u)χ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(u)q̇" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "(o)nēn", [GENDERS.R.NAME]: "nef", [GENDERS.MON.NAME]: "(á)ħó", [GENDERS.I.NAME]: "(á)llul", [GENDERS.MAG.NAME]: "(ó)nōχ", [GENDERS.MUN.NAME]: "(á)r", [GENDERS.A.NAME]: "ħóq̇" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "ħen", [GENDERS.R.NAME]: "ħáf", [GENDERS.MON.NAME]: "(á)ħó", [GENDERS.I.NAME]: "(á)llul", [GENDERS.MAG.NAME]: "(ó)nōχ", [GENDERS.MUN.NAME]: "(á)r", [GENDERS.A.NAME]: "ħóq̇" }
+    },
+    3: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "tón", [GENDERS.R.NAME]: "ħyf", [GENDERS.MON.NAME]: "(o)ħó", [GENDERS.I.NAME]: "llul", [GENDERS.MAG.NAME]: "ħuχ", [GENDERS.MUN.NAME]: "(u)r", [GENDERS.A.NAME]: "(ú)q̇" },
+        [NUMBERS.D]: { [GENDERS.E.NAME]: "(q̇)ân", [GENDERS.R.NAME]: "(y)q̇ħáf", [GENDERS.MON.NAME]: "ħó", [GENDERS.I.NAME]: "(ú)cul", [GENDERS.MAG.NAME]: "ħúχ", [GENDERS.MUN.NAME]: "(ú)r", [GENDERS.A.NAME]: "(u)q̇" },
+        [NUMBERS.P]: { [GENDERS.E.NAME]: "tun", [GENDERS.R.NAME]: "if", [GENDERS.MON.NAME]: "ħó", [GENDERS.I.NAME]: "(ú)cul", [GENDERS.MAG.NAME]: "ħúχ", [GENDERS.MUN.NAME]: "(ú)r", [GENDERS.A.NAME]: "(u)q̇" }
+    }
 }
 
 const PRONOUNS = {
