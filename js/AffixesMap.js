@@ -1,11 +1,11 @@
 // Affixes and conjugation
-modules = modules || []
+window.modules = window.modules || []
 
-if (!modules.includes("MainMap")) {
+if (!window.modules.includes("MainMap")) {
     throw new Error("AffixesMap requires MainMap to be loaded first.")
 }
 
-if (!modules.includes("CharacterMap")) {
+if (!window.modules.includes("CharacterMap")) {
     throw new Error("AffixesMap requires CharacterMap to be loaded first.")
 }
 
@@ -174,4 +174,4 @@ function connect(prefix = "", text = "", suffix = "") {
 function connect_suffix(text, suffix) {return connect("", text, suffix)}
 function connect_prefix(text, prefix) {return connect(prefix, text, "")}
 
-modules.push("AffixesMap")
+window.modules.push("AffixesMap")

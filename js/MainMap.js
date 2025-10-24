@@ -1,5 +1,5 @@
 // Locales + identifiers idk
-modules = modules || []
+window.modules = window.modules || []
 
 const GENDERS = {
     E: { NAME: "Exalted", SHORT: "e" },
@@ -28,4 +28,4 @@ const TARGETS = {
 }
 
 
-modules.push("MainMap")
+window.modules.push("MainMap")

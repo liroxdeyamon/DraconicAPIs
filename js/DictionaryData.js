@@ -1,15 +1,15 @@
 
-modules = modules || []
+window.modules = window.modules || []
 
-if (!modules.includes("MainMap")) {
+if (!window.modules.includes("MainMap")) {
     throw new Error("DictionaryData requires MainMap to be loaded first.")
 }
 
-if (!modules.includes("CharacterMap")) {
+if (!window.modules.includes("CharacterMap")) {
     throw new Error("DictionaryData requires CharacterMap to be loaded first.")
 }
 
-if (!modules.includes("AffixesMap")) {
+if (!window.modules.includes("AffixesMap")) {
     throw new Error("DictionaryData requires AffixesMap to be loaded first.")
 }
 
@@ -960,6 +960,6 @@ const PARTICLES = {
 
 
 
-modules.push("DictionaryData")
+window.modules.push("DictionaryData")
 
 // oh my god

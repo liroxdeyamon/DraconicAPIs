@@ -1,6 +1,6 @@
-modules = modules || []
+window.modules = window.modules || []
 
-if (!modules.includes("MainMap")) {
+if (!window.modules.includes("MainMap")) {
     throw new Error("CharacterMap requires MainMap to be loaded first.")
 }
 
@@ -708,4 +708,4 @@ function get_pyric_equivalent(entry) {
 
 
 
-modules.push("CharacterMap")
+window.modules.push("CharacterMap")
