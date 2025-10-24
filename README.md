@@ -33,7 +33,41 @@ Recommended to import all scripts at the bottom of the html file (Ensuring the D
 If you don't want dictionary data to be loaded, you can remove it, this will probably boost the load time.
 
 # MainMap.js
+```js
+GENDERS = {
+    E: { NAME: "Exalted", SHORT: "e" },
+    R: { ... },
+    MON: { ... },
+    I: { ... },
+    MAG: { ... },
+    MUN: { ... },
+    A: { ... } // /\(/o.o\)/\ - Spooky the spider
+}
+// Example usage:
+// GENDERS.E.NAME
 
+NUMBERS = {
+    S: "Singular",
+    D: "Dual",
+    P: "Plural"
+}
+// Example usage:
+// NUMBERS.S
+
+MOODS = {
+    D: "Directive",
+    R: "Recessive",
+}
+// Example usage:
+// MOODS.D
+
+TARGETS = {
+    S: "Subject",
+    O: "Object",
+}
+// Example usage:
+// TARGETS.S
+```
 
 # CharacterMap.js
 CHARACTERS is a list consisting of Character class:
@@ -150,7 +184,147 @@ Just a registry:
 
 
 # AffixesMap.js
+## SUFFIXES
+Used by nouns
 
+```js
+SUFFIXES = {
+  [MOODS.D]: {
+    [GENDERS.E.NAME]: {
+      [NUMBERS.S]: { 1: "", 2: "", 3: "", 4: "" },
+      [NUMBERS.D]: { ... },
+      [NUMBERS.P]: { ... }
+    },
+    [GENDERS.R.NAME]: { ... },
+    [GENDERS.MON.NAME]: { ... },
+    [GENDERS.I.NAME]: { ... },
+    [GENDERS.MAG.NAME]: { ... },
+    [GENDERS.MUN.NAME]: { ... },
+    [GENDERS.A.NAME]: { ... }
+  },
+  [MOODS.R]: { ... }
+}
+
+// Example usage:
+// SUFFIXES[MOODS.D][GENDERS.E.NAME][NUMBERS.S][1]
+```
+
+## VERB_SUBJECT_PREFIXES
+Used by verbs
+
+```js
+VERB_SUBJECT_PREFIXES = {
+    1: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "", [GENDERS.R.NAME]: "", [GENDERS.MON.NAME]: "", [GENDERS.I.NAME]: "", [GENDERS.MAG.NAME]: "", [GENDERS.MUN.NAME]: "", [GENDERS.A.NAME]: "" },
+        [NUMBERS.D]: { ... },
+        [NUMBERS.P]: { ... }
+    },
+    2: {
+        ...
+    },
+    3: {
+        ...
+    }
+}
+
+// Example usage:
+// VERB_SUBJECT_PREFIXES[1][NUMBERS.S][GENDERS.E.NAME]
+```
+
+## VERB_SUBJECT_PREFIXES
+Used by verbs
+
+```js
+VERB_OBJECT_SUFFIXES = {
+    1: {
+        [NUMBERS.S]: { [GENDERS.E.NAME]: "", [GENDERS.R.NAME]: "", [GENDERS.MON.NAME]: "", [GENDERS.I.NAME]: "", [GENDERS.MAG.NAME]: "", [GENDERS.MUN.NAME]: "", [GENDERS.A.NAME]: "" },
+        [NUMBERS.D]: { ... },
+        [NUMBERS.P]: { ... }
+    },
+    2: {
+        ...
+    },
+    3: {
+        ...
+    }
+}
+
+// Example usage:
+// VERB_OBJECT_SUFFIXES[1][NUMBERS.S][GENDERS.E.NAME]
+```
+
+## PRONOUNS
+in progress
+
+## FUNCTIONS
+```yaml
+connect_split(prefix = "", text = "", suffix = "")
+    Inputs: prefix:String, text:String, suffix:String
+    Returns: [prefix_entries, text_entries, suffix_entries] with rules applied
+
+connect(prefix = "", text = "", suffix = "")
+    Inputs: prefix:String, text:String, suffix:String
+    Returns: Combined Character[] from connect_split
+
+connect_suffix(text, suffix)
+    Inputs: text:String, suffix:String
+    Returns: Character[] from connect("", text, suffix)
+
+connect_prefix(text, prefix)
+    Inputs: text:String, prefix:String
+    Returns: Character[] from connect(prefix, text, "")
+
+```
 
 # DictionaryData.js
+There are NOUNS, VERBS, ADJECTIVES, ADVERBS, AUXILIARIES, PREPOSITIONS, PARTICLES being a key-value pairs of:
 
+```js
+"noun+declesion": new Noun({
+  word,
+  declension,
+  genders, // {"Gender": "meaning"}
+  usage_notes
+}) // "æklū1": new Noun("æklū", 1, {'Mundane': 'salt', 'Abstract': 'saltiness, salinity'}, ""),
+
+"verb": new Verb({
+  word,
+  defenition,
+  froms,
+  usage_notes
+}) // "æf": new Verb("æf", "to denounce, to insult; to spit, to spit upon", "æfad, āf, āfad", ""),
+
+"adjective+declesion": new Adjective({
+  word,
+  declesion,
+  defenition,
+  froms,
+  usage_notes
+}) // "æklôħ1": new Adjective("æklôħ", 1, "salted, salty; well-seasoned", "āklôħ", ""),
+
+"adverb": new Adverb({
+  word,
+  defenition,
+  froms,
+  usage_notes
+}) // "ax": new Adverb("ax", "not; negates verbs and regular auxiliaries", "nan", "- Is not used with lur 'to be,' as both a verb and an auxiliary. Negative copula q̇em is used instead "),
+
+"auxiliary": new Auxiliary({
+  word,
+  defenition,
+  froms,
+  usage_notes
+}) // "āhk": new Auxiliary("āhk", "do not! (prohibitive)", "defective", "- always in the second person"),
+
+"preposition": new Preposition({
+  word,
+  defenition,
+  usage_notes
+}) // "æze-": new Preposition("æze-", "through", ""),
+
+"particle": new Particle({
+  word,
+  defenition,
+  usage_notes
+}) // "ān": new Particle("ān", "optional noun suffix on animate roots to specify feminine", "- rare"),
+```
