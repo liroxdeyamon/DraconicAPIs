@@ -3,7 +3,7 @@ import re
 
 def read_excel_data():
     df = pd.read_excel('dict.xlsx')
-    data_list = df.iloc[:, 0:4].values.tolist()
+    data_list = df.iloc[:, 0:5].values.tolist()
     return data_list
 
 def clean_definition(def_text):
@@ -50,7 +50,7 @@ def process_genders(entry):
     return result
 
 
-def process_noun_entry(entry):
+def process_declesion(entry):
     declension = "1"
     if "(" in entry[0] and ")" in entry[0]:
         parts = entry[0].split("(")
@@ -59,8 +59,7 @@ def process_noun_entry(entry):
     else:
         word = entry[0].strip()
 
-    genders = process_genders(entry)
-    return word, declension, genders
+    return word, declension
 
 
 dictionarydata = """
@@ -80,64 +79,71 @@ if (!modules.includes("AffixesMap")) {
 
 
 class Noun {
-  constructor(word, declension, genders) {
+  constructor(word, declension, genders, usage_notes) {
     this.type = "n"
     this.word = word
     this.declension = declension
     this.genders = genders
+    this.usage_notes = usage_notes
   }
 }
 
 class Verb {
-  constructor(word, declension, defenition, froms) {
+  constructor(word, defenition, froms, usage_notes) {
     this.type = "v"
     this.word = word
-    this.declension = declension
     this.defenition = defenition
     this.froms = froms
+    this.usage_notes = usage_notes
   }
 }
 
 class Adjective {
-  constructor(word, defenition, froms) {
+  constructor(word, declesion, defenition, froms, usage_notes) {
     this.type = "adj"
     this.word = word
+    this.declesion = declesion
     this.defenition = defenition
     this.froms = froms
+    this.usage_notes = usage_notes
   }
 }
 
 class Adverb {
-  constructor(word, defenition, froms) {
+  constructor(word, defenition, froms, usage_notes) {
     this.type = "adv"
     this.word = word
     this.defenition = defenition
     this.froms = froms
+    this.usage_notes = usage_notes
   }
 }
 
 class Auxiliary {
-  constructor(word, defenition, froms) {
+  constructor(word, defenition, froms, usage_notes) {
     this.type = "aux"
     this.word = word
     this.defenition = defenition
     this.froms = froms
+    this.usage_notes = usage_notes
   }
 }
 
 class Preposition {
-  constructor(word, defenition) {
+  constructor(word, defenition, usage_notes) {
     this.type = "pp"
     this.word = word
     this.defenition = defenition
+    this.usage_notes = usage_notes
   }
 }
 
 class Particle {
-  constructor(word, defenition) {
+  constructor(word, defenition, usage_notes) {
     this.type = "part"
     this.word = word
     this.defenition = defenition
+    this.usage_notes = usage_notes
   }
 }
 
@@ -148,24 +154,71 @@ const NOUNS = {
 NOUNS_HERE
 }
 
+const VERBS = {
+VERBS_HERE
+}
+
+const ADJECTIVES = {
+ADJECTIVES_HERE
+}
+
+const ADVERBS = {
+ADVERBS_HERE
+}
+
+const AUXILIARIES = {
+AUXILIARIES_HERE
+}
+
+const PREPOSITIONS = {
+PREPOSITIONS_HERE
+}
+
+const PARTICLES = {
+PARTICLES_HERE
+}
+
 // ^^==== CACHE =====^^
 
 
 
 modules.push("DictionaryData")
+
+// oh my god
 """
 
 
 
-
+def process_notes(text):
+    return str(text).replace('"', "'").replace("nan", "")
 
 if __name__ == "__main__":
-    nouns = []
+    nouns, verbs, adjectives, adverbs, auxiliaries, prepositions, particles = [], [], [], [], [], [], []
     data = read_excel_data()
     for i in data:
         if i[1] == "n":
-            word, dec, genders = process_noun_entry(i)
-            nouns.append(f'"{word}{dec}": new Noun("{word}", {dec}, {genders})')
+            word, dec = process_declesion(i)
+            nouns.append(f'"{word}{dec}": new Noun("{word}", {dec}, {process_genders(i)}, "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "v":
+            verbs.append(f'"{i[0]}": new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "adj":
+            word, dec = process_declesion(i)
+            adjectives.append(f'"{word}{dec}": new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "adv":
+            adverbs.append(f'"{i[0]}": new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "aux":
+            auxiliaries.append(f'"{i[0]}": new Auxiliary("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "pp":
+            prepositions.append(f'"{i[0]}": new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
+        elif i[1] == "part":
+            particles.append(f'"{i[0]}": new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
     with open("./DictionaryData.js", "w", encoding="utf-8") as f:
-        f.write(dictionarydata.replace("NOUNS_HERE", ",\n".join(nouns)))
+        f.write(dictionarydata
+                .replace("NOUNS_HERE", ",\n".join(nouns))
+                .replace("ADVERBS_HERE", ",\n".join(adverbs))
+                .replace("VERBS_HERE", ",\n".join(verbs))
+                .replace("ADJECTIVES_HERE", ",\n".join(adjectives))
+                .replace("AUXILIARIES_HERE", ",\n".join(auxiliaries))
+                .replace("PREPOSITIONS_HERE", ",\n".join(prepositions))
+                .replace("PARTICLES_HERE", ",\n".join(particles)))
 
