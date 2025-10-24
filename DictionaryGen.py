@@ -145,7 +145,7 @@ class Particle {
 // vv==== CACHE =====vv
 
 const NOUNS = {
-    NOUNS_HERE
+NOUNS_HERE
 }
 
 // ^^==== CACHE =====^^
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     for i in data:
         if i[1] == "n":
             word, dec, genders = process_noun_entry(i)
-            nouns.append(f'"{word}{dec}": Noun("{word}", {dec}, {genders})')
+            nouns.append(f'"{word}{dec}": new Noun("{word}", {dec}, {genders})')
     with open("./DictionaryData.js", "w", encoding="utf-8") as f:
         f.write(dictionarydata.replace("NOUNS_HERE", ",\n".join(nouns)))
 
