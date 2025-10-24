@@ -32,10 +32,10 @@ Open an issue/discussion!
 
 # Importing order
 ```html
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/MainMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/CharacterMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/AffixesMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/DictionaryData.js"></script>
+<script src="https://liroxdeyamon.github.io/DraconicAPIs/js/MainMap.js"></script>
+<script src="https://liroxdeyamon.github.io/DraconicAPIs/js/js/CharacterMap.js"></script>
+<script src="https://liroxdeyamon.github.io/DraconicAPIs/js/js/AffixesMap.js"></script>
+<script src="https://liroxdeyamon.github.io/DraconicAPIs/js/js/DictionaryData.js"></script>
 <script src="YourScript.js"></script>
 ```
 
@@ -48,7 +48,7 @@ To use the font you need to import it in css:
 ```css
 @font-face {
   font-family: "SegoeUIDrac";
-  src: url("https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/font/SegoeUIDrac.ttf") format("truetype");
+  src: url("https://liroxdeyamon.github.io/DraconicAPIs/js/font/SegoeUIDrac.ttf") format("truetype");
 }
 ```
 
