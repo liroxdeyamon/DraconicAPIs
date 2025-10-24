@@ -212,7 +212,7 @@ if __name__ == "__main__":
             prepositions.append(f'"{i[0]}": new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
         elif i[1] == "part":
             particles.append(f'"{i[0]}": new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
-    with open("./DictionaryData.js", "w", encoding="utf-8") as f:
+    with open("./js/DictionaryData.js", "w", encoding="utf-8") as f:
         f.write(dictionarydata
                 .replace("NOUNS_HERE", ",\n".join(nouns))
                 .replace("ADVERBS_HERE", ",\n".join(adverbs))

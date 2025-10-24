@@ -11,7 +11,7 @@ A collection of JavaScript modules designed for smooth and easy usage of human10
 #### Made by:
 - LiroxDeYamon
 - SuPDuZz - CharacterMap.js data
-- _eXeCutie - ideas for this project
+- _eXeCutie - ideas & draconic font
 
 #### Made for:
 - SuPDuZz' Github Pages & Draconic Alphabet iframe
@@ -21,16 +21,34 @@ A collection of JavaScript modules designed for smooth and easy usage of human10
 
 # Importing order
 ```html
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/MainMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/CharacterMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/AffixesMap.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/DictionaryData.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/MainMap.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/CharacterMap.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/AffixesMap.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/js/DictionaryData.js"></script>
 <script src="YourScript.js"></script>
 ```
 
 Recommended to import all scripts at the bottom of the html file (Ensuring the DOM is created)
 
 If you don't want dictionary data to be loaded, you can remove it, this will probably boost the load time.
+
+# Font
+To use the font you need to import it in css:
+```css
+@font-face {
+  font-family: "SegoeUIDrac";
+  src: url("https://cdn.jsdelivr.net/gh/liroxdeyamon/DraconicAPIs/font/SegoeUIDrac.ttf") format("truetype");
+}
+```
+
+And afterwards use it on any needed tag:
+```css
+tag {
+  font-family: "SegoeUIDrac", sans-serif;
+}
+```
+
+The font was provided by _eXeCutie.
 
 # MainMap.js
 ```js
