@@ -9,7 +9,7 @@ if (!window.modules.includes("CharacterMap")) {
     throw new Error("AffixesMap requires CharacterMap to be loaded first.")
 }
 
-const SUFFIXES = {
+const NOUN_SUFFIXES = {
     [MOODS.D]: {
         [GENDERS.E.NAME]: {
             [NUMBERS.S]: { 1: "ēn", 2: "æn", 3: "ēn", 4: "ħán" },
@@ -173,5 +173,17 @@ function connect(prefix = "", text = "", suffix = "") {
 
 function connect_suffix(text, suffix) {return connect("", text, suffix)}
 function connect_prefix(text, prefix) {return connect(prefix, text, "")}
+
+
+function getAllValues(obj) {
+    return Object.values(obj).flatMap(val => 
+        typeof val === 'object' && val !== null ? getAllValues(val) : val
+    );
+}
+
+const FLAT_NOUN_SUFFIXES = [...new Set(getAllValues(SUFFIXES))];
+const FLAT_VERB_SUBJECT_PREFIXES = [...new Set(getAllValues(VERB_SUBJECT_PREFIXES))];
+const FLAT_VERB_OBJECT_SUFFIXES = [...new Set(getAllValues(VERB_OBJECT_SUFFIXES))];
+
 
 window.modules.push("AffixesMap")

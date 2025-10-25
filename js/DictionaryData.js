@@ -958,7 +958,17 @@ const PARTICLES = {
 
 // ^^==== CACHE =====^^
 
-
+  const ALL_WORDS = Object.fromEntries(
+      Object.entries({
+          ...NOUNS,
+          ...VERBS,
+          ...ADJECTIVES,
+          ...ADVERBS,
+          ...AUXILIARIES,
+          ...PREPOSITIONS,
+          ...PARTICLES
+      }).sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
+  );
 
 window.modules.push("DictionaryData")
 
