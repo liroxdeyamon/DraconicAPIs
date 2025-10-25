@@ -147,6 +147,24 @@ class Particle {
   }
 }
 
+class Determiner {
+  constructor(word, defenition, usage_notes) {
+    this.type = "det"
+    this.word = word
+    this.defenition = defenition
+    this.usage_notes = usage_notes
+  }
+}
+
+class Conjugations {
+  constructor(word, defenition, usage_notes) {
+    this.type = "con"
+    this.word = word
+    this.defenition = defenition
+    this.usage_notes = usage_notes
+  }
+}
+
 
 // vv==== CACHE =====vv
 
@@ -178,6 +196,14 @@ const PARTICLES = {
 PARTICLES_HERE
 }
 
+const DETERMINERS = {
+DETERMINERS_HERE
+}
+
+const CONJUGATIONS = {
+CONJUGATIONS_HERE
+}
+
 // ^^==== CACHE =====^^
 
 const ALL_WORDS = Object.fromEntries(
@@ -203,25 +229,29 @@ def process_notes(text):
     return str(text).replace('"', "'").replace("nan", "")
 
 if __name__ == "__main__":
-    nouns, verbs, adjectives, adverbs, auxiliaries, prepositions, particles = [], [], [], [], [], [], []
+    nouns, verbs, adjectives, adverbs, auxiliaries, prepositions, particles, determiners, conjugations = [], [], [], [], [], [], [], [], []
     data = read_excel_data()
     for i in data:
         if i[1] == "n":
             word, dec = process_declesion(i)
-            nouns.append(f'"{word}{dec}": new Noun("{word}", {dec}, {process_genders(i)}, "{process_notes(i[4])}")'.replace("\n", ""))
+            nouns.append(f'"{word}{dec}": new Noun("{word}", {dec}, {process_genders(i)}, "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "v":
-            verbs.append(f'"{i[0]}": new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+            verbs.append(f'"{i[0]}": new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "adj":
             word, dec = process_declesion(i)
-            adjectives.append(f'"{word}{dec}": new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+            adjectives.append(f'"{word}{dec}": new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "adv":
-            adverbs.append(f'"{i[0]}": new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+            adverbs.append(f'"{i[0]}": new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "aux":
-            auxiliaries.append(f'"{i[0]}": new Auxiliary("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", ""))
+            auxiliaries.append(f'"{i[0]}": new Auxiliary("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "pp":
-            prepositions.append(f'"{i[0]}": new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
+            prepositions.append(f'"{i[0]}": new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "part":
-            particles.append(f'"{i[0]}": new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", ""))
+            particles.append(f'"{i[0]}": new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
+        elif i[1] == "det":
+            determiners.append(f'"{i[0]}": new Determiner("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
+        elif i[1] == "con":
+            conjugations.append(f'"{i[0]}": new Conjugation("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
     with open("./js/DictionaryData.js", "w", encoding="utf-8") as f:
         f.write(dictionarydata
                 .replace("NOUNS_HERE", ",\n".join(nouns))
@@ -230,5 +260,7 @@ if __name__ == "__main__":
                 .replace("ADJECTIVES_HERE", ",\n".join(adjectives))
                 .replace("AUXILIARIES_HERE", ",\n".join(auxiliaries))
                 .replace("PREPOSITIONS_HERE", ",\n".join(prepositions))
-                .replace("PARTICLES_HERE", ",\n".join(particles)))
+                .replace("PARTICLES_HERE", ",\n".join(particles))
+                .replace("DETERMINERS_HERE", ",\n".join(determiners))
+                .replace("CONJUGATIONS_HERE", ",\n".join(conjugations)))
 
