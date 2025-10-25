@@ -92,7 +92,7 @@ class Determiner {
   }
 }
 
-class Conjugations {
+class Conjugation {
   constructor(word, defenition, usage_notes) {
     this.type = "con"
     this.word = word
