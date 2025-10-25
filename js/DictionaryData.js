@@ -92,7 +92,7 @@ class Determiner {
   }
 }
 
-class Conjugation {
+class Conjunction {
   constructor(word, defenition, usage_notes) {
     this.type = "con"
     this.word = word
@@ -984,28 +984,28 @@ const DETERMINERS = {
 "trâfo": new Determiner("trâfo", "some, some of", " takes singular for mass nouns, plural for count nouns")
 }
 
-const CONJUGATIONS = {
-"fáχ": new Conjugation("fáχ", "neither, nor", ""),
-"hærŋ": new Conjugation("hærŋ", "although, though; albeit", ""),
-"ho": new Conjugation("ho", "despite the fact that", ""),
-"huz": new Conjugation("huz", "in order to, so that", ""),
-"kæ": new Conjugation("kæ", "or; either, or", " often reduced to 'ky' in casual speech"),
-"li": new Conjugation("li", "near to when, in the same time as", ""),
-"lil": new Conjugation("lil", "near to where, in the same place as", ""),
-"lloq": new Conjugation("lloq", "although", ""),
-"qa": new Conjugation("qa", "while", ""),
-"qēr": new Conjugation("qēr", "before (in time); until", ""),
-"q̇ert": new Conjugation("q̇ert", "unless", ""),
-"saχ": new Conjugation("saχ", "but", ""),
-"si": new Conjugation("si", "and", " often reduced to 'sy'  in casual speech"),
-"sīl": new Conjugation("sīl", "after (in time); since", ""),
-"tā": new Conjugation("tā", "thus", ""),
-"teru": new Conjugation("teru", "if and only if; once, only when", ""),
-"ti": new Conjugation("ti", "if", ""),
-"tre": new Conjugation("tre", "because", ""),
-"tuz": new Conjugation("tuz", "as, in the same way, to the same extent", ""),
-"xy": new Conjugation("xy", "so", ""),
-"thæ": new Conjugation("thæ", "then, and then, hence, and so", " often used between sentences, where English might use a full stop")
+const CONJUNCTIONS = {
+"fáχ": new Conjunction("fáχ", "neither, nor", ""),
+"hærŋ": new Conjunction("hærŋ", "although, though; albeit", ""),
+"ho": new Conjunction("ho", "despite the fact that", ""),
+"huz": new Conjunction("huz", "in order to, so that", ""),
+"kæ": new Conjunction("kæ", "or; either, or", " often reduced to 'ky' in casual speech"),
+"li": new Conjunction("li", "near to when, in the same time as", ""),
+"lil": new Conjunction("lil", "near to where, in the same place as", ""),
+"lloq": new Conjunction("lloq", "although", ""),
+"qa": new Conjunction("qa", "while", ""),
+"qēr": new Conjunction("qēr", "before (in time); until", ""),
+"q̇ert": new Conjunction("q̇ert", "unless", ""),
+"saχ": new Conjunction("saχ", "but", ""),
+"si": new Conjunction("si", "and", " often reduced to 'sy'  in casual speech"),
+"sīl": new Conjunction("sīl", "after (in time); since", ""),
+"tā": new Conjunction("tā", "thus", ""),
+"teru": new Conjunction("teru", "if and only if; once, only when", ""),
+"ti": new Conjunction("ti", "if", ""),
+"tre": new Conjunction("tre", "because", ""),
+"tuz": new Conjunction("tuz", "as, in the same way, to the same extent", ""),
+"xy": new Conjunction("xy", "so", ""),
+"thæ": new Conjunction("thæ", "then, and then, hence, and so", " often used between sentences, where English might use a full stop")
 }
 
 // ^^==== CACHE =====^^
