@@ -156,7 +156,7 @@ class Determiner {
   }
 }
 
-class Conjugation {
+class Conjunction {
   constructor(word, defenition, usage_notes) {
     this.type = "con"
     this.word = word
@@ -200,8 +200,8 @@ const DETERMINERS = {
 DETERMINERS_HERE
 }
 
-const CONJUGATIONS = {
-CONJUGATIONS_HERE
+const CONJUNCTIONS = {
+CONJUNCTIONS_HERE
 }
 
 // ^^==== CACHE =====^^
@@ -229,7 +229,7 @@ def process_notes(text):
     return str(text).replace('"', "'").replace("nan", "")
 
 if __name__ == "__main__":
-    nouns, verbs, adjectives, adverbs, auxiliaries, prepositions, particles, determiners, conjugations = [], [], [], [], [], [], [], [], []
+    nouns, verbs, adjectives, adverbs, auxiliaries, prepositions, particles, determiners, conjunctions = [], [], [], [], [], [], [], [], []
     data = read_excel_data()
     for i in data:
         if i[1] == "n":
@@ -251,7 +251,7 @@ if __name__ == "__main__":
         elif i[1] == "det":
             determiners.append(f'"{i[0]}": new Determiner("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "con":
-            conjugations.append(f'"{i[0]}": new Conjugation("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
+            conjunctions.append(f'"{i[0]}": new Conjunction("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
     with open("./js/DictionaryData.js", "w", encoding="utf-8") as f:
         f.write(dictionarydata
                 .replace("NOUNS_HERE", ",\n".join(nouns))
@@ -262,5 +262,5 @@ if __name__ == "__main__":
                 .replace("PREPOSITIONS_HERE", ",\n".join(prepositions))
                 .replace("PARTICLES_HERE", ",\n".join(particles))
                 .replace("DETERMINERS_HERE", ",\n".join(determiners))
-                .replace("CONJUGATIONS_HERE", ",\n".join(conjugations)))
+                .replace("CONJUNCTIONS_HERE", ",\n".join(conjunctions)))
 
