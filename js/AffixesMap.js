@@ -181,7 +181,7 @@ function getAllValues(obj) {
     );
 }
 
-const FLAT_NOUN_SUFFIXES = [...new Set(getAllValues(SUFFIXES))];
+const FLAT_NOUN_SUFFIXES = [...new Set(getAllValues(NOUN_SUFFIXES))];
 const FLAT_VERB_SUBJECT_PREFIXES = [...new Set(getAllValues(VERB_SUBJECT_PREFIXES))];
 const FLAT_VERB_OBJECT_SUFFIXES = [...new Set(getAllValues(VERB_OBJECT_SUFFIXES))];
 
