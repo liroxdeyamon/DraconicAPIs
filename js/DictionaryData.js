@@ -26,7 +26,7 @@ class Noun {
 }
 
 class Verb {
-  constructor(word, definition , froms, usage_notes) {
+  constructor(word, definition , forms, usage_notes) {
     this.type = "v"
     this.word = word
     this.definition = definition 
@@ -36,7 +36,7 @@ class Verb {
 }
 
 class Adjective {
-  constructor(word, declesion, defenition, froms, usage_notes) {
+  constructor(word, declesion, defenition, forms, usage_notes) {
     this.type = "adj"
     this.word = word
     this.declesion = declesion
@@ -47,7 +47,7 @@ class Adjective {
 }
 
 class Adverb {
-  constructor(word, definition , froms, usage_notes) {
+  constructor(word, definition , forms, usage_notes) {
     this.type = "adv"
     this.word = word
     this.definition = definition 
@@ -57,7 +57,7 @@ class Adverb {
 }
 
 class Auxiliary {
-  constructor(word, definition , froms, usage_notes) {
+  constructor(word, definition , forms, usage_notes) {
     this.type = "aux"
     this.word = word
     this.definition = definition 
