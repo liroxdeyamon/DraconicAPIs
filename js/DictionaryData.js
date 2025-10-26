@@ -18,6 +18,7 @@ class Noun {
   constructor(word, declension, genders, usage_notes) {
     this.type = "n"
     this.word = word
+    this.definition = defenition
     this.declension = declension
     this.genders = genders
     this.usage_notes = usage_notes
@@ -28,8 +29,8 @@ class Verb {
   constructor(word, defenition, froms, usage_notes) {
     this.type = "v"
     this.word = word
-    this.defenition = defenition
-    this.froms = froms
+    this.definition = defenition
+    this.forms = forms
     this.usage_notes = usage_notes
   }
 }
@@ -39,8 +40,8 @@ class Adjective {
     this.type = "adj"
     this.word = word
     this.declesion = declesion
-    this.defenition = defenition
-    this.froms = froms
+    this.definition = defenition
+    this.forms = forms
     this.usage_notes = usage_notes
   }
 }
@@ -49,8 +50,8 @@ class Adverb {
   constructor(word, defenition, froms, usage_notes) {
     this.type = "adv"
     this.word = word
-    this.defenition = defenition
-    this.froms = froms
+    this.definition = defenition
+    this.forms = forms
     this.usage_notes = usage_notes
   }
 }
@@ -59,8 +60,8 @@ class Auxiliary {
   constructor(word, defenition, froms, usage_notes) {
     this.type = "aux"
     this.word = word
-    this.defenition = defenition
-    this.froms = froms
+    this.definition = defenition
+    this.forms = forms
     this.usage_notes = usage_notes
   }
 }
@@ -69,7 +70,7 @@ class Preposition {
   constructor(word, defenition, usage_notes) {
     this.type = "pp"
     this.word = word
-    this.defenition = defenition
+    this.definition = defenition
     this.usage_notes = usage_notes
   }
 }
@@ -78,7 +79,7 @@ class Particle {
   constructor(word, defenition, usage_notes) {
     this.type = "part"
     this.word = word
-    this.defenition = defenition
+    this.definition = defenition
     this.usage_notes = usage_notes
   }
 }
@@ -87,7 +88,7 @@ class Determiner {
   constructor(word, defenition, usage_notes) {
     this.type = "det"
     this.word = word
-    this.defenition = defenition
+    this.definition = defenition
     this.usage_notes = usage_notes
   }
 }
@@ -96,7 +97,7 @@ class Conjunction {
   constructor(word, defenition, usage_notes) {
     this.type = "con"
     this.word = word
-    this.defenition = defenition
+    this.definition = defenition
     this.usage_notes = usage_notes
   }
 }
