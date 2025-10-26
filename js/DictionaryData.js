@@ -35,10 +35,10 @@ class Verb {
 }
 
 class Adjective {
-  constructor(word, declesion, definition, forms, usage_notes) {
+  constructor(word, declension, definition, forms, usage_notes) {
     this.type = "adj"
     this.word = word
-    this.declesion = declesion
+    this.declension = declension
     this.definition = definition 
     this.forms = forms
     this.usage_notes = usage_notes
