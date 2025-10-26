@@ -15,10 +15,9 @@ if (!modules.includes("AffixesMap")) {
 
 
 class Noun {
-  constructor(word, declension, genders, usage_notes, definition) {
+  constructor(word, declension, genders, usage_notes) {
     this.type = "n"
     this.word = word
-    this.definition = definition 
     this.declension = declension
     this.genders = genders
     this.usage_notes = usage_notes
