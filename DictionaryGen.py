@@ -18,7 +18,9 @@ GENDERS = {
     'mon': ['Monstrous'],
     'i': ['Irrational'],
     'animates': ['Exalted', 'Rational', 'Monstrous', 'Irrational'],
+    'animate': ['Exalted', 'Rational', 'Monstrous', 'Irrational'],
     'inanimates': ['Magical', 'Mundane', 'Abstract'],
+    'inanimate': ['Magical', 'Mundane', 'Abstract'],
     'all': ['Exalted', 'Rational', 'Monstrous', 'Irrational',
             'Magical', 'Mundane', 'Abstract']
 }
@@ -30,23 +32,32 @@ def process_genders(entry):
 
     def add(abbrs, meaning):
         for a in abbrs:
+            a = a.strip().strip('.').strip()
+            if not a:
+                continue
             if a in GENDERS:
                 g = GENDERS[a]
                 if isinstance(g, list):
-                    for x in g: result[x] = meaning
-                else: result[g] = meaning
+                    for x in g:
+                        result[x] = result.get(x, '') + ('; ' if x in result else '') + meaning
+                else:
+                    result[g] = result.get(g, '') + ('; ' if g in result else '') + meaning
 
     if lines:
         for l in lines:
             p = l[2:].split(') ', 1)
-            if len(p) == 2: add([p[0].strip('(.)')], p[1].strip())
+            if len(p) == 2:
+                abbrs = [x.strip() for x in p[0].strip('(.)').split(',')]
+                add(abbrs, p[1].strip())
     else:
         if text.startswith('(') and ')' in text:
             gsrc, text = text.split(')', 1)
             src = gsrc.strip('()') or entry[3].strip('()')
         else:
             src = entry[3].strip('()')
-        add([a.strip() for a in src.replace('.', '').split(',') if a], text.strip())
+        abbrs = [a.strip() for a in src.replace('.', '').split(',') if a]
+        add(abbrs, text.strip())
+
     return result
 
 
@@ -240,6 +251,32 @@ function search_word_by_definition(definition) {
     return false
   })
 }
+
+
+function combine_genders(entry) {
+  const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)
+  const inanimates = GENDERS_INANIMATES.AFFECTED.map(g => g.NAME)
+
+  const defMap = {}
+  for (const [gender, def] of Object.entries(entry)) {
+    if (!defMap[def]) defMap[def] = []
+    defMap[def].push(gender)
+  }
+
+  const result = {}
+  for (const [def, genders] of Object.entries(defMap)) {
+    const animCheck = animates.every(g => genders.includes(g))
+    const inanimCheck = inanimates.every(g => genders.includes(g))
+    const allCheck = [...animates, ...inanimates].every(g => genders.includes(g))
+
+    if (allCheck) result[GENDERS_ALL.NAME] = def
+    else if (animCheck) result[GENDERS_ANIMATES.NAME] = def
+    else if (inanimCheck) result[GENDERS_INANIMATES.NAME] = def
+    else result[genders.join(", ")] = def
+  }
+  return result
+}
+
 
 
 modules.push("DictionaryData")
