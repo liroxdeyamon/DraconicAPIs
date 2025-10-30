@@ -565,7 +565,21 @@ function entries_from_field(text, fieldNames, filter_brackets = false) {
 
           const valLen = val.length;
           
-           if (i < text.length - valLen - 1 && text[i] === '(') {
+          const plainSlice = text.slice(i, i + valLen);
+          if (plainSlice === val) {
+            const advance = valLen;
+            if (valLen > bestValLen || (valLen === bestValLen && advance > bestAdvance)) {
+              const match = { ...e };
+              match._advance = advance;
+              match._isParenthesized = false;
+              best = match;
+              bestValLen = valLen;
+              bestAdvance = advance;
+              bestIsParenthesized = false;
+            }
+          }
+
+          if (i < text.length - valLen - 1 && text[i] === '(') {
             const parenSlice = text.slice(i, i + valLen + 2);
             if (parenSlice[parenSlice.length - 1] === ')' && 
                 parenSlice.slice(1, 1 + valLen) === val) {
@@ -577,7 +591,8 @@ function entries_from_field(text, fieldNames, filter_brackets = false) {
               match._isParenthesized = true;
               
               const isBetter = valLen > bestValLen || 
-                             (valLen === bestValLen && advance > bestAdvance);
+                             (valLen === bestValLen && advance > bestAdvance) ||
+                             (valLen === bestValLen && bestIsParenthesized === false);
               
               if (isBetter) {
                 best = match;
@@ -587,19 +602,6 @@ function entries_from_field(text, fieldNames, filter_brackets = false) {
               }
             }
           }
-          
-          const plainSlice = text.slice(i, i + valLen);
-          if (plainSlice === val) {
-            const advance = valLen;
-            if (valLen > bestValLen || (valLen === bestValLen && !bestIsParenthesized && advance > bestAdvance)) {
-              const match = { ...e };
-              match._advance = advance;
-              match._isParenthesized = false;
-              best = match;
-              bestValLen = valLen;
-              bestAdvance = advance;
-            }
-          }
         }
       }
     }
@@ -607,9 +609,15 @@ function entries_from_field(text, fieldNames, filter_brackets = false) {
     if (best) {
       const advance = best._advance;
       delete best._advance;
-      delete best._isParenthesized;
       
-      result.push(best);
+      if (filter_brackets && best._isParenthesized) {
+        delete best._isParenthesized;
+        result.push(best);
+      } else {
+        delete best._isParenthesized;
+        result.push(best);
+      } // tff???????
+      
       i += advance;
     } else {
       i++;
