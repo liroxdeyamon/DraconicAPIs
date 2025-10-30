@@ -1,0 +1,78 @@
+// WIP
+console.warn("This module is WIP and not recommended to use, its unstable and may have incorrect information!");
+
+if (!window.modules.includes("MainMap")) {
+    throw new Error("AffixesMap requires MainMap to be loaded first.")
+}
+
+if (!window.modules.includes("CharacterMap")) {
+    throw new Error("AffixesMap requires CharacterMap to be loaded first.")
+}
+
+const DIGITS = ["q̇em","χu","eχ","fo","se","aq","qah","hog","xēχ","χyz","ez","fyz","selz","agz","qaz","hyz"]; // 0-15
+const DIGITS_SUFFIXES = ["","u","eχ","o","ys","aq","ga","yg"];
+const DIGITS_MULTIPLES = {16:"sē",24:"fōrz",32:"sēlz",40:"qāz",48:"qōz",56:"hōz",64:"lān"};
+const DIGITS_POWERS = {512: "lāran", 4_096: "xeglārn", 32_768: "táħû", 262_144: "torħû"};
+
+function numberToDraconic(n) {
+    if (n === 0) return DIGITS[0];
+    
+    let parts = [];
+    let remaining = n;
+    
+    // Шаг 1: Обрабатываем степени (512 и выше)
+    const powers = [262_144, 32_768, 4_096, 512];
+    for (let power of powers) {
+        if (remaining >= power) {
+            let count = Math.floor(remaining / power);
+            remaining = remaining % power;
+            
+            if (count === 1) {
+                // Если количество = 1, пишем только степень
+                parts.push(DIGITS_POWERS[power]);
+            } else {
+                // Иначе добавляем количество
+                let countStr = numberToDraconic(count);
+                parts.push(countStr + " " + DIGITS_POWERS[power]);
+            }
+        }
+    }
+    
+    // Шаг 2: Обрабатываем кратные 8 (от 64 до 16)
+    const multiples = [64, 56, 48, 40, 32, 24, 16];
+    
+    for (let mult of multiples) {
+        if (remaining >= mult) {
+            let count = Math.floor(remaining / mult);
+            remaining = remaining % mult;
+            
+            if (count === 1) {
+                // Если количество = 1, пишем только кратное
+                parts.push(DIGITS_MULTIPLES[mult]);
+            } else {
+                // Иначе добавляем количество
+                let countStr = numberToDraconic(count);
+                parts.push(countStr + " " + DIGITS_MULTIPLES[mult]);
+            }
+        }
+    }
+    
+    // Шаг 3: Обрабатываем остаток 0-15
+    if (remaining > 0 && remaining <= 15) {
+        if (parts.length > 0 && remaining <= 7) {
+            parts[parts.length - 1] += DIGITS_SUFFIXES[remaining];
+        } else {
+            parts.push(DIGITS[remaining]);
+        }
+    }
+    
+    return parts.join(" si ");
+}
+
+
+function numberFromDraconic() {
+    return "NOOO DONT MAKE ME DO THIS";
+}
+
+
+window.modules.push("NumbersMap")
