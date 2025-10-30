@@ -139,13 +139,15 @@ function flattenSuffixes(suffixes, type) {
             if (entries.length && entries[0].prop) {
                 if (entries[0].prop.includes(REG.OPTIONAL)) {
                     variants.push(entries_to_text(entries));
-                    variants.push(entries_to_text(entries), true);
+                    variants.push(entries_to_text(entries, true));
                 } else if (entries[0].prop.includes(REG.VOWEL)) {
                     variants.push(suf);
                     const pyric = get_pyric_equivalent(entries[0]);
                     if (pyric != null) variants.push(entries_to_text([pyric, ...entries.slice(1)]));
                 }
-            } else console.log(`huh? ${suf} ${forms[formKey]} ${entries}`)
+            } else {
+                console.log(`huh? ${suf} ${forms[formKey]} ${entries}`)
+            }
 
             const declensions = type === "n"
                 ? Object.entries(forms).filter(([_, val]) => val === suf).map(([key]) => Number(key))
@@ -173,7 +175,8 @@ function flattenSuffixes(suffixes, type) {
             for (const numberKey in numbers) {
                 const genders = numbers[numberKey];
                 for (const genderKey in genders) {
-                    processForms(genders[genderKey], personKey, genderKey, numberKey);
+                    const singleForm = { [personKey]: genders[genderKey] };
+                    processForms(singleForm, personKey, genderKey, numberKey);
                 }
             }
         }
@@ -181,6 +184,7 @@ function flattenSuffixes(suffixes, type) {
 
     return result;
 }
+
 
 
 const NOUNS_SUFFIXES_MAP = flattenSuffixes(NOUN_SUFFIXES, "n");
