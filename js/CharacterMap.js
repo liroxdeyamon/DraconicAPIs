@@ -115,7 +115,7 @@ CHARACTERS = [
   }),
   new Character({ // 5
     name: 'ax',  name_ipa: "/ax/",
-    letter: "´", letter_rom: ["'", "`"], letter_ipa: "/ʔ/", letter_glyph: "\uE005", letter_discord: ":__:",
+    letter: "'", letter_rom: ["'", "´", "`"], letter_ipa: "/ʔ/", letter_glyph: "\uE005", letter_discord: ":__:",
     text: mainText,
     prop: [REG.CONSONANT],
     allophones: {
