@@ -48,6 +48,10 @@ td {
     color: var(--text);
 }
 
+tr:hover td {
+    background-color: var(--table0);
+}
+
 @font-face {
   font-family: "SegoeUIDrac";
   src: url("https://liroxdeyamon.github.io/DraconicAPIs/font/SegoeUIDrac.ttf") format("truetype");
