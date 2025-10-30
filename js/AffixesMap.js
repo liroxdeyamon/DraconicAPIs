@@ -9,6 +9,16 @@ if (!window.modules.includes("CharacterMap")) {
     throw new Error("AffixesMap requires CharacterMap to be loaded first.")
 }
 
+
+function deepFreeze(obj) {
+    Object.freeze(obj)
+    for (const key in obj) {
+        if (obj[key] && typeof obj[key] === "object" && !Object.isFrozen(obj[key])) {
+            deepFreeze(obj[key])
+        }
+    }
+}
+
 const NOUN_SUFFIXES = {
     [MOODS.D]: {
         [GENDERS.E.NAME]: {
@@ -125,6 +135,10 @@ const VERB_OBJECT_SUFFIXES = {
 const PRONOUNS = {
     // what the fuck
 }
+
+deepFreeze(NOUN_SUFFIXES)
+deepFreeze(VERB_SUBJECT_PREFIXES)
+deepFreeze(VERB_OBJECT_SUFFIXES)
 
 function flattenSuffixes(suffixes, type) {
     const result = {};
