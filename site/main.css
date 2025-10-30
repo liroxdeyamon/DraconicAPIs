@@ -1,0 +1,67 @@
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: sans-serif;
+}
+
+a:link {
+  color: var(--link1);
+  text-decoration: none;
+}
+
+a:visited, a:active {
+  color: var(--link2);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text);
+    border: 2px solid var(--border);
+}
+
+th {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+    background-color: var(--table2);
+    color: var(--text);
+}
+
+td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+    background-color: var(--table1);
+    color: var(--text);
+}
+
+@font-face {
+  font-family: "SegoeUIDrac";
+  src: url("https://liroxdeyamon.github.io/DraconicAPIs/font/SegoeUIDrac.ttf") format("truetype");
+}
+
+.glyph {
+  font-family: "SegoeUIDrac", sans-serif;
+  color: var(--accent);
+  font-size: 100px;
+}
+
+.glyph-wrapper {
+  display: inline-block;
+  height: 0px; 
+  overflow: hidden;
+  vertical-align: middle;
+}
