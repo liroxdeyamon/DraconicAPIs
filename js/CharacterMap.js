@@ -643,21 +643,34 @@ function glyphs_to_entries(text) {
   return entries_from_field(text, ["letter_glyph"]);
 }
 
-function entries_to_glyphs(entries) {
-  return entries.map(e => e.letter_glyph || "").join("");
+function entries_to_glyphs(entries, ignore_optional = false) {
+  return entries
+    .filter(e => !(ignore_optional && e.prop?.includes(REG.OPTIONAL)))
+    .map(e => e.letter_glyph || "")
+    .join("");
 }
 
-function entries_to_rom(entries) {
-  return entries.map(e => e.letter_rom || "").join("");
+function entries_to_rom(entries, ignore_optional = false) {
+  return entries
+    .filter(e => !(ignore_optional && e.prop?.includes(REG.OPTIONAL)))
+    .map(e => e.letter_rom || "")
+    .join("");
 }
 
-function entries_to_text(entries) {
-  return entries.map(e => e.letter || "").join("");
+function entries_to_text(entries, ignore_optional = false) {
+  return entries
+    .filter(e => !(ignore_optional && e.prop?.includes(REG.OPTIONAL)))
+    .map(e => e.letter || "")
+    .join("");
 }
 
-function entries_to_discord(entries) {
-  return entries.map(e => e.letter_discord || "").join("");
+function entries_to_discord(entries, ignore_optional = false) {
+  return entries
+    .filter(e => !(ignore_optional && e.prop?.includes(REG.OPTIONAL)))
+    .map(e => e.letter_discord || "")
+    .join("");
 }
+// TODO: REDO
 
 function get_entry_by_id(id) {
   return CHARACTERS[id] || null;
