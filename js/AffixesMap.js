@@ -145,7 +145,7 @@ function flattenSuffixes(suffixes, type) {
                     const pyric = get_pyric_equivalent(entries[0]);
                     if (pyric != null) variants.push(entries_to_text([pyric, ...entries.slice(1)]));
                 }
-            } else console.log(`huh? ${suf}`)
+            } else console.log(`huh? ${suf} ${forms[formKey]} ${entries}`)
 
             const declensions = type === "n"
                 ? Object.entries(forms).filter(([_, val]) => val === suf).map(([key]) => Number(key))
