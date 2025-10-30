@@ -74,7 +74,7 @@ const NOUN_SUFFIXES = {
             [NUMBERS.P]: { 1: "(a)lluχ", 2: "(y)lūrχ", 3: "(y)lūrχ", 4: "(')ūrχ" }
         },
         [GENDERS.MUN.NAME]: {
-            [NUMBERS.S]: { 1: "(o)ħárk	", 2: "ħárk	", 3: "ħárk	", 4: "q̇ħárk" },
+            [NUMBERS.S]: { 1: "(o)ħárk", 2: "ħárk", 3: "ħárk", 4: "q̇ħárk" },
             [NUMBERS.D]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk	" },
             [NUMBERS.P]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk	" }
         },  // /\(/o.o\)/\ - Spooky the spider
