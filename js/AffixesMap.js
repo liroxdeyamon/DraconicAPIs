@@ -182,8 +182,8 @@ function flattenSuffixes(suffixes, type) {
 }
 
 
-const NOUNS_SUFFIXES_MAP = flattenSuffixesNouns(NOUN_SUFFIXES);
-const VERBS_SUFFIXES_MAP = flattenSuffixesVerbs(VERB_OBJECT_SUFFIXES);
+const NOUNS_SUFFIXES_MAP = flattenSuffixes(NOUN_SUFFIXES, "n");
+const VERBS_SUFFIXES_MAP = flattenSuffixes(VERB_OBJECT_SUFFIXES, "v");
 
 
 function connect_split(prefix = "", text = "", suffix = "") {
