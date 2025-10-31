@@ -110,10 +110,10 @@ class Verb {
 }
 
 class Adjective {
-  constructor(word, declesion, definition, forms, usage_notes) {
+  constructor(word, declension, definition, forms, usage_notes) {
     this.type = "adj"
     this.word = word
-    this.declesion = declesion
+    this.declension = declension
     this.definition = definition
     this.forms = forms
     this.usage_notes = usage_notes
@@ -237,48 +237,41 @@ ALL_WORDS.MAP = Object.entries({
 
 function basicSearch(keyword, wordmap) {
   const lower = keyword.toLowerCase()
-  return wordmap.filter(w => w.word.toLowerCase().includes(lower))
+  return wordmap.filter(w => w.word && w.word.toLowerCase().includes(lower))
 }
 
-NOUNS.fetch = function(keyword) {basicSearch(keyword, NOUNS.MAP)}
-VERBS.fetch = function(keyword) {basicSearch(keyword, VERBS.MAP)}
-ADJECTIVES.fetch = function(keyword) {basicSearch(keyword, ADJECTIVES.MAP)}
-ADVERBS.fetch = function(keyword) {basicSearch(keyword, ADVERBS.MAP)}
-AUXILIARIES.fetch = function(keyword) {basicSearch(keyword, AUXILIARIES.MAP)}
-PREPOSITIONS.fetch = function(keyword) {basicSearch(keyword, PREPOSITIONS.MAP)}
-PARTICLES.fetch = function(keyword) {basicSearch(keyword, PARTICLES.MAP)}
-DETERMINERS.fetch = function(keyword) {basicSearch(keyword, DETERMINERS.MAP)}
-CONJUNCTIONS.fetch = function(keyword) {basicSearch(keyword, CONJUNCTIONS.MAP)}
-ALL_WORDS.fetch = function(keyword) {basicSearch(keyword, ALL_WORDS.MAP)}
+
+NOUNS.fetch = function(keyword) {return basicSearch(keyword, NOUNS.FLAT)}
+VERBS.fetch = function(keyword) {return basicSearch(keyword, VERBS.FLAT)}
+ADJECTIVES.fetch = function(keyword) {return basicSearch(keyword, ADJECTIVES.FLAT)}
+ADVERBS.fetch = function(keyword) {return basicSearch(keyword, ADVERBS.FLAT)}
+AUXILIARIES.fetch = function(keyword) {return basicSearch(keyword, AUXILIARIES.FLAT)}
+PREPOSITIONS.fetch = function(keyword) {return basicSearch(keyword, PREPOSITIONS.FLAT)}
+PARTICLES.fetch = function(keyword) {return basicSearch(keyword, PARTICLES.FLAT)}
+DETERMINERS.fetch = function(keyword) {return basicSearch(keyword, DETERMINERS.FLAT)}
+CONJUNCTIONS.fetch = function(keyword) {return basicSearch(keyword, CONJUNCTIONS.FLAT)}
+ALL_WORDS.fetch = function(keyword) {return basicSearch(keyword, ALL_WORDS.FLAT)}
 
 function basicSearchByDefinition(definition, wordmap) {
-  const lower = definition.toLowerCase()
-  return wordmap.filter(w => {
-    if (w.definition && JSON.stringify(w.definition).toLowerCase().includes(lower))
-      return true
-    return false
-  })
+  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+    .filter(w => w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase()))
 }
 
 function basicSearchByGender(definition, wordmap) {
-  const lower = definition.toLowerCase()
-  return wordmap.filter(w => {
-    if (w.genders && JSON.stringify(w.genders).toLowerCase().includes(lower))
-      return true
-    return false
-  })
+  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+    .filter(w => w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
 }
 
-NOUNS.fetchByDefenition = function(keyword) {basicSearchByGender(keyword, NOUNS.MAP)}
-VERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, VERBS.MAP)}
-ADJECTIVES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADJECTIVES.MAP)}
-ADVERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADVERBS.MAP)}
-AUXILIARIES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, AUXILIARIES.MAP)}
-PREPOSITIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PREPOSITIONS.MAP)}
-PARTICLES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PARTICLES.MAP)}
-DETERMINERS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, DETERMINERS.MAP)}
-CONJUNCTIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, CONJUNCTIONS.MAP)}
-ALL_WORDS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ALL_WORDS.MAP)}
+NOUNS.fetchByDefinition = function(def) {return basicSearchByGender(def, NOUNS.FLAT)}
+VERBS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, VERBS.FLAT)}
+ADJECTIVES.fetchByDefinition = function(def) {return basicSearchByDefinition(def, ADJECTIVES.FLAT)}
+ADVERBS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, ADVERBS.FLAT)}
+AUXILIARIES.fetchByDefinition = function(def) {return basicSearchByDefinition(def, AUXILIARIES.FLAT)}
+PREPOSITIONS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, PREPOSITIONS.FLAT)}
+PARTICLES.fetchByDefinition = function(def) {return basicSearchByDefinition(def, PARTICLES.FLAT)}
+DETERMINERS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, DETERMINERS.FLAT)}
+CONJUNCTIONS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, CONJUNCTIONS.FLAT)}
+ALL_WORDS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, ALL_WORDS.FLAT)}
 
 WORD_UTILS.combineGenders = function(entry) {
   const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)

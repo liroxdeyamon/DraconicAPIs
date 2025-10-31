@@ -64,7 +64,7 @@ function getAllValues(obj) {
 const NOUNS = {
     MAP: {},
     get FLAT() {
-        return Object.values(this.MAP);
+        return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
     },
     SUFFIXES: {
         MAP: {},
@@ -73,7 +73,7 @@ const NOUNS = {
         }
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const VERBS = {
@@ -94,13 +94,13 @@ const VERBS = {
         }
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const ADJECTIVES = {
     MAP: {},
     get FLAT() {
-        return Object.values(this.MAP);
+        return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
     },
     SUFFIXES: {
         MAP: {},
@@ -109,7 +109,7 @@ const ADJECTIVES = {
         }
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const ADVERBS = {
@@ -118,7 +118,7 @@ const ADVERBS = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const AUXILIARIES = {
@@ -127,7 +127,7 @@ const AUXILIARIES = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const PREPOSITIONS = {
@@ -136,7 +136,7 @@ const PREPOSITIONS = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const PARTICLES = {
@@ -145,7 +145,7 @@ const PARTICLES = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const DETERMINERS = {
@@ -154,7 +154,7 @@ const DETERMINERS = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const CONJUNCTIONS = {
@@ -163,7 +163,7 @@ const CONJUNCTIONS = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const ALL_WORDS = {
@@ -172,7 +172,7 @@ const ALL_WORDS = {
         return Object.values(this.MAP);
     },
     fetch() {},
-    fetchByDefintition() {}
+    fetchByDefinition() {}
 }
 
 const WORD_UTILS = {
