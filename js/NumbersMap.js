@@ -31,7 +31,7 @@ NUMBERS.numberToText = function(n) {
             if (count === 1) {
                 parts.push(DIGITS_POWERS[power]);
             } else {
-                let countStr = numberToDraconic(count);
+                let countStr = NUMBERS.numberToText(count);
                 parts.push(countStr + " " + DIGITS_POWERS[power]);
             }
         }
@@ -47,7 +47,7 @@ NUMBERS.numberToText = function(n) {
             if (count === 1) {
                 parts.push(DIGITS_MULTIPLES[mult]);
             } else {
-                let countStr = numberToDraconic(count);
+                let countStr = NUMBERS.numberToText(count);
                 parts.push(countStr + " " + DIGITS_MULTIPLES[mult]);
             }
         }
