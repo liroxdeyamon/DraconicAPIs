@@ -1,0 +1,152 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  background: hsl(var(--accent_hue), 100%, 4%);
+  color: #e6eaf2;
+  font-family: Inter, system-ui, Roboto, Arial;
+  accent-color: hsl(var(--accent_hue), 100%, 30%);
+}
+
+.textcenter {
+    text-align: center;
+}
+
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35%;
+  gap: 1rem;
+  align-items: stretch;
+  margin: 0 18px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  background: #00000055;
+}
+
+#slim {
+  height: 6%;
+}
+
+.typein {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#lettr_image {
+  display: block;
+  margin: auto;
+}
+
+#guess_field {
+  outline: 2.5px solid hsl(var(--guess-hue), 100%, var(--guess-lig));
+  flex: 1;
+  background: transparent;
+  color: inherit;
+}
+
+#attempts_list {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+#attempts_list>li {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  background: #00000055;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.setting {
+  display: flex;
+  vertical-align: middle;
+}
+
+.setting > h2 {
+  margin: 0 10px;
+}
+
+input, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 0;
+  font-size: 15px;
+}
+
+button {
+  background: hsl(var(--accent_hue), 100%, 30%);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  width: 80px;
+}
+
+progress {
+  margin-top:-20px;
+  width: 100%;
+}
+
+#help_overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#help_content {
+  background: hsl(var(--accent_hue), 100%, 10%);
+  color: #e6eaf2;
+  padding: 20px;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+#help_close {
+  position: absolute;
+  top: 5px; right: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* this is such a mess */
+.fill {
+  height: 100%;
+}
+
+.glyph {
+  font-family: "SegoeUIDrac", sans-serif;
+  font-size: 140px;
+  color: #AC272B;
+
+  position: absolute;  /* out of document flow */
+  line-height: 0;
+}

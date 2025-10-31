@@ -130,7 +130,7 @@ const PRONOUNS = {
     // what the fuck
 }
 
-function flattenSuffixes(suffixes, type) {
+function flattenSuffixMatches(suffixes, type) {
     const result = {};
 
     function processForms(forms, moodOrPerson, genderKey, numberKey) {
@@ -197,11 +197,35 @@ function flattenSuffixes(suffixes, type) {
     return result;
 }
 
+function flattenPrefixesMatches(prefixesMap) {
+    const result = {};
 
+    for (const personKey in prefixesMap) {
+        const numbers = prefixesMap[personKey];
+        for (const numberKey in numbers) {
+            const genders = numbers[numberKey];
+            for (const genderKey in genders) {
+                result[genders[genderKey]] = [
+                    genders[genderKey],
+                    Number(personKey),
+                    numberKey,         
+                    genderKey
+                ];;
+            }
+        }
+    }
 
-NOUNS.SUFFIXES.FLAT_MATCHES = flattenSuffixes(NOUNS.SUFFIXES.MAP, "n");
+    const entries = Object.entries(result);
+    entries.sort((a, b) => b[0].length - a[0].length);
+    return Object.fromEntries(entries);
+}
+
+NOUNS.SUFFIXES.FLAT_MATCHES = flattenSuffixMatches(NOUNS.SUFFIXES.MAP, "n");
 ADJECTIVES.SUFFIXES.FLAT_MATCHES = NOUNS.SUFFIXES.FLAT_MATCHES;
-VERBS.SUFFIXES.FLAT_MATCHES  = flattenSuffixes(VERBS.SUFFIXES.MAP, "v");
+VERBS.SUFFIXES.FLAT_MATCHES  = flattenSuffixMatches(VERBS.SUFFIXES.MAP, "v");
+VERBS.PREFIXES.FLAT_MATCHES  = flattenPrefixesMatches(VERBS.PREFIXES.MAP);
+
+VERBS.PREFIXES.FLAT_MATCHES = flattenPrefixesMatches(VERBS.PREFIXES.MAP);
 
 WORD_UTILS.matchSuffix = function(input, suffixMap) {
     for (const suf in suffixMap) {
@@ -215,8 +239,23 @@ WORD_UTILS.matchSuffix = function(input, suffixMap) {
     return null;
 }
 
-WORD_UTILS.matchPrefix = (input, prefixMap) => prefixMap.find(p => input.startsWith(p)) || null;
+WORD_UTILS.matchPrefix = (input, prefixMap) => {
+    // 1. Извлечение и сортировка ключей при каждом вызове.
+    // Сортировка по убыванию длины гарантирует, что мы найдем самый длинный префикс.
+    const sortedKeys = Object.keys(prefixMap).sort((a, b) => b.length - a.length);
 
+    // 2. Находим самый длинный префикс
+    const matchedPrefix = sortedKeys.find(p => input.startsWith(p));
+
+    if (!matchedPrefix) {
+        return null; // Префикс не найден
+    }
+
+    // 3. Используем найденный префикс для получения данных и возвращаем оба значения
+    const metadata = prefixMap[matchedPrefix];
+
+    return [matchedPrefix, metadata];
+};
 WORD_UTILS.connectSplit = function(prefix = "", text = "", suffix = "") {
     let text_entries = CHARACTERS.textToEntriesByAnyText(text);
     let prefix_entries = CHARACTERS.textToEntriesByAnyText(prefix);

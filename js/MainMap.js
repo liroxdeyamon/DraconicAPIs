@@ -86,7 +86,8 @@ const VERBS = {
         MAP: {},
         get FLAT() {
             return getAllValues(this.MAP)
-        }
+        },
+        FLAT_MATCHES: {}
     },
     SUFFIXES: {
         MAP: {},
