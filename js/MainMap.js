@@ -70,7 +70,8 @@ const NOUNS = {
         MAP: {},
         get FLAT() {
             return getAllValues(this.MAP)
-        }
+        },
+        FLAT_MATCHES: {}
     },
     fetch() {},
     fetchByDefinition() {}
@@ -91,7 +92,8 @@ const VERBS = {
         MAP: {},
         get FLAT() {
             return getAllValues(this.MAP)
-        }
+        },
+        FLAT_MATCHES: {}
     },
     fetch() {},
     fetchByDefinition() {}
@@ -106,7 +108,8 @@ const ADJECTIVES = {
         MAP: {},
         get FLAT() {
             return getAllValues(this.MAP)
-        }
+        },
+        FLAT_MATCHES: {}
     },
     fetch() {},
     fetchByDefinition() {}
