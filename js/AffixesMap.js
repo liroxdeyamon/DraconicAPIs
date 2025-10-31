@@ -215,6 +215,8 @@ WORD_UTILS.matchSuffix = function(input, suffixMap) {
     return null;
 }
 
+WORD_UTILS.matchPrefix = (input, prefixMap) => prefixMap.find(p => input.startsWith(p)) || null;
+
 WORD_UTILS.connectSplit = function(prefix = "", text = "", suffix = "") {
     let text_entries = CHARACTERS.textToEntriesByAnyText(text);
     let prefix_entries = CHARACTERS.textToEntriesByAnyText(prefix);
