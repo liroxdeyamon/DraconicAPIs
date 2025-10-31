@@ -1071,9 +1071,6 @@ CONJUNCTIONS.fetchByDefinition = function(def) {return basicSearchByDefinition(d
 ALL_WORDS.fetchByDefinition = function(def) {return mergedSearchByDefinition(def, ALL_WORDS.FLAT)}
 
 WORD_UTILS.combineGenders = function(entry) {
-  const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)
-  const inanimates = GENDERS_INANIMATES.AFFECTED.map(g => g.NAME)
-
   const defMap = {}
   for (const [gender, def] of Object.entries(entry)) {
     if (!defMap[def]) defMap[def] = []
@@ -1082,13 +1079,13 @@ WORD_UTILS.combineGenders = function(entry) {
 
   const result = {}
   for (const [def, genders] of Object.entries(defMap)) {
-    const animCheck = animates.every(g => genders.includes(g))
-    const inanimCheck = inanimates.every(g => genders.includes(g))
-    const allCheck = [...animates, ...inanimates].every(g => genders.includes(g))
+    const animCheck = GENDERS.ANIMATES.FLAT.NAME.every(g => genders.includes(g))
+    const inanimCheck = GENDERS.INANIMATES.FLAT.NAME.every(g => genders.includes(g))
+    const allCheck = [...GENDERS.ANIMATES.FLAT.NAME, ...GENDERS.INANIMATES.FLAT.NAME].every(g => genders.includes(g))
 
     if (allCheck) result[GENDERS_ALL.NAME] = def
-    else if (animCheck) result[GENDERS_ANIMATES.NAME] = def
-    else if (inanimCheck) result[GENDERS_INANIMATES.NAME] = def
+    else if (animCheck) result[GENDERS.ANIMATES.NAME] = def
+    else if (inanimCheck) result[GENDERS.INANIMATES.NAME] = def
     else result[genders.join(", ")] = def
   }
   return result
