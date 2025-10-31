@@ -180,6 +180,7 @@ const ALL_WORDS = {
 
 const WORD_UTILS = {
     matchSuffix() {},
+    matchPrefix() {},
     connectSplit() {},
     connect() {},
     connectSuffix() {},

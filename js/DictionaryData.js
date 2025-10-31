@@ -1007,15 +1007,15 @@ CONJUNCTIONS.MAP = {
 // ^^==== CACHE =====^^
 
 ALL_WORDS.MAP = Object.entries({
-    ...NOUNS,
-    ...VERBS,
-    ...ADJECTIVES,
-    ...ADVERBS,
-    ...AUXILIARIES,
-    ...PREPOSITIONS,
-    ...PARTICLES,
-    ...DETERMINERS,
-    ...CONJUNCTIONS,
+    ...NOUNS.MAP,
+    ...VERBS.MAP,
+    ...ADJECTIVES.MAP,
+    ...ADVERBS.MAP,
+    ...AUXILIARIES.MAP,
+    ...PREPOSITIONS.MAP,
+    ...PARTICLES.MAP,
+    ...DETERMINERS.MAP,
+    ...CONJUNCTIONS.MAP,
 })
 .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
 .flatMap(([key, value]) => {
