@@ -2,7 +2,7 @@ import pandas as pd
 import re
 
 def read_excel_data():
-    df = pd.read_excel('dict.xlsx')
+    df = pd.read_excel('dictionarygen/dict.xlsx')
     data_list = df.iloc[:, 0:5].values.tolist()
     return data_list
 
@@ -179,45 +179,45 @@ class Conjunction {
 
 // vv==== CACHE =====vv
 
-const NOUNS = {
+NOUNS.MAP = {
 NOUNS_HERE
 }
 
-const VERBS = {
+VERBS.MAP = {
 VERBS_HERE
 }
 
-const ADJECTIVES = {
+ADJECTIVES.MAP = {
 ADJECTIVES_HERE
 }
 
-const ADVERBS = {
+ADVERBS.MAP = {
 ADVERBS_HERE
 }
 
-const AUXILIARIES = {
+AUXILIARIES.MAP = {
 AUXILIARIES_HERE
 }
 
-const PREPOSITIONS = {
+PREPOSITIONS.MAP = {
 PREPOSITIONS_HERE
 }
 
-const PARTICLES = {
+PARTICLES.MAP = {
 PARTICLES_HERE
 }
 
-const DETERMINERS = {
+DETERMINERS.MAP = {
 DETERMINERS_HERE
 }
 
-const CONJUNCTIONS = {
+CONJUNCTIONS.MAP = {
 CONJUNCTIONS_HERE
 }
 
 // ^^==== CACHE =====^^
 
-const ALL_WORDS = Object.entries({
+ALL_WORDS.MAP = Object.entries({
     ...NOUNS,
     ...VERBS,
     ...ADJECTIVES,
@@ -235,25 +235,52 @@ const ALL_WORDS = Object.entries({
     return [value]
 });
 
-
-function search_word(keyword) {
+function basicSearch(keyword, wordmap) {
   const lower = keyword.toLowerCase()
-  return ALL_WORDS.filter(w => w.word.toLowerCase().includes(lower))
+  return wordmap.filter(w => w.word.toLowerCase().includes(lower))
 }
 
-function search_word_by_definition(definition) {
+NOUNS.fetch = function(keyword) {basicSearch(keyword, NOUNS.MAP)}
+VERBS.fetch = function(keyword) {basicSearch(keyword, VERBS.MAP)}
+ADJECTIVES.fetch = function(keyword) {basicSearch(keyword, ADJECTIVES.MAP)}
+ADVERBS.fetch = function(keyword) {basicSearch(keyword, ADVERBS.MAP)}
+AUXILIARIES.fetch = function(keyword) {basicSearch(keyword, AUXILIARIES.MAP)}
+PREPOSITIONS.fetch = function(keyword) {basicSearch(keyword, PREPOSITIONS.MAP)}
+PARTICLES.fetch = function(keyword) {basicSearch(keyword, PARTICLES.MAP)}
+DETERMINERS.fetch = function(keyword) {basicSearch(keyword, DETERMINERS.MAP)}
+CONJUNCTIONS.fetch = function(keyword) {basicSearch(keyword, CONJUNCTIONS.MAP)}
+ALL_WORDS.fetch = function(keyword) {basicSearch(keyword, ALL_WORDS.MAP)}
+
+function basicSearchByDefinition(definition, wordmap) {
   const lower = definition.toLowerCase()
-  return ALL_WORDS.filter(w => {
+  return wordmap.filter(w => {
     if (w.definition && JSON.stringify(w.definition).toLowerCase().includes(lower))
       return true
+    return false
+  })
+}
+
+function basicSearchByGender(definition, wordmap) {
+  const lower = definition.toLowerCase()
+  return wordmap.filter(w => {
     if (w.genders && JSON.stringify(w.genders).toLowerCase().includes(lower))
       return true
     return false
   })
 }
 
+NOUNS.fetchByDefenition = function(keyword) {basicSearchByGender(keyword, NOUNS.MAP)}
+VERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, VERBS.MAP)}
+ADJECTIVES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADJECTIVES.MAP)}
+ADVERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADVERBS.MAP)}
+AUXILIARIES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, AUXILIARIES.MAP)}
+PREPOSITIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PREPOSITIONS.MAP)}
+PARTICLES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PARTICLES.MAP)}
+DETERMINERS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, DETERMINERS.MAP)}
+CONJUNCTIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, CONJUNCTIONS.MAP)}
+ALL_WORDS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ALL_WORDS.MAP)}
 
-function combine_genders(entry) {
+WORD_UTILS.combineGenders = function(entry) {
   const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)
   const inanimates = GENDERS_INANIMATES.AFFECTED.map(g => g.NAME)
 
@@ -276,8 +303,6 @@ function combine_genders(entry) {
   }
   return result
 }
-
-
 
 modules.push("DictionaryData")
 

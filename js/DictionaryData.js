@@ -104,7 +104,7 @@ class Conjunction {
 
 // vv==== CACHE =====vv
 
-const NOUNS = {
+NOUNS.MAP = {
 "afuχ": new Noun("afuχ", 3, {'Magical': 'life cycle, circle of life', 'Mundane': 'wheel', 'Abstract': 'cycle, circle'}, ""),
 "axa": {1: new Noun("axa", 1, {'Abstract': 'negativity; negation'}, ""),2: new Noun("axa", 2, {'Monstrous': 'eyebat; cyclops', 'Magical': 'eye', 'Mundane': 'eye', 'Abstract': 'sight, vision'}, "")},
 "cellâlq": new Noun("cellâlq", 3, {'Monstrous': 'giant fire elemental, especially if violent', 'Irrational': 'flame as personified', 'Magical': 'firestorm, inferno; (definite) Hell', 'Mundane': 'cinder, ember', 'Abstract': 'uncontained or unchecked power; plague'}, ""),
@@ -462,7 +462,7 @@ const NOUNS = {
 "χōtrūrχu": new Noun("χōtrūrχu", 1, {'Exalted': 'lieutenant; leader (of a small group or team)', 'Rational': 'lieutenant; leader (of a small group or team)', 'Monstrous': 'lieutenant; leader (of a small group or team)', 'Irrational': 'lieutenant; leader (of a small group or team)', 'Magical': 'magic that compels one do to something against their own will', 'Mundane': 'commandment (as written or decreed)', 'Abstract': 'employment, hiring of an employee; command, order; imperative, commandment (as given)'}, "")
 }
 
-const VERBS = {
+VERBS.MAP = {
 "æf": new Verb("æf", "to denounce, to insult; to spit, to spit upon", "æfad, āf, āfad", ""),
 "æfux": new Verb("æfux", "to drool, to salivate; to hunger, to hunger for", "æfād, āfux, āfād", " sense 'to hunger for' takes preposition ō"),
 "ærχ": new Verb("ærχ", "to like, to enjoy; (reflexive) to be pleased, satisfied", "ærd, N/A, N/A", ""),
@@ -701,7 +701,7 @@ const VERBS = {
 "trath": new Verb("trath", "to disappoint, to let down", "tradad, trāth, trādad", " takes preposition ho")
 }
 
-const ADJECTIVES = {
+ADJECTIVES.MAP = {
 "anq̇ulq̇": new Adjective("anq̇ulq̇", 2, "respectful; humble", "anq̇ūlq̇", ""),
 "anqχēl": new Adjective("anqχēl", 1, "resilient, tough, resistant", "ānqχēl (1)", ""),
 "axk": new Adjective("axk", 3, "mechanical; functional, operable", "āxk", ""),
@@ -858,7 +858,7 @@ const ADJECTIVES = {
 "χūq": new Adjective("χūq", 4, "forceful, vigorous, powerful; insistent", "χuχūq", "")
 }
 
-const ADVERBS = {
+ADVERBS.MAP = {
 "ax": new Adverb("ax", "not; negates verbs and regular auxiliaries", "nan", " Is not used with lur 'to be,' as both a verb and an auxiliary. Negative copula q̇em is used instead "),
 "fulthor": new Adverb("fulthor", "poorly; evilly, wickedly", "fūlthor", ""),
 "futhor": new Adverb("futhor", "well; righteously, upstandingly", "fūthor", ""),
@@ -895,7 +895,7 @@ const ADVERBS = {
 "qyru": new Adverb("qyru", "behind; backwards", "nan", "")
 }
 
-const AUXILIARIES = {
+AUXILIARIES.MAP = {
 "āhk": new Auxiliary("āhk", "do not! (prohibitive)", "defective", " always in the second person"),
 "ciχād": new Auxiliary("ciχād", "to have been able to, could (past abilitative)", "defective", " often implies a counterfactual"),
 "ciχo": new Auxiliary("ciχo", "to be able to, can (abilitative)", "defective", " implies present tense"),
@@ -917,7 +917,7 @@ const AUXILIARIES = {
 "χar": new Auxiliary("χar", "to hopefully, to wish to, to desire to (desiderative mood)", "χalód, χār, χalód", "")
 }
 
-const PREPOSITIONS = {
+PREPOSITIONS.MAP = {
 "æze": new Preposition("æze", "through", ""),
 "aze": new Preposition("aze", "alternative form of æze", ""),
 "fenlly": new Preposition("fenlly", "made of, conisting of", ""),
@@ -946,7 +946,7 @@ const PREPOSITIONS = {
 "ū": new Preposition("ū", "about, regarding, of", "")
 }
 
-const PARTICLES = {
+PARTICLES.MAP = {
 "ān": new Particle("ān", "optional noun suffix on animate roots to specify feminine", " rare"),
 "elce": new Particle("elce", "particle following a plain interrogative to mean 'how much' or 'how many'", " following word must be a noun prefixed with ħá sense 'how much' takes singular, and sense 'how many' takes plural"),
 "ħâ": new Particle("ħâ", "behold!;  ô!", " not used in sentences; interjected to call attention to something or someone considered somewhat archaic, but still used in formal settings"),
@@ -970,7 +970,7 @@ const PARTICLES = {
 "χħôħá": new Particle("χħôħá", "the great, the honorable; particle used to present or introduce dragons of nobility, especially to a crowd", "")
 }
 
-const DETERMINERS = {
+DETERMINERS.MAP = {
 "llillīxy": new Determiner("llillīxy", "too much, too many", " always takes plural"),
 "llīxem": new Determiner("llīxem", "all; every", " when the noun it describes is in the singular, it means 'every' when the noun it describes is in the plural, it means 'all'"),
 "loxta": new Determiner("loxta", "most, the majority of", " always takes plural"),
@@ -980,7 +980,7 @@ const DETERMINERS = {
 "trâfo": new Determiner("trâfo", "some, some of", " takes singular for mass nouns, plural for count nouns")
 }
 
-const CONJUNCTIONS = {
+CONJUNCTIONS.MAP = {
 "fáχ": new Conjunction("fáχ", "neither, nor", ""),
 "hærŋ": new Conjunction("hærŋ", "although, though; albeit", ""),
 "ho": new Conjunction("ho", "despite the fact that", ""),
@@ -1006,7 +1006,7 @@ const CONJUNCTIONS = {
 
 // ^^==== CACHE =====^^
 
-const ALL_WORDS = Object.entries({
+ALL_WORDS.MAP = Object.entries({
     ...NOUNS,
     ...VERBS,
     ...ADJECTIVES,
@@ -1024,25 +1024,52 @@ const ALL_WORDS = Object.entries({
     return [value]
 });
 
-
-function search_word(keyword) {
+function basicSearch(keyword, wordmap) {
   const lower = keyword.toLowerCase()
-  return ALL_WORDS.filter(w => w.word.toLowerCase().includes(lower))
+  return wordmap.filter(w => w.word.toLowerCase().includes(lower))
 }
 
-function search_word_by_definition(definition) {
+NOUNS.fetch = function(keyword) {basicSearch(keyword, NOUNS.MAP)}
+VERBS.fetch = function(keyword) {basicSearch(keyword, VERBS.MAP)}
+ADJECTIVES.fetch = function(keyword) {basicSearch(keyword, ADJECTIVES.MAP)}
+ADVERBS.fetch = function(keyword) {basicSearch(keyword, ADVERBS.MAP)}
+AUXILIARIES.fetch = function(keyword) {basicSearch(keyword, AUXILIARIES.MAP)}
+PREPOSITIONS.fetch = function(keyword) {basicSearch(keyword, PREPOSITIONS.MAP)}
+PARTICLES.fetch = function(keyword) {basicSearch(keyword, PARTICLES.MAP)}
+DETERMINERS.fetch = function(keyword) {basicSearch(keyword, DETERMINERS.MAP)}
+CONJUNCTIONS.fetch = function(keyword) {basicSearch(keyword, CONJUNCTIONS.MAP)}
+ALL_WORDS.fetch = function(keyword) {basicSearch(keyword, ALL_WORDS.MAP)}
+
+function basicSearchByDefinition(definition, wordmap) {
   const lower = definition.toLowerCase()
-  return ALL_WORDS.filter(w => {
+  return wordmap.filter(w => {
     if (w.definition && JSON.stringify(w.definition).toLowerCase().includes(lower))
       return true
+    return false
+  })
+}
+
+function basicSearchByGender(definition, wordmap) {
+  const lower = definition.toLowerCase()
+  return wordmap.filter(w => {
     if (w.genders && JSON.stringify(w.genders).toLowerCase().includes(lower))
       return true
     return false
   })
 }
 
+NOUNS.fetchByDefenition = function(keyword) {basicSearchByGender(keyword, NOUNS.MAP)}
+VERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, VERBS.MAP)}
+ADJECTIVES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADJECTIVES.MAP)}
+ADVERBS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ADVERBS.MAP)}
+AUXILIARIES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, AUXILIARIES.MAP)}
+PREPOSITIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PREPOSITIONS.MAP)}
+PARTICLES.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, PARTICLES.MAP)}
+DETERMINERS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, DETERMINERS.MAP)}
+CONJUNCTIONS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, CONJUNCTIONS.MAP)}
+ALL_WORDS.fetchByDefenition = function(keyword) {basicSearchByDefinition(keyword, ALL_WORDS.MAP)}
 
-function combine_genders(entry) {
+WORD_UTILS.combineGenders = function(entry) {
   const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)
   const inanimates = GENDERS_INANIMATES.AFFECTED.map(g => g.NAME)
 
@@ -1065,8 +1092,6 @@ function combine_genders(entry) {
   }
   return result
 }
-
-
 
 modules.push("DictionaryData")
 
