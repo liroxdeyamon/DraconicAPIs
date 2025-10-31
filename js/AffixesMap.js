@@ -301,7 +301,7 @@ WORD_UTILS.connect = function(prefix = "", text = "", suffix = "") {
     return entries.flat();
 }
 
-WORD_UTILS.connectSuffix = function(text, suffix) { return connect("", text, suffix) }
-WORD_UTILS.connectPrefix = function(text, prefix) { return connect(prefix, text, "") }
+WORD_UTILS.connectSuffix = function(text, suffix) { return WORD_UTILS.connect("", text, suffix) }
+WORD_UTILS.connectPrefix = function(text, prefix) { return WORD_UTILS.connect(prefix, text, "") }
 
 window.modules.push("AffixesMap")
