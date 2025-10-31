@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs: MainMap.js</title>
+    <link rel="stylesheet" href="../css/colors.css">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<span class="centered"><h1>Docs</h1></span>
+<hr>
+
+<span class="centered"><h2>GENDERS</h2></span>
+<hr>
+<div class="code">
+<pre><code>MAP -> {
+    E -> { NAME: "Exalted", SHORT: "e" },
+    R -> { NAME: "Rational", SHORT: "r" },
+    MON -> { NAME: "Monstrous", SHORT: "mon" },
+    I -> { NAME: "Irrational", SHORT: "i" },
+    MAG -> { NAME: "Magical", SHORT: "mag" },
+    MUN -> { NAME: "Mundane", SHORT: "mun" },
+    A -> { NAME: "Abstract", SHORT: "a" }
+}
+
+ANIMATES -> {
+    NAME: "Animates"
+    AFFECTED -> [MAP.E, MAP.R, MAP.MON, MAP.I]
+    FLAT -> {
+        NAME -> String[]
+        SHORT -> String[]
+    }
+}
+
+INANIMATES -> {
+    NAME: "Inanimates",
+    AFFECTED: [MAP.MAG, MAP.MUN, MAP.A],
+    FLAT -> {
+        NAME -> String[]
+        SHORT -> String[]
+    }
+}
+
+FLAT -> {
+    NAME -> String[]
+    SHORT -> String[]
+}
+
+// USAGE:
+// GENDERS.MAP.X.NAME - Gender X name. GENDERS.MAP.E.NAME -> "Exalted"
+// GENDERS.FLAT.NAME -> ["Exalted", "Rational", ...]
+// GENDERS.FLAT.SHORT -> ["e", "r", ...]
+// GENDERS.ANIMATES.AFFECTED -> [{NAME: "Exalted", SHORT: "e"}, ...]
+// GENDERS.INANIMATES.FLAT.NAME -> ["Magical", "Mundane", ...]</code></pre>
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+<pre><code>MAP -> {"name": Character(), ...},
+FLAT -> Character[]</code></pre>
+</div>
+
+
+
+<span class="centered"><h2>NOUNS, VERBS, ADJECTIVES, etc.</h2></span>
+<hr>
+<div class="code">
+<pre><code>
+
+NOUNS -> {
+    MAP -> {"name": Noun(), "name": {1: Noun(), 2: Noun(), ...}, ...},
+    FLAT -> Noun[],
+    SUFFIXES -> {
+        MAP: {
+            [MOODS.D]: {
+                [GENDERS.E.NAME]: {
+                    [NUMBERS.S]: { 1: "", 2: "", 3: "", 4: "" },
+                    [NUMBERS.D]: { ... },
+                    [NUMBERS.P]: { ... }
+                },
+                [GENDERS.R.NAME]: { ... },
+                [GENDERS.MON.NAME]: { ... },
+                [GENDERS.I.NAME]: { ... },
+                [GENDERS.MAG.NAME]: { ... },
+                [GENDERS.MUN.NAME]: { ... },
+                [GENDERS.A.NAME]: { ... }
+            },
+            [MOODS.R]: { ... }
+        }
+        FLAT -> String[],
+    },
+    fetch(keyword) -> Noun[] // all nouns with keyword in it
+    fetchByDefinition(def) -> Noun[] // all nouns with keyword in its definition
+}
+
+VERBS -> {
+    MAP: {"name": Verb(), ...},
+    FLAT -> Verb[],
+    PREFIXES: {
+        MAP: {
+            1: {
+                [NUMBERS.S]: { [GENDERS.E.NAME]: "", [GENDERS.R.NAME]: "", [GENDERS.MON.NAME]: "", [GENDERS.I.NAME]: "", [GENDERS.MAG.NAME]: "", [GENDERS.MUN.NAME]: "", [GENDERS.A.NAME]: "" },
+                [NUMBERS.D]: { ... },
+                [NUMBERS.P]: { ... }
+            },
+            2: {
+                ...
+            },
+            3: {
+                ...
+            }
+        }
+        FLAT -> String[]
+    },
+    SUFFIXES: {
+        MAP: {
+            1: {
+                [NUMBERS.S]: { [GENDERS.E.NAME]: "", [GENDERS.R.NAME]: "", [GENDERS.MON.NAME]: "", [GENDERS.I.NAME]: "", [GENDERS.MAG.NAME]: "", [GENDERS.MUN.NAME]: "", [GENDERS.A.NAME]: "" },
+                [NUMBERS.D]: { ... },
+                [NUMBERS.P]: { ... }
+            },
+            2: {
+                ...
+            },
+            3: {
+                ...
+            }
+        }
+        FLAT -> String[]
+    },
+    fetch(keyword) -> Verb[] // all verbs with keyword in it
+    fetchByDefinition(def) -> Verb[] // all verbs with keyword in its definition
+}
+
+ADJECTIVES -> {
+    MAP -> {"name": Adjective(), "name": {1: Adjective(), 2: Adjective(), ...}, ...},
+    
+    SUFFIXES -> NOUNS.SUFFIXES
+    fetch(keyword) -> Adjective[] // all adjectives with keyword in it
+    fetchByDefinition(def) -> Adjective[] // all adjectives with keyword in its definition
+}
+
+ADVERBS -> {
+    MAP: {"name": Adverb(), ...},
+    FLAT -> Adverb[]
+    fetch(keyword) -> Adverb[] // all adverbs with keyword in it
+    fetchByDefinition(def) -> Adverb[] // all adverbs with keyword in its definition
+}
+
+AUXILIARIES -> {
+    MAP: {"name": Auxiliary(), ...},
+    FLAT -> Auxiliary[]
+    fetch(keyword) -> Auxiliary[] // all auxiliaries with keyword in it
+    fetchByDefinition(def) -> Auxiliary[] // all auxiliaries with keyword in its definition
+}
+
+PREPOSITIONS -> {
+    MAP: {"name": Preposition(), ...},
+    FLAT -> Preposition[]
+    fetch(keyword) -> Preposition[] // all prepositions with keyword in it
+    fetchByDefinition(def) -> Preposition[] // all prepositions with keyword in its definition
+}
+
+PARTICLES -> {
+    MAP: {"name": Particle(), ...},
+    FLAT -> Particle[]
+    fetch(keyword) -> Particle[] // all particles with keyword in it
+    fetchByDefinition(def) -> Particle[] // all particles with keyword in its definition
+}
+
+DETERMINERS -> {
+    MAP: {"name": Determiner(), ...},
+    FLAT -> Determiner[]
+    fetch(keyword) -> Determiner[] // all determiners with keyword in it
+    fetchByDefinition(def) -> Determiner[] // all determiners with keyword in its definition
+}
+
+CONJUNCTIONS -> {
+    MAP: {"name": Conjunction(), ...},
+    FLAT -> Conjunction[]
+    fetch(keyword) -> Conjunction[] // all conjunctions with keyword in it
+    fetchByDefinition(def) -> Conjunction[] // all conjunctions with keyword in its definition
+}
+
+ALL_WORDS -> {
+    MAP -> {"name": Object(), "name": {1: Object(), 2: Object(), ...}, ...},
+    FLAT -> Object[]
+    fetch(keyword) -> Object[] // all words with keyword in it
+    fetchByDefinition(def) -> Object[] // all words with keyword in its definition
+}
+</code></pre>
+</div>
+
+
+<span class="centered"><h2></h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2></h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2></h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+
+<span class="centered"><h2>CHARACTERS</h2></span>
+<hr>
+<div class="code">
+
+</div>
+
+</body>
+</html>

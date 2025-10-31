@@ -189,9 +189,9 @@ function flattenSuffixes(suffixes, type) {
 
 
 
-// NOUNS.SUFFIXES.FLAT = flattenSuffixes(NOUN_SUFFIXES, "n");
-// ADJECTIVES.SUFFIXES.FLAT = NOUNS.SUFFIXES.FLAT;
-// VERBS.SUFFIXES.FLAT  = flattenSuffixes(VERB_OBJECT_SUFFIXES, "v");
+NOUNS.SUFFIXES.FLAT_MATCHES = flattenSuffixes(NOUN_SUFFIXES, "n");
+ADJECTIVES.SUFFIXES.FLAT_MATCHES = NOUNS.SUFFIXES.FLAT;
+VERBS.SUFFIXES.FLAT_MATCHES  = flattenSuffixes(VERB_OBJECT_SUFFIXES, "v");
 
 WORD_UTILS.matchSuffix = function(input, suffixMap) {
     for (const suf in suffixMap) {

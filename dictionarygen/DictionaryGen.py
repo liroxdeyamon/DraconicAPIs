@@ -262,6 +262,14 @@ function basicSearchByGender(definition, wordmap) {
     .filter(w => w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
 }
 
+function mergedSearchByDefinition(definition, wordmap) {
+  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+    .filter(w => 
+      (w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase())) ||
+      (w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
+    );
+}
+
 NOUNS.fetchByDefinition = function(def) {return basicSearchByGender(def, NOUNS.FLAT)}
 VERBS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, VERBS.FLAT)}
 ADJECTIVES.fetchByDefinition = function(def) {return basicSearchByDefinition(def, ADJECTIVES.FLAT)}
@@ -271,7 +279,7 @@ PREPOSITIONS.fetchByDefinition = function(def) {return basicSearchByDefinition(d
 PARTICLES.fetchByDefinition = function(def) {return basicSearchByDefinition(def, PARTICLES.FLAT)}
 DETERMINERS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, DETERMINERS.FLAT)}
 CONJUNCTIONS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, CONJUNCTIONS.FLAT)}
-ALL_WORDS.fetchByDefinition = function(def) {return basicSearchByDefinition(def, ALL_WORDS.FLAT)}
+ALL_WORDS.fetchByDefinition = function(def) {return mergedSearchByDefinition(def, ALL_WORDS.FLAT)}
 
 WORD_UTILS.combineGenders = function(entry) {
   const animates = GENDERS_ANIMATES.AFFECTED.map(g => g.NAME)

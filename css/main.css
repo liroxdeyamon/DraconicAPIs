@@ -69,3 +69,7 @@ tr:hover td {
   overflow: hidden;
   vertical-align: middle;
 }
+
+.code {
+  background: var(--table0); padding: 15px; border-radius: 5px;
+}

@@ -13,7 +13,7 @@ const DIGITS = ["q̇em","χu","eχ","fo","se","aq","qah","hog","xēχ","χyz","e
 const DIGITS_SUFFIXES = ["","u","eχ","o","ys","aq","ga","yg"];
 const DIGITS_MULTIPLES = {16:"sē",24:"fōrz",32:"sēlz",40:"qāz",48:"qōz",56:"hōz",64:"lān"};
 const DIGITS_POWERS = {512: "lāran", 4_096: "xeglārn", 32_768: "táħû", 262_144: "torħû"
-    , 2097152: "lāróz", 16777216: "līróz" // me suggested! :D
+    , 2097152: "lāróz", 16777216: "līróz" // me suggested! :D hope not get rejected :q
 }; // TODO: move in NUMBERS
 
 NUMBERS.numberToText = function(n) {
