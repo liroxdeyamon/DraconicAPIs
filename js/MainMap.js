@@ -205,6 +205,8 @@ const CHARACTERS = {
     entriesToRom() {},
     entriesToDiscord() {},
     entriesToGlyph() {},
+
+    getPyricEquivalent() {}
 }
 
 const NUMBERS = {

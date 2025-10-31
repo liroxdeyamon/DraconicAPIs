@@ -139,17 +139,27 @@ function flattenSuffixes(suffixes, type) {
             if (!suf) continue;
 
             let variants = [];
-            const entries = entries_from_field(suf, ["letter"], true);
-            if (entries.length && entries[0].prop) {
-                if (entries[0].prop.includes(REG.OPTIONAL)) {
-                    variants.push(entries_to_text(entries));
-                    variants.push(entries_to_text(entries, true));
-                } else if (entries[0].prop.includes(REG.VOWEL)) {
+            const entries = CHARACTERS.textToEntriesByAnyText(suf);
+            
+            if (entries && entries.length) {
+                const firstEntry = entries[0];
+                
+                if (firstEntry.prop && firstEntry.prop.includes(REG.OPTIONAL)) {
+                    variants.push(CHARACTERS.entriesToText(entries));
+                    variants.push(CHARACTERS.entriesToText(entries, true));
+                } else if (firstEntry.prop && firstEntry.prop.includes(REG.VOWEL)) {
                     variants.push(suf);
-                    const pyric = get_pyric_equivalent(entries[0]);
-                    if (pyric != null) variants.push(entries_to_text([pyric, ...entries.slice(1)]));
-                } else variants.push(suf);
-            } else console.log(`huh? ${suf} ${forms[formKey]} ${entries}`)
+                    const pyric = CHARACTERS.getPyricEquivalent(firstEntry);
+                    if (pyric != null) {
+                        variants.push(CHARACTERS.entriesToText([pyric, ...entries.slice(1)]));
+                    }
+                } else {
+                    variants.push(suf);
+                }
+            } else {
+                console.warn(`Could not parse suffix: ${suf}`);
+                variants.push(suf);
+            }
 
             const declensions = type === "n"
                 ? Object.entries(forms).filter(([_, val]) => val === suf).map(([key]) => Number(key))
@@ -189,9 +199,9 @@ function flattenSuffixes(suffixes, type) {
 
 
 
-NOUNS.SUFFIXES.FLAT_MATCHES = flattenSuffixes(NOUN_SUFFIXES, "n");
-ADJECTIVES.SUFFIXES.FLAT_MATCHES = NOUNS.SUFFIXES.FLAT;
-VERBS.SUFFIXES.FLAT_MATCHES  = flattenSuffixes(VERB_OBJECT_SUFFIXES, "v");
+NOUNS.SUFFIXES.FLAT_MATCHES = flattenSuffixes(NOUNS.SUFFIXES.MAP, "n");
+ADJECTIVES.SUFFIXES.FLAT_MATCHES = NOUNS.SUFFIXES.FLAT_MATCHES;
+VERBS.SUFFIXES.FLAT_MATCHES  = flattenSuffixes(VERBS.SUFFIXES.MAP, "v");
 
 WORD_UTILS.matchSuffix = function(input, suffixMap) {
     for (const suf in suffixMap) {
@@ -206,16 +216,16 @@ WORD_UTILS.matchSuffix = function(input, suffixMap) {
 }
 
 WORD_UTILS.connectSplit = function(prefix = "", text = "", suffix = "") {
-    let text_entries = text_to_entries(text);
-    let prefix_entries = text_to_entries(prefix);
-    let suffix_entries = text_to_entries(suffix);
+    let text_entries = CHARACTERS.textToEntriesByAnyText(text);
+    let prefix_entries = CHARACTERS.textToEntriesByAnyText(prefix);
+    let suffix_entries = CHARACTERS.textToEntriesByAnyText(suffix);
     if (!text_entries) return [];
     const last_text = text_entries[text_entries.length - 1];
     // const first_text = text_entries[0];
 
-    if (prefix_entries) {
-        // No rules?
-    }
+    // if (prefix_entries) {
+    //     // No rules?
+    // }
 
     if (suffix_entries) {
         let first_suffix = suffix_entries[0];
@@ -228,7 +238,7 @@ WORD_UTILS.connectSplit = function(prefix = "", text = "", suffix = "") {
                     }
                 } else if (last_text && last_text.prop.includes(window.REG.VOWEL)) {
                     if (last_text.prop.includes(window.REG.PYRIC)) {
-                        const pyric = get_pyric_equivalent(first_suffix);
+                        const pyric = CHARACTERS.getPyricEquivalent(first_suffix);
                         if (pyric) first_suffix = pyric;
                         suffix_entries[0] = first_suffix;
                     }
@@ -246,18 +256,11 @@ WORD_UTILS.connectSplit = function(prefix = "", text = "", suffix = "") {
 }
 
 WORD_UTILS.connect = function(prefix = "", text = "", suffix = "") {
-    const entries = connect_split(prefix, text, suffix);
+    const entries = WORD_UTILS.connectSplit(prefix, text, suffix);
     return entries.flat();
 }
 
 WORD_UTILS.connectSuffix = function(text, suffix) { return connect("", text, suffix) }
 WORD_UTILS.connectPrefix = function(text, prefix) { return connect(prefix, text, "") }
-
-
-// function getAllValues(obj) {
-//     return Object.values(obj).flatMap(val =>
-//         typeof val === 'object' && val !== null ? getAllValues(val) : val
-//     );
-// }
 
 window.modules.push("AffixesMap")

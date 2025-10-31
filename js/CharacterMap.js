@@ -543,7 +543,7 @@ function entriesFromField(text, fieldNames, filter_brackets = false) {
     let bestAdvance = 0;
     let bestIsParenthesized = false;
 
-    for (const e of CHARACTERS) {
+    for (const e of CHARACTERS.FLAT) {
       for (const field of fieldNames) {
         const values = Array.isArray(e[field]) ? e[field] : [e[field]];
         for (const val of values) {
@@ -669,4 +669,12 @@ CHARACTERS.entriesToGlyphs = (entries, ignore_optional = false) =>
     .map(e => e.letter_glyph || "")
     .join("");
 
+CHARACTERS.getPyricEquivalent = (entry) => {
+    if (!entry || !entry.prop.includes(REG.VOWEL)) return null;
+    return CHARACTERS.FLAT.find(e =>
+        e.prop.includes(REG.VOWEL) &&
+        e.prop.includes(REG.PYRIC) &&
+        e.letter_rom.some(l => l.toLowerCase() === entry.letter_rom[0].toLowerCase())
+    ) || null;
+}
 window.modules.push("CharacterMap")
