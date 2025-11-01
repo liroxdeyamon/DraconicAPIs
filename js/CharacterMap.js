@@ -677,4 +677,23 @@ CHARACTERS.getPyricEquivalent = (entry) => {
         e.letter_rom.some(l => l.toLowerCase() === entry.letter_rom[0].toLowerCase())
     ) || null;
 }
+
+
+WORD_UTILS.axifyVowelCouples = function(text) {
+    text = CHARACTERS.textToEntriesByAnyText(text);
+    let result = [];
+    
+    for (let i = 0; i < text.length; i++) {
+        result.push(text[i]);
+        
+        if (i < text.length - 1 && 
+            text[i].prop?.includes(REG.VOWEL) && 
+            text[i + 1].prop?.includes(REG.VOWEL)) {
+            result.push(CHARACTERS.MAP["ax"]);
+        }
+    }
+    
+    return CHARACTERS.entriesToText(result);
+}
+
 window.modules.push("CharacterMap")
