@@ -217,23 +217,26 @@ CONJUNCTIONS_HERE
 
 // ^^==== CACHE =====^^
 
-ALL_WORDS.MAP = Object.entries({
-    ...NOUNS.MAP,
-    ...VERBS.MAP,
-    ...ADJECTIVES.MAP,
-    ...ADVERBS.MAP,
-    ...AUXILIARIES.MAP,
-    ...PREPOSITIONS.MAP,
-    ...PARTICLES.MAP,
-    ...DETERMINERS.MAP,
-    ...CONJUNCTIONS.MAP,
-})
-.sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-.flatMap(([key, value]) => {
-    if (typeof value === 'object' && !Array.isArray(value) && Object.values(value)[0] instanceof Noun)
-        return Object.values(value)
-    return [value]
-});
+ALL_WORDS.MAP = Object.fromEntries(
+    Object.entries({
+        ...NOUNS.MAP,
+        ...VERBS.MAP,
+        ...ADJECTIVES.MAP,
+        ...ADVERBS.MAP,
+        ...AUXILIARIES.MAP,
+        ...PREPOSITIONS.MAP,
+        ...PARTICLES.MAP,
+        ...DETERMINERS.MAP,
+        ...CONJUNCTIONS.MAP,
+    })
+    .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
+    .map(([key, value]) => {
+        if (typeof value === 'object' && !Array.isArray(value) && Object.values(value)[0] instanceof Noun) {
+            return [key, value];
+        }
+        return [key, value];
+    })
+);
 
 function basicSearch(keyword, wordmap) {
   const lower = keyword.toLowerCase()

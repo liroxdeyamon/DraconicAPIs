@@ -1026,6 +1026,7 @@ ALL_WORDS.MAP = Object.fromEntries(
         return [key, value];
     })
 );
+
 function basicSearch(keyword, wordmap) {
   const lower = keyword.toLowerCase()
   return wordmap.filter(w => w.word && w.word.toLowerCase().includes(lower))
