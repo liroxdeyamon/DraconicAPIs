@@ -54,7 +54,7 @@ tr:hover td {
 
 @font-face {
   font-family: "SegoeUIDrac";
-  src: url("https://liroxdeyamon.github.io/DraconicAPIs/font/SegoeUIDrac.ttf") format("truetype");
+  src: url("/font/SegoeUIDrac.ttf") format("truetype");
 }
 
 .glyph {
