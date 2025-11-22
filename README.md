@@ -32,16 +32,29 @@ Open an issue/discussion!
 
 # Importing order
 ```html
-<script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Map.js"></script>
-<script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Dictionary.js"></script>
-<script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Experimental.js"></script>
-<script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Deprecated.js"></script>
+<script src="https://draconicconlang.github.io/APIs/dialects/DialectLoader.js"></script>
 <script src="YourScript.js"></script>
 ```
 
-Recommended to import all scripts at the bottom of the html file (Ensuring the DOM is created)
+Recommended importing all scripts at the bottom of the HTML file (Ensuring the DOM is created)
 
-If you don't want dictionary data to be loaded, you can remove it, this will probably boost the load time.
+Then you can load the dialect of your choice (replace "dr_dr") inside your JS file:
+
+```js
+DIALECTS.load("dr_dr").then(DR => {
+  Object.assign(globalThis, DR);
+});
+```
+
+If you don't want dictionary data to be loaded, you can remove it like:
+
+```js
+DIALECTS.load("dr_dr", false).then(DR => {
+  Object.assign(globalThis, DR);
+});
+```
+
+This will probably boost the load time.
 
 # Font
 To use the font you need to import it in css:

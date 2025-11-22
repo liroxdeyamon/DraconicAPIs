@@ -7,7 +7,6 @@ META = {
     LISTED: true // for getDialect and getDialectList
 }
 
-
 // ============================ CLASSES ============================
 
 class Character {
@@ -123,7 +122,7 @@ class Conjunction {
 
 // ---------------------------- IDS ----------------------------
 
-const IDS = {
+IDS = {
     NUMBERS: {
         S: "Singular",
         D: "Dual",
@@ -176,7 +175,7 @@ const pyricHText = 'Letters containig /ħ/ are pronounced by dragon using /h/ an
 const pyricVowelText = 'Some letters following by q̇ħóll are considered pyric, and pronounced by dragon breathing out fire. Humans can use a lighter or stick to alternative sound.'
 const soundPath = "https://supduzz.github.io/Draconic/assets/sound/symbol-" // hosted on sup's pages
 
-const allophones = {
+allophones = {
   "before i": 'placed before "i" or "ī"',
   "before obs": "placed before obstruent",
   "word-init": "word-initially and before voiceless obstruents",
@@ -185,7 +184,7 @@ const allophones = {
   "pyric": "placed before q̇ħóll"
 }
 
-const CHARACTERS = {
+CHARACTERS = {
     MAP: {
     //row 0
     "toru": new Character({ // 0
@@ -765,7 +764,7 @@ Object.entries(CHARACTERS.MAP).forEach(([key, value]) => {
 
 // ---------------------------- GENDERS ----------------------------
 
-const GENDERS = {
+GENDERS = {
     MAP: {
         E: { NAME: "Exalted", SHORT: "e" },
         R: { NAME: "Rational", SHORT: "r" },
@@ -960,7 +959,7 @@ function generatePrefixMatches(prefixesMap) {
     return result;
 }
 
-const AFFIXES = {
+AFFIXES = {
     SUFFIXES: {
         NOUNS: {
             MAP: {
@@ -1227,7 +1226,7 @@ function mergedSearchByDefinition(definition, wordmap) {
     );
 }
 
-const DICTIONARY = {
+DICTIONARY = {
     NOUNS: {
         MAP: {},
         get FLAT() {
@@ -1336,7 +1335,7 @@ const DICTIONARY = {
 
 // ---------------------------- NUMBRES ----------------------------
 
-const NUMBERS = {
+NUMBERS = {
     DIGITS: ["q̇em","χu","eχ","fo","se","aq","qah","hog","xēχ","χyz","ez","fyz","selz","agz","qaz","hyz"],
     DIGITS_SUFFIXES: ["","u","eχ","o","ys","aq","ga","yg"],
     DIGITS_MULTIPLES: {16:"sē",24:"fōrz",32:"sēlz",40:"qāz",48:"qōz",56:"hōz",64:"lān"},
@@ -1400,7 +1399,7 @@ const NUMBERS = {
 // ---------------------------- MISC ----------------------------
 // TODO edit idk
 
-const PRONOUNS = {
+PRONOUNS = {
     MAP: {
         [GENDERS.MAP.E.NAME]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xēn", [IDS.CASE.O]: "xon" }, 2: { [IDS.CASE.S]: "syn", [IDS.CASE.O]: "sun" }, 3: { [IDS.CASE.S]: "tēn", [IDS.CASE.O]: "tôn" } },
@@ -1441,7 +1440,7 @@ const PRONOUNS = {
 }
 
 
-const WORDCLASSES = {
+WORDCLASSES = {
     N: { NAME: "Noun", SHORT: "n" },
     V: { NAME: "Verb", SHORT: "v" },
     ADJ: { NAME: "Adjective", SHORT: "adj" },
@@ -1455,7 +1454,7 @@ const WORDCLASSES = {
 }
 
 
-const CORRELATIVES = {
+CORRELATIVES = {
     MAP: {
         [GENDERS.ANIMATES.NAME]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hā", [IDS.CASE.O]: "halláħ" },
@@ -1520,7 +1519,7 @@ const CORRELATIVES = {
 }
 
 
-const LUR = {
+LUR = {
     MAP: {
         [IDS.ASPECT.E]: {
             [IDS.TENSE.P]: {

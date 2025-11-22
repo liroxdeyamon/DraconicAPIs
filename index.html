@@ -86,12 +86,19 @@ We would love to address your part in this project!</p>
 <hr>
 
 <div class="code">
-  <code>&lt;script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Map.js"&gt;&lt;/script&gt;</code><br>
-  <code>&lt;script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Dictionary.js"&gt;&lt;/script&gt;</code><br>
-  <code>&lt;script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Experimental.js"&gt;&lt;/script&gt;</code><br>
-  <code>&lt;script src="https://draconicconlang.github.io/APIs/dialects/dr_dr/Deprecated.js"&gt;&lt;/script&gt;</code><br>
+  <code>&lt;script src="https://draconicconlang.github.io/APIs/dialects/DialectLoader.js"&gt;&lt;/script&gt;</code><br>
   <code>&lt;script src="YourScript.js"&gt;&lt;/script&gt;</code>
 </div>
+
+<p>Then in YourScript.js:</p>
+
+<div class="code">
+  <code>DIALECTS.load("dr_dr").then(DR => {</code><br>
+  <code>  Object.assign(globalThis, DR);</code>
+  <code>});</code>
+</div>
+
+<p>Replace "dr_dr" for another dialect, all dialects are presented in DIALECTS.FLAT.</p>
 
 </body>
 </html>
