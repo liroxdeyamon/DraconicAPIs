@@ -1064,8 +1064,8 @@ AFFIXES = {
         },
         ADJECTIVES: {
             get MAP() { return AFFIXES.SUFFIXES.NOUNS.MAP; },
-            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP); },
-            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n"); }
+            get FLAT() { return AFFIXES.SUFFIXES.NOUNS.FLAT; },
+            get MATCHES() { return AFFIXES.SUFFIXES.NOUNS.MATHES; }
         },
         DETERMINERS: {
             MAP: {
@@ -1301,13 +1301,7 @@ DICTIONARY = {
         get FLAT() {
             return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
         },
-        SUFFIXES: {
-            MAP: {},
-            get FLAT() {
-                return getAllValues(this.MAP)
-            },
-            MATCHES: {}
-        },
+        SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); }
     },
