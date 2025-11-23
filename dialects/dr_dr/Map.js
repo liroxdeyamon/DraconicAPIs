@@ -1258,7 +1258,7 @@ DICTIONARY = {
             get FLAT() {
                 return getAllValues(this.MAP)
             },
-            FLAT_MATCHES: {}
+            MATCHES: {}
         },
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); }
