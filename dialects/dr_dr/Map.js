@@ -711,7 +711,7 @@ CHARACTERS = {
         return match
     },
 
-    textToEntriesByAnyText(text) { return entriesFromField(text, ["letter", "letter_rom", "letter_discord", "letter_glyph"]); },
+    textToEntriesByAnyText(text) { return CHARACTERS.entriesFromField(text, ["letter", "letter_rom", "letter_discord", "letter_glyph"]); },
 
     textToEntriesByText(text) { return CHARACTERS.entriesFromField(text, ["letter"]); },
 
