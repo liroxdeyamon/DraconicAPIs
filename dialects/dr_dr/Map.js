@@ -1064,8 +1064,8 @@ AFFIXES = {
         },
         ADJECTIVES: {
             get MAP() { return AFFIXES.SUFFIXES.NOUNS.MAP; },
-            get FLAT() { return AFFIXES.SUFFIXES.NOUNS.FLAT; },
-            get MATCHES() { return AFFIXES.SUFFIXES.NOUNS.MATHES; }
+            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP); },
+            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n"); }
         },
         DETERMINERS: {
             MAP: {
