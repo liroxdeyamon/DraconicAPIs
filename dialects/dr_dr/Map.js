@@ -10,111 +10,111 @@ META = {
 // ============================ CLASSES ============================
 
 class Character {
-  constructor({
-    name, name_ipa, letter, letter_rom, letter_ipa,
-    letter_glyph, letter_discord, text = mainText,
-    prop = [], table_prop = {}, allophones = {}, sound = null
-  }) {
-    this.name = name
-    this.name_ipa = name_ipa
-    this.letter = letter
-    this.letter_rom = letter_rom
-    this.letter_ipa = letter_ipa
-    this.letter_glyph = letter_glyph
-    this.letter_discord = letter_discord
-    this.text = text
-    this.prop = prop
-    this.table_prop = table_prop
-    this.allophones = allophones
-    this.sound = sound
-  }
+    constructor({
+        name, name_ipa, letter, letter_rom, letter_ipa,
+        letter_glyph, letter_discord, text = mainText,
+        prop = [], table_prop = {}, allophones = {}, sound = null
+    }) {
+        this.name = name
+        this.name_ipa = name_ipa
+        this.letter = letter
+        this.letter_rom = letter_rom
+        this.letter_ipa = letter_ipa
+        this.letter_glyph = letter_glyph
+        this.letter_discord = letter_discord
+        this.text = text
+        this.prop = prop
+        this.table_prop = table_prop
+        this.allophones = allophones
+        this.sound = sound
+    }
 }
 
 class Noun {
-  constructor(word, declension, genders, usage_notes) {
-    this.type = "n"
-    this.word = word
-    this.declension = declension
-    this.genders = genders
-    this.usage_notes = usage_notes
-  }
+    constructor(word, declension, genders, usage_notes) {
+        this.type = "n"
+        this.word = word
+        this.declension = declension
+        this.genders = genders
+        this.usage_notes = usage_notes
+    }
 }
 
 class Verb {
-  constructor(word, definition, forms, usage_notes) {
-    this.type = "v"
-    this.word = word
-    this.definition = definition
-    this.forms = forms
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, forms, usage_notes) {
+        this.type = "v"
+        this.word = word
+        this.definition = definition
+        this.forms = forms
+        this.usage_notes = usage_notes
+    }
 }
 
 class Adjective {
-  constructor(word, declension, definition, forms, usage_notes) {
-    this.type = "adj"
-    this.word = word
-    this.declension = declension
-    this.definition = definition
-    this.forms = forms
-    this.usage_notes = usage_notes
-  }
+    constructor(word, declension, definition, forms, usage_notes) {
+        this.type = "adj"
+        this.word = word
+        this.declension = declension
+        this.definition = definition
+        this.forms = forms
+        this.usage_notes = usage_notes
+    }
 }
 
 class Adverb {
-  constructor(word, definition, forms, usage_notes) {
-    this.type = "adv"
-    this.word = word
-    this.definition = definition
-    this.forms = forms
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, forms, usage_notes) {
+        this.type = "adv"
+        this.word = word
+        this.definition = definition
+        this.forms = forms
+        this.usage_notes = usage_notes
+    }
 }
 
 class Auxiliary {
-  constructor(word, definition, forms, usage_notes) {
-    this.type = "aux"
-    this.word = word
-    this.definition = definition
-    this.forms = forms
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, forms, usage_notes) {
+        this.type = "aux"
+        this.word = word
+        this.definition = definition
+        this.forms = forms
+        this.usage_notes = usage_notes
+    }
 }
 
 class Preposition {
-  constructor(word, definition, usage_notes) {
-    this.type = "pp"
-    this.word = word
-    this.definition = definition
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, usage_notes) {
+        this.type = "pp"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
 }
 
 class Particle {
-  constructor(word, definition, usage_notes) {
-    this.type = "part"
-    this.word = word
-    this.definition = definition
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, usage_notes) {
+        this.type = "part"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
 }
 
 class Determiner {
-  constructor(word, definition, usage_notes) {
-    this.type = "det"
-    this.word = word
-    this.definition = definition
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, usage_notes) {
+        this.type = "det"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
 }
 
 class Conjunction {
-  constructor(word, definition, usage_notes) {
-    this.type = "con"
-    this.word = word
-    this.definition = definition
-    this.usage_notes = usage_notes
-  }
+    constructor(word, definition, usage_notes) {
+        this.type = "con"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
 }
 
 
@@ -176,463 +176,463 @@ const pyricVowelText = 'Some letters following by q̇ħóll are considered pyric
 const soundPath = "https://supduzz.github.io/Draconic/assets/sound/symbol-" // hosted on sup's pages
 
 allophones = {
-  "before i": 'placed before "i" or "ī"',
-  "before obs": "placed before obstruent",
-  "word-init": "word-initially and before voiceless obstruents",
-  "word-final": "placed word-finally or before obstruent",
-  "intervoc": "intervocalically",
-  "pyric": "placed before q̇ħóll"
+    "before i": 'placed before "i" or "ī"',
+    "before obs": "placed before obstruent",
+    "word-init": "word-initially and before voiceless obstruents",
+    "word-final": "placed word-finally or before obstruent",
+    "intervoc": "intervocalically",
+    "pyric": "placed before q̇ħóll"
 }
 
 CHARACTERS = {
     MAP: {
-    //row 0
-    "toru": new Character({ // 0
-        name: "toru", name_ipa: "/t̪oru/",
-        letter: "t", letter_rom: ["t"], letter_ipa: "/t̪/", letter_glyph: "\uE000", letter_discord: ":t_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/t̪̚/": allophones["word-final"]},
-        sound: soundPath+"0-0.mp3"
-    }),
-    "cáll": new Character({ // 1
-        name: "cáll",  name_ipa: "/t͡s̠ɑ̤ˁɬ/",
-        letter: "c", letter_rom: ["c"], letter_ipa: "/t͡s̠/", letter_glyph: "\uE001", letter_discord: ":c_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/t͡ʃ/": allophones["before i"]},
-        sound: soundPath+"0-1.mp3"
-    }),
-    "kû": new Character({ // 2
-        name: "kû",  name_ipa: "/kṳˁː/",
-        letter: "k", letter_rom: ["k"], letter_ipa: "/k/", letter_glyph: "\uE002", letter_discord: ":k_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-            "/c/": allophones["before i"],
-            "/g̥/": allophones["intervoc"],
-            "/k̚/": allophones["word-final"]
-        },
-        sound: soundPath+"0-2.mp3"
-    }),
-    "qath": new Character({ // 3
-        name: "qath",  name_ipa: "/qɑθ/",
-        letter: "q", letter_rom: ["q"], letter_ipa: "/q/", letter_glyph: "\uE003", letter_discord: ":q_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-            "/ɢ̥/": allophones["intervoc"],
-            "/q̚/": allophones["word-final"]
-        },
-        sound: soundPath+"0-3.mp3"
-    }),
-    "q̇os": new Character({ // 4
-        name: "q̇os",  name_ipa: "/ʡos̠/",
-        letter: "q̇", letter_rom: ["Q"], letter_ipa: "/ʡ/", letter_glyph: "\uE004", letter_discord: ":Q_:",
-        text: mainText+" If you struggle while pronouncing this, try looking up aryepiglottic folds, and mess around with how to contract them.",
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-            "/ʡ̆/" :allophones["intervoc"],
-            "/ʡ̚/": allophones["word-final"]
-        },
-        sound: soundPath+"0-4.mp3"
-    }),
-    "ax": new Character({ // 5
-        name: "ax",  name_ipa: "/ax/",
-        letter: "'", letter_rom: ["'", "´", "`"], letter_ipa: "/ʔ/", letter_glyph: "\uE005", letter_discord: ":__:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-            "/ʔ̞/": allophones["intervoc"],
-            "/ʔ̚/": allophones["word-final"]
-        },
-        sound: soundPath+"0-5.mp3"
-    }),
+        //row 0
+        "toru": new Character({ // 0
+            name: "toru", name_ipa: "/t̪oru/",
+            letter: "t", letter_rom: ["t"], letter_ipa: "/t̪/", letter_glyph: "\uE000", letter_discord: ":t_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/t̪̚/": allophones["word-final"] },
+            sound: soundPath + "0-0.mp3"
+        }),
+        "cáll": new Character({ // 1
+            name: "cáll", name_ipa: "/t͡s̠ɑ̤ˁɬ/",
+            letter: "c", letter_rom: ["c"], letter_ipa: "/t͡s̠/", letter_glyph: "\uE001", letter_discord: ":c_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/t͡ʃ/": allophones["before i"] },
+            sound: soundPath + "0-1.mp3"
+        }),
+        "kû": new Character({ // 2
+            name: "kû", name_ipa: "/kṳˁː/",
+            letter: "k", letter_rom: ["k"], letter_ipa: "/k/", letter_glyph: "\uE002", letter_discord: ":k_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/c/": allophones["before i"],
+                "/g̥/": allophones["intervoc"],
+                "/k̚/": allophones["word-final"]
+            },
+            sound: soundPath + "0-2.mp3"
+        }),
+        "qath": new Character({ // 3
+            name: "qath", name_ipa: "/qɑθ/",
+            letter: "q", letter_rom: ["q"], letter_ipa: "/q/", letter_glyph: "\uE003", letter_discord: ":q_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/ɢ̥/": allophones["intervoc"],
+                "/q̚/": allophones["word-final"]
+            },
+            sound: soundPath + "0-3.mp3"
+        }),
+        "q̇os": new Character({ // 4
+            name: "q̇os", name_ipa: "/ʡos̠/",
+            letter: "q̇", letter_rom: ["Q"], letter_ipa: "/ʡ/", letter_glyph: "\uE004", letter_discord: ":Q_:",
+            text: mainText + " If you struggle while pronouncing this, try looking up aryepiglottic folds, and mess around with how to contract them.",
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/ʡ̆/": allophones["intervoc"],
+                "/ʡ̚/": allophones["word-final"]
+            },
+            sound: soundPath + "0-4.mp3"
+        }),
+        "ax": new Character({ // 5
+            name: "ax", name_ipa: "/ax/",
+            letter: "'", letter_rom: ["'", "´", "`"], letter_ipa: "/ʔ/", letter_glyph: "\uE005", letter_discord: ":__:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/ʔ̞/": allophones["intervoc"],
+                "/ʔ̚/": allophones["word-final"]
+            },
+            sound: soundPath + "0-5.mp3"
+        }),
 
-    //row 1
-    "trō": new Character({ // 6
-        name: "trō",  name_ipa: "/t̪roː/",
-        letter: "tr", letter_rom: ["tr"], letter_ipa: "/t̪r/", letter_glyph: "\uE006", letter_discord: ":tr:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/t̪r̥/": "before voiceless obstruents"},
-        sound: soundPath+"1-0.mp3"
-    }),
-    "sēl": new Character({ // 7
-        name: "sēl",  name_ipa: "/s̠ēl̪/",
-        letter: "s", letter_rom: ["s"], letter_ipa: "/s̠/", letter_glyph: "\uE007", letter_discord: ":s_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/ʃ/": allophones["before i"]},
-        sound: soundPath+"1-1.mp3"
-    }),
-    "kxæŋ": new Character({ // 8
-        name: "kxæŋ",  name_ipa: "/k͡xaŋ/",
-        letter: "kx", letter_rom: ["kx"], letter_ipa: "/k͡x/", letter_glyph: "\uE008", letter_discord: ":kx:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/c͡ç/": allophones["before i"]},
-        sound: soundPath+"1-2.mp3"
-    }),
-    "qχē": new Character({ // 9
-        name: "qχē",  name_ipa: "/q͡χeː/",
-        letter: "qχ", letter_rom: ["qX"], letter_ipa: "/q͡χ/", letter_glyph: "\uE009", letter_discord: ":qX:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {},
-        sound: soundPath+"1-3.mp3"
-    }),
-    "qħán": new Character({ // 10
-        name: "qħán",  name_ipa: "/qˤʰɑ̤ˤn̥/",
-        letter: "qħ", letter_rom: ["qH"], letter_ipa: "/qˤʰ/", letter_glyph: "\uE00a", letter_discord: ":qH:",
-        text: mainText + " " + pyricHText,
-        prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
-        allophones: {},
-        sound: soundPath+"1-4.mp3"
-    }),
-    "q̇ħón": new Character({ // 11
-        name: "q̇ħón",  name_ipa: "/ʡˤʰo̤ˤn̥/",
-        letter: "q̇ħ", letter_rom: ["QH"], letter_ipa: "/ʡˤʰ/", letter_glyph: "\uE00b", letter_discord: ":QH:",
-        text: mainText + " " + pyricHText,
-        prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
-        allophones: {},
-        sound: soundPath+"1-5.mp3"
-    }),
+        //row 1
+        "trō": new Character({ // 6
+            name: "trō", name_ipa: "/t̪roː/",
+            letter: "tr", letter_rom: ["tr"], letter_ipa: "/t̪r/", letter_glyph: "\uE006", letter_discord: ":tr:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/t̪r̥/": "before voiceless obstruents" },
+            sound: soundPath + "1-0.mp3"
+        }),
+        "sēl": new Character({ // 7
+            name: "sēl", name_ipa: "/s̠ēl̪/",
+            letter: "s", letter_rom: ["s"], letter_ipa: "/s̠/", letter_glyph: "\uE007", letter_discord: ":s_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/ʃ/": allophones["before i"] },
+            sound: soundPath + "1-1.mp3"
+        }),
+        "kxæŋ": new Character({ // 8
+            name: "kxæŋ", name_ipa: "/k͡xaŋ/",
+            letter: "kx", letter_rom: ["kx"], letter_ipa: "/k͡x/", letter_glyph: "\uE008", letter_discord: ":kx:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/c͡ç/": allophones["before i"] },
+            sound: soundPath + "1-2.mp3"
+        }),
+        "qχē": new Character({ // 9
+            name: "qχē", name_ipa: "/q͡χeː/",
+            letter: "qχ", letter_rom: ["qX"], letter_ipa: "/q͡χ/", letter_glyph: "\uE009", letter_discord: ":qX:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {},
+            sound: soundPath + "1-3.mp3"
+        }),
+        "qħán": new Character({ // 10
+            name: "qħán", name_ipa: "/qˤʰɑ̤ˤn̥/",
+            letter: "qħ", letter_rom: ["qH"], letter_ipa: "/qˤʰ/", letter_glyph: "\uE00a", letter_discord: ":qH:",
+            text: mainText + " " + pyricHText,
+            prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
+            allophones: {},
+            sound: soundPath + "1-4.mp3"
+        }),
+        "q̇ħón": new Character({ // 11
+            name: "q̇ħón", name_ipa: "/ʡˤʰo̤ˤn̥/",
+            letter: "q̇ħ", letter_rom: ["QH"], letter_ipa: "/ʡˤʰ/", letter_glyph: "\uE00b", letter_discord: ":QH:",
+            text: mainText + " " + pyricHText,
+            prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
+            allophones: {},
+            sound: soundPath + "1-5.mp3"
+        }),
 
-    //row 2
-    "od": new Character({ // 12
-        name: "od",  name_ipa: "/oð/",
-        letter: "d", letter_rom: ["d"], letter_ipa: "/ð/", letter_glyph: "\uE00c", letter_discord: ":d_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {},
-        sound: soundPath+"2-0.mp3"
-    }),
-    "ēz": new Character({ // 13
-        name: "ēz",  name_ipa: "/eːz̠/",
-        letter: "z", letter_rom: ["z"], letter_ipa: "/z̠/", letter_glyph: "\uE00d", letter_discord: ":z_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/ʒ/": allophones["before i"]},
-        sound: soundPath+"2-1.mp3"
-    }),
-    "āg": new Character({ // 14
-        name: "āg",  name_ipa: "/ɑːɣ/",
-        letter: "g", letter_rom: ["g"], letter_ipa: "/ɣ/", letter_glyph: "\uE00e", letter_discord: ":g_:",   
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/ʝ/": allophones["before i"]},
-        sound: soundPath+"2-2.mp3"
-    }),
-    "fe": new Character({ // 15
-        name: "fe",  name_ipa: "/ɸe/",
-        letter: "f", letter_rom: ["f"], letter_ipa: "/ɸ/", letter_glyph: "\uE00f", letter_discord: ":f_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-        "/f/": "when adjecent to 'th'", 
-        "/β/": "intervocalically or adjecent to z, g", 
-        "/v/": "when adjecent to d"
-        },
-        sound: soundPath+"2-3.mp3"
-    }),
-    "thyn": new Character({ // 16
-        name: "thyn",  name_ipa: "/θən̥/",
-        letter: "th", letter_rom: ["th"], letter_ipa: "/θ/", letter_glyph: "\uE010", letter_discord: ":th:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {},
-        sound: soundPath+"2-4.mp3"
-    }),
-    "llī": new Character({ // 17
-        name: "llī",  name_ipa: "/ɬiː/",
-        letter: "ll", letter_rom: ["ll"], letter_ipa: "/ɬ/", letter_glyph: "\uE011", letter_discord: ":ll:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/ɮ/": allophones["intervoc"]},
-        sound: soundPath+"2-5.mp3"
-    }),
+        //row 2
+        "od": new Character({ // 12
+            name: "od", name_ipa: "/oð/",
+            letter: "d", letter_rom: ["d"], letter_ipa: "/ð/", letter_glyph: "\uE00c", letter_discord: ":d_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {},
+            sound: soundPath + "2-0.mp3"
+        }),
+        "ēz": new Character({ // 13
+            name: "ēz", name_ipa: "/eːz̠/",
+            letter: "z", letter_rom: ["z"], letter_ipa: "/z̠/", letter_glyph: "\uE00d", letter_discord: ":z_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/ʒ/": allophones["before i"] },
+            sound: soundPath + "2-1.mp3"
+        }),
+        "āg": new Character({ // 14
+            name: "āg", name_ipa: "/ɑːɣ/",
+            letter: "g", letter_rom: ["g"], letter_ipa: "/ɣ/", letter_glyph: "\uE00e", letter_discord: ":g_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/ʝ/": allophones["before i"] },
+            sound: soundPath + "2-2.mp3"
+        }),
+        "fe": new Character({ // 15
+            name: "fe", name_ipa: "/ɸe/",
+            letter: "f", letter_rom: ["f"], letter_ipa: "/ɸ/", letter_glyph: "\uE00f", letter_discord: ":f_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/f/": "when adjecent to 'th'",
+                "/β/": "intervocalically or adjecent to z, g",
+                "/v/": "when adjecent to d"
+            },
+            sound: soundPath + "2-3.mp3"
+        }),
+        "thyn": new Character({ // 16
+            name: "thyn", name_ipa: "/θən̥/",
+            letter: "th", letter_rom: ["th"], letter_ipa: "/θ/", letter_glyph: "\uE010", letter_discord: ":th:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {},
+            sound: soundPath + "2-4.mp3"
+        }),
+        "llī": new Character({ // 17
+            name: "llī", name_ipa: "/ɬiː/",
+            letter: "ll", letter_rom: ["ll"], letter_ipa: "/ɬ/", letter_glyph: "\uE011", letter_discord: ":ll:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/ɮ/": allophones["intervoc"] },
+            sound: soundPath + "2-5.mp3"
+        }),
 
-    //row 3
-    "xæ": new Character({ // 18
-        name: "xæ",  name_ipa: "/xa/",
-        letter: "x", letter_rom: ["x"], letter_ipa: "/x/", letter_glyph: "\uE012", letter_discord: ":x_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/ç/": allophones["before i"]},
-        sound: soundPath+"3-0.mp3"
-    }),
-    "χy": new Character({ // 19
-        name: "χy",  name_ipa: "/χə/",
-        letter: "χ", letter_rom: ["X"], letter_ipa: "/χ/", letter_glyph: "\uE013", letter_discord: ":X_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {},
-        sound: soundPath+"3-1.mp3"
-    }),
-    "har": new Character({ // 20
-        name: "har",  name_ipa: "/hɑr/",
-        letter: "h", letter_rom: ["h"], letter_ipa: "/h/", letter_glyph: "\uE014", letter_discord: ":h_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {},
-        sound: soundPath+"3-2.mp3"
-    }),
-    "χħáth": new Character({ // 21
-        name: "χħáth",  name_ipa: "/χˤʰɑ̤ˤθ/",
-        letter: "χħ", letter_rom: ["XH"], letter_ipa: "/χˤʰ/", letter_glyph: "\uE015", letter_discord: ":XH:",
-        table_prop: {"size": 1.2},
-        text: mainText,
-        prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
-        allophones: {},
-        sound: soundPath+"3-3.mp3"
-    }),
-    "ħâ": new Character({ // 22
-        name: "ħâ",  name_ipa: "/ħɑ̤ˤː/",
-        letter: "ħ", letter_rom: ["H"], letter_ipa: "/ħ/", letter_glyph: "\uE016", letter_discord: ":H_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
-        allophones: {},
-        sound: soundPath+"3-4.mp3"
-    }),
-    "rox": new Character({ // 23
-        name: "rox",  name_ipa: "/r̥ox/",
-        letter: "r", letter_rom: ["r"], letter_ipa: "/ɾ/", letter_glyph: "\uE017", letter_discord: ":r_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/r̥/": "word-init"},
-        sound: soundPath+"3-5.mp3"
-    }), 
+        //row 3
+        "xæ": new Character({ // 18
+            name: "xæ", name_ipa: "/xa/",
+            letter: "x", letter_rom: ["x"], letter_ipa: "/x/", letter_glyph: "\uE012", letter_discord: ":x_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/ç/": allophones["before i"] },
+            sound: soundPath + "3-0.mp3"
+        }),
+        "χy": new Character({ // 19
+            name: "χy", name_ipa: "/χə/",
+            letter: "χ", letter_rom: ["X"], letter_ipa: "/χ/", letter_glyph: "\uE013", letter_discord: ":X_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {},
+            sound: soundPath + "3-1.mp3"
+        }),
+        "har": new Character({ // 20
+            name: "har", name_ipa: "/hɑr/",
+            letter: "h", letter_rom: ["h"], letter_ipa: "/h/", letter_glyph: "\uE014", letter_discord: ":h_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {},
+            sound: soundPath + "3-2.mp3"
+        }),
+        "χħáth": new Character({ // 21
+            name: "χħáth", name_ipa: "/χˤʰɑ̤ˤθ/",
+            letter: "χħ", letter_rom: ["XH"], letter_ipa: "/χˤʰ/", letter_glyph: "\uE015", letter_discord: ":XH:",
+            table_prop: { "size": 1.2 },
+            text: mainText,
+            prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
+            allophones: {},
+            sound: soundPath + "3-3.mp3"
+        }),
+        "ħâ": new Character({ // 22
+            name: "ħâ", name_ipa: "/ħɑ̤ˤː/",
+            letter: "ħ", letter_rom: ["H"], letter_ipa: "/ħ/", letter_glyph: "\uE016", letter_discord: ":H_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C, IDS.CHARACTERS.P],
+            allophones: {},
+            sound: soundPath + "3-4.mp3"
+        }),
+        "rox": new Character({ // 23
+            name: "rox", name_ipa: "/r̥ox/",
+            letter: "r", letter_rom: ["r"], letter_ipa: "/ɾ/", letter_glyph: "\uE017", letter_discord: ":r_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/r̥/": "word-init" },
+            sound: soundPath + "3-5.mp3"
+        }),
 
-    //row 4
-    "lel": new Character({ // 24
-        name: "lel",  name_ipa: "/l̥el̪/",
-        letter: "l", letter_rom: ["l"], letter_ipa: "/l̪/", letter_glyph: "\uE018", letter_discord: ":l_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/l̥/": "word-init"},
-        sound: soundPath+"4-0.mp3"
-    }),
-    "eχ": new Character({ // 25
-        name: "eχ",  name_ipa: "/eχ/",
-        letter: "e", letter_rom: ["e"], letter_ipa: "/e/", letter_glyph: "\uE019", letter_discord: ":e_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"4-1.mp3"
-    }),
-    "æfu": new Character({ // 26
-        name: "æfu",  name_ipa: "/aɸu/",
-        letter: "æ", letter_rom: ["ae"], letter_ipa: "/a/", letter_glyph: "\uE01a", letter_discord: ":ae:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"4-2.mp3"
-    }),
-    "y´": new Character({ // 27
-        name: "y´",  name_ipa: "/əʔ/",
-        letter: "y", letter_rom: ["y"], letter_ipa: "/ə/", letter_glyph: "\uE01b", letter_discord: ":y_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"4-3.mp3"
-    }),
-    "a´": new Character({ // 28
-        name: "a´",  name_ipa: "/ɑʔ/",
-        letter: "a", letter_rom: ["a"], letter_ipa: "/ɑ/", letter_glyph: "\uE01c", letter_discord: ":a_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/ɑ̤ˤ/ (á)": allophones["pyric"]},
-        sound: soundPath+"4-4.mp3"
-    }),
-    "o´": new Character({ // 29
-        name: "o´",  name_ipa: "/oʔ/",
-        letter: "o", letter_rom: ["o"], letter_ipa: "/o/", letter_glyph: "\uE01d", letter_discord: ":o_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/o̤ˤ/ (ó)": allophones["pyric"]},
-        sound: soundPath+"4-5.mp3"
-    }), 
+        //row 4
+        "lel": new Character({ // 24
+            name: "lel", name_ipa: "/l̥el̪/",
+            letter: "l", letter_rom: ["l"], letter_ipa: "/l̪/", letter_glyph: "\uE018", letter_discord: ":l_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/l̥/": "word-init" },
+            sound: soundPath + "4-0.mp3"
+        }),
+        "eχ": new Character({ // 25
+            name: "eχ", name_ipa: "/eχ/",
+            letter: "e", letter_rom: ["e"], letter_ipa: "/e/", letter_glyph: "\uE019", letter_discord: ":e_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "4-1.mp3"
+        }),
+        "æfu": new Character({ // 26
+            name: "æfu", name_ipa: "/aɸu/",
+            letter: "æ", letter_rom: ["ae"], letter_ipa: "/a/", letter_glyph: "\uE01a", letter_discord: ":ae:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "4-2.mp3"
+        }),
+        "y´": new Character({ // 27
+            name: "y´", name_ipa: "/əʔ/",
+            letter: "y", letter_rom: ["y"], letter_ipa: "/ə/", letter_glyph: "\uE01b", letter_discord: ":y_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "4-3.mp3"
+        }),
+        "a´": new Character({ // 28
+            name: "a´", name_ipa: "/ɑʔ/",
+            letter: "a", letter_rom: ["a"], letter_ipa: "/ɑ/", letter_glyph: "\uE01c", letter_discord: ":a_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/ɑ̤ˤ/ (á)": allophones["pyric"] },
+            sound: soundPath + "4-4.mp3"
+        }),
+        "o´": new Character({ // 29
+            name: "o´", name_ipa: "/oʔ/",
+            letter: "o", letter_rom: ["o"], letter_ipa: "/o/", letter_glyph: "\uE01d", letter_discord: ":o_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/o̤ˤ/ (ó)": allophones["pyric"] },
+            sound: soundPath + "4-5.mp3"
+        }),
 
-    //row 5
-    "u´": new Character({ // 30
-        name: "u´",  name_ipa: "/uʔ/",
-        letter: "u", letter_rom: ["u"], letter_ipa: "/u/", letter_glyph: "\uE01e", letter_discord: ":u_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/ṳˤ/ (ú)": allophones["pyric"]},
-        sound: soundPath+"5-0.mp3"
-    }),
-    "i´": new Character({ // 31
-        name: "i´",  name_ipa: "/iʔ/",
-        letter: "i", letter_rom: ["i"], letter_ipa: "/i/", letter_glyph: "\uE01f", letter_discord: ":i_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"5-1.mp3"
-    }),
-    "ē´": new Character({ // 32
-        name: "ē´",  name_ipa: "/eːʔ/",
-        letter: "ē", letter_rom: ["ee"], letter_ipa: "/eː/", letter_glyph: "\uE020", letter_discord: ":ee:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"5-2.mp3"
-    }),
-    "ā´": new Character({ // 33
-        name: "ā´",  name_ipa: "/ɑːʔ/",
-        letter: "ā", letter_rom: ["aa"], letter_ipa: "/ɑː/", letter_glyph: "\uE021", letter_discord: ":aa:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/ɑ̤ˤː/ (â)": allophones["pyric"]},
-        sound: soundPath+"5-3.mp3"
-    }),
-    "ō´": new Character({ // 34
-        name: "ō´",  name_ipa: "/oːʔ/",
-        letter: "ō", letter_rom: ["oo"], letter_ipa: "/oː/", letter_glyph: "\uE022", letter_discord: ":oo:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/o̤ˤː/ (ô)": allophones["pyric"]},
-        sound: soundPath+"5-4.mp3"
-    }),
-    "ū´": new Character({ // 35
-        name: "ū´",  name_ipa: "/uːʔ/",
-        letter: "ū", letter_rom: ["uu"], letter_ipa: "/uː/", letter_glyph: "\uE023", letter_discord: ":uu:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {"/ṳˁː/ (û)": allophones["pyric"]},
-        sound: soundPath+"5-5.mp3"
-    }), 
+        //row 5
+        "u´": new Character({ // 30
+            name: "u´", name_ipa: "/uʔ/",
+            letter: "u", letter_rom: ["u"], letter_ipa: "/u/", letter_glyph: "\uE01e", letter_discord: ":u_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/ṳˤ/ (ú)": allophones["pyric"] },
+            sound: soundPath + "5-0.mp3"
+        }),
+        "i´": new Character({ // 31
+            name: "i´", name_ipa: "/iʔ/",
+            letter: "i", letter_rom: ["i"], letter_ipa: "/i/", letter_glyph: "\uE01f", letter_discord: ":i_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "5-1.mp3"
+        }),
+        "ē´": new Character({ // 32
+            name: "ē´", name_ipa: "/eːʔ/",
+            letter: "ē", letter_rom: ["ee"], letter_ipa: "/eː/", letter_glyph: "\uE020", letter_discord: ":ee:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "5-2.mp3"
+        }),
+        "ā´": new Character({ // 33
+            name: "ā´", name_ipa: "/ɑːʔ/",
+            letter: "ā", letter_rom: ["aa"], letter_ipa: "/ɑː/", letter_glyph: "\uE021", letter_discord: ":aa:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/ɑ̤ˤː/ (â)": allophones["pyric"] },
+            sound: soundPath + "5-3.mp3"
+        }),
+        "ō´": new Character({ // 34
+            name: "ō´", name_ipa: "/oːʔ/",
+            letter: "ō", letter_rom: ["oo"], letter_ipa: "/oː/", letter_glyph: "\uE022", letter_discord: ":oo:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/o̤ˤː/ (ô)": allophones["pyric"] },
+            sound: soundPath + "5-4.mp3"
+        }),
+        "ū´": new Character({ // 35
+            name: "ū´", name_ipa: "/uːʔ/",
+            letter: "ū", letter_rom: ["uu"], letter_ipa: "/uː/", letter_glyph: "\uE023", letter_discord: ":uu:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: { "/ṳˁː/ (û)": allophones["pyric"] },
+            sound: soundPath + "5-5.mp3"
+        }),
 
-    //row 6
-    "ī´": new Character({ // 36
-        name: "ī´",  name_ipa: "/iːʔ/",
-        letter: "ī", letter_rom: ["ii"], letter_ipa: "/iː/", letter_glyph: "\uE024", letter_discord: ":ii:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.V],
-        allophones: {},
-        sound: soundPath+"6-0.mp3"
-    }),
-    "má": new Character({ // 37
-        name: "má",  name_ipa: "/m̥ɑ̤ˤ/",
-        letter: "m", letter_rom: ["m"], letter_ipa: "/m/", letter_glyph: "\uE025", letter_discord: ":m_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {"/m̥/": "word-init"},
-        sound: soundPath+"6-1.mp3"
-    }),
-    "naχ": new Character({ // 38
-        name: "naχ",  name_ipa: "/n̥ɑχ/",
-        letter: "n", letter_rom: ["n"], letter_ipa: "/n/", letter_glyph: "\uE026", letter_discord: ":n_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-        "/n̥/": "word-initially, word-finally or before voicelss obstruent",
-        "/n̪/": "before dentals",
-        "/ŋ/": "before velars and uvulars"
-        },
-        sound: soundPath+"6-2.mp3"
-    }),
-    "yŋ": new Character({ // 39
-        name: "yŋ",  name_ipa: "/əŋ/",
-        letter: "ŋ", letter_rom: ["ng"], letter_ipa: "/ŋ/", letter_glyph: "\uE027", letter_discord: ":ng_:",
-        text: mainText,
-        prop: [IDS.CHARACTERS.C],
-        allophones: {
-        "/ŋ̥/": "before voiceless velars",
-        "/ɴ̥/": "before uvulars"
-        },
-        sound: soundPath+"6-3.mp3"
-    }),
-    "á´": new Character({ // 40
-        name: "á´",  name_ipa: "/ɑ̤ˤʔ/",
-        letter: "á", letter_rom: ["A"], letter_ipa: "/ɑ̤ˤ/", letter_glyph: "\uE01c\uE028", letter_discord: ":a_::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"xoffset": 4},
-        sound: soundPath+"6-5.mp3"
-    }),
-    "ó´": new Character({ // 41
-        name: "ó´",  name_ipa: "/o̤ˤʔ/",
-        letter: "ó", letter_rom: ["O"], letter_ipa: "/o̤ˤ/", letter_glyph: "\uE01d\uE028", letter_discord: ":o_::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"size": 0.9, "xoffset": -3},
-        sound: soundPath+"7-0.mp3"
-    }),
-    // row 7
-    "ú´": new Character({ // 42
-        name: "ú´",  name_ipa: "/ṳˤʔ/",
-        letter: "ú", letter_rom: ["U"], letter_ipa: "/ṳˤ/", letter_glyph: "\uE01e\uE028", letter_discord: ":u_::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"size": 1.1, "xoffset": 4},
-        sound: soundPath+"7-1.mp3"
-    }),
-    "â´": new Character({ // 43
-        name: "â´",  name_ipa: "/ɑ̤ˤːʔ/",
-        letter: "â", letter_rom: ["AA"], letter_ipa: "/ɑ̤ˤː/", letter_glyph: "\uE021\uE028", letter_discord: ":aa::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"xoffset": 5},
-        sound: soundPath+"7-2.mp3"
-    }),
-    "ô´": new Character({ // 44
-        name: "ô´",  name_ipa: "/o̤ˤːʔ/",
-        letter: "ô", letter_rom: ["OO"], letter_ipa: "/o̤ˤː/", letter_glyph: "\uE022\uE028", letter_discord: ":oo::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"size": 1.2, "xoffset": 4},
-        sound: soundPath+"7-3.mp3"
-    }),
-    "û´": new Character({ // 45
-        name: "û´",  name_ipa: "/ṳˤːʔ/",
-        letter: "û", letter_rom: ["UU"], letter_ipa: "/ṳˤː/", letter_glyph: "\uE023\uE028", letter_discord: ":uu::_pyr:",
-        text: mainText + " " + pyricVowelText,
-        prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
-        table_prop: {"size": 0.9, "xoffset": -4},
-        sound: soundPath+"7-4.mp3"
-    }),
-    "q̇em": new Character({ // 46
-        name: "q̇em",  name_ipa: "/ʡem/",
-        letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE029", letter_discord: ":Qem:",
-        text: `pronounced {name_ipa}, unlike most of the other symbols, this one doesn"t have a direct translation to a romanized way of writing. \n
+        //row 6
+        "ī´": new Character({ // 36
+            name: "ī´", name_ipa: "/iːʔ/",
+            letter: "ī", letter_rom: ["ii"], letter_ipa: "/iː/", letter_glyph: "\uE024", letter_discord: ":ii:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.V],
+            allophones: {},
+            sound: soundPath + "6-0.mp3"
+        }),
+        "má": new Character({ // 37
+            name: "má", name_ipa: "/m̥ɑ̤ˤ/",
+            letter: "m", letter_rom: ["m"], letter_ipa: "/m/", letter_glyph: "\uE025", letter_discord: ":m_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: { "/m̥/": "word-init" },
+            sound: soundPath + "6-1.mp3"
+        }),
+        "naχ": new Character({ // 38
+            name: "naχ", name_ipa: "/n̥ɑχ/",
+            letter: "n", letter_rom: ["n"], letter_ipa: "/n/", letter_glyph: "\uE026", letter_discord: ":n_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/n̥/": "word-initially, word-finally or before voicelss obstruent",
+                "/n̪/": "before dentals",
+                "/ŋ/": "before velars and uvulars"
+            },
+            sound: soundPath + "6-2.mp3"
+        }),
+        "yŋ": new Character({ // 39
+            name: "yŋ", name_ipa: "/əŋ/",
+            letter: "ŋ", letter_rom: ["ng"], letter_ipa: "/ŋ/", letter_glyph: "\uE027", letter_discord: ":ng_:",
+            text: mainText,
+            prop: [IDS.CHARACTERS.C],
+            allophones: {
+                "/ŋ̥/": "before voiceless velars",
+                "/ɴ̥/": "before uvulars"
+            },
+            sound: soundPath + "6-3.mp3"
+        }),
+        "á´": new Character({ // 40
+            name: "á´", name_ipa: "/ɑ̤ˤʔ/",
+            letter: "á", letter_rom: ["A"], letter_ipa: "/ɑ̤ˤ/", letter_glyph: "\uE01c\uE028", letter_discord: ":a_::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "xoffset": 4 },
+            sound: soundPath + "6-5.mp3"
+        }),
+        "ó´": new Character({ // 41
+            name: "ó´", name_ipa: "/o̤ˤʔ/",
+            letter: "ó", letter_rom: ["O"], letter_ipa: "/o̤ˤ/", letter_glyph: "\uE01d\uE028", letter_discord: ":o_::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "size": 0.9, "xoffset": -3 },
+            sound: soundPath + "7-0.mp3"
+        }),
+        // row 7
+        "ú´": new Character({ // 42
+            name: "ú´", name_ipa: "/ṳˤʔ/",
+            letter: "ú", letter_rom: ["U"], letter_ipa: "/ṳˤ/", letter_glyph: "\uE01e\uE028", letter_discord: ":u_::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "size": 1.1, "xoffset": 4 },
+            sound: soundPath + "7-1.mp3"
+        }),
+        "â´": new Character({ // 43
+            name: "â´", name_ipa: "/ɑ̤ˤːʔ/",
+            letter: "â", letter_rom: ["AA"], letter_ipa: "/ɑ̤ˤː/", letter_glyph: "\uE021\uE028", letter_discord: ":aa::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "xoffset": 5 },
+            sound: soundPath + "7-2.mp3"
+        }),
+        "ô´": new Character({ // 44
+            name: "ô´", name_ipa: "/o̤ˤːʔ/",
+            letter: "ô", letter_rom: ["OO"], letter_ipa: "/o̤ˤː/", letter_glyph: "\uE022\uE028", letter_discord: ":oo::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "size": 1.2, "xoffset": 4 },
+            sound: soundPath + "7-3.mp3"
+        }),
+        "û´": new Character({ // 45
+            name: "û´", name_ipa: "/ṳˤːʔ/",
+            letter: "û", letter_rom: ["UU"], letter_ipa: "/ṳˤː/", letter_glyph: "\uE023\uE028", letter_discord: ":uu::_pyr:",
+            text: mainText + " " + pyricVowelText,
+            prop: [IDS.CHARACTERS.V, IDS.CHARACTERS.P],
+            table_prop: { "size": 0.9, "xoffset": -4 },
+            sound: soundPath + "7-4.mp3"
+        }),
+        "q̇em": new Character({ // 46
+            name: "q̇em", name_ipa: "/ʡem/",
+            letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE029", letter_discord: ":Qem:",
+            text: `pronounced {name_ipa}, unlike most of the other symbols, this one doesn"t have a direct translation to a romanized way of writing. \n
         In draconic the symbol has three different uses, it can be used as a rough equivelent of a hyphen, which means it can be optionally used to connect compounds or conjoin propositions to their nouns.\n
         It can also stand in for the number 0, or proceed a string of letters to indicate that they are numbers.\n
         In shorthand writing, it can also stand in for the word q̇e that means "none"`,
-        prop: [IDS.CHARACTERS.D],
-        table_prop: {"size": 0.6},
-    }),
-    "seleŋ": new Character({ // 47
-        name: "seleŋ",  name_ipa: "/s̠el̪eŋ/",
-        letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE02a", letter_discord: ":seleng:",
-        text: `pronounced {name_ipa}, unlike most of the other symbols, this one doesn"t have a direct translation to a romanized way of writing. \n
+            prop: [IDS.CHARACTERS.D],
+            table_prop: { "size": 0.6 },
+        }),
+        "seleŋ": new Character({ // 47
+            name: "seleŋ", name_ipa: "/s̠el̪eŋ/",
+            letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE02a", letter_discord: ":seleng:",
+            text: `pronounced {name_ipa}, unlike most of the other symbols, this one doesn"t have a direct translation to a romanized way of writing. \n
         It can however be used as a rough equivalent of a quotation mark or an asterisk. It can optionally be used to mark parentheticals, quotes, proper nouns, or even just for emphasis. \n
         Though it is seldom used in formal writing.`,
-        prop: [IDS.CHARACTERS.D],
-    }),
-    //row 8
-    "q̇ħóll": new Character({ // 48
-        name: "q̇ħóll",  name_ipa: "/ʡho̤ˤɬ/",
-        letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE028", letter_discord: ":_pyr:",
-        text: "{name} pronounced {name_ipa} is the symbol representing pyrification it does not do anything in and of its own. It however changes vowels to pyric vowels when placed after one. Pyric letters pronounced are by dragons breathing out fire, humans can use a ligher or stick to alternative sound (see allophones).",
-        prop: [IDS.CHARACTERS.I],
-        allophones: {
-            "a pronounced /ɑ/": "á pronounced /ɑ̤ˤ/",
-            "o pronounced /o/": "ó pronounced /o̤ˤ/",
-            "u pronounced /u/": "ú pronounced /ṳˤ/",
-            "ā pronounced /ɑː/": "â pronounced /ɑ̤ˤː/",
-            "ō pronounced /oː/": "ô pronounced /o̤ˤː/",
-            "ū pronounced /uː/": "û pronounced /ṳˁː/"
-        },
-        sound: soundPath+"6-4.mp3"
-    }),
-    " ": new Character({ // 49
-        name: " ",  name_ipa: "",
-        letter: " ", letter_rom: [" "], letter_ipa: "", letter_glyph: " ", letter_discord: "   ",
-        text: "SPACEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-        prop: [IDS.CHARACTERS.I],
-    })
+            prop: [IDS.CHARACTERS.D],
+        }),
+        //row 8
+        "q̇ħóll": new Character({ // 48
+            name: "q̇ħóll", name_ipa: "/ʡho̤ˤɬ/",
+            letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE028", letter_discord: ":_pyr:",
+            text: "{name} pronounced {name_ipa} is the symbol representing pyrification it does not do anything in and of its own. It however changes vowels to pyric vowels when placed after one. Pyric letters pronounced are by dragons breathing out fire, humans can use a ligher or stick to alternative sound (see allophones).",
+            prop: [IDS.CHARACTERS.I],
+            allophones: {
+                "a pronounced /ɑ/": "á pronounced /ɑ̤ˤ/",
+                "o pronounced /o/": "ó pronounced /o̤ˤ/",
+                "u pronounced /u/": "ú pronounced /ṳˤ/",
+                "ā pronounced /ɑː/": "â pronounced /ɑ̤ˤː/",
+                "ō pronounced /oː/": "ô pronounced /o̤ˤː/",
+                "ū pronounced /uː/": "û pronounced /ṳˁː/"
+            },
+            sound: soundPath + "6-4.mp3"
+        }),
+        " ": new Character({ // 49
+            name: " ", name_ipa: "",
+            letter: " ", letter_rom: [" "], letter_ipa: "", letter_glyph: " ", letter_discord: "   ",
+            text: "SPACEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+            prop: [IDS.CHARACTERS.I],
+        })
     },
     get FLAT() { return Object.values(this.MAP); },
 
@@ -656,41 +656,41 @@ CHARACTERS = {
         const result = [];
         let i = 0;
         let inParen = false;
-        
+
         while (i < text.length) {
             if (text[i] === '(') { inParen = true; i++; continue; }
             if (text[i] === ')') { inParen = false; i++; continue; }
-            
+
             let best = null, bestLen = 0;
-            
+
             for (const e of CHARACTERS.FLAT) {
-            for (const f of fieldNames) {
-                const fv = e[f];
-                const vals = Array.isArray(fv) ? fv : (fv ? [fv] : []);
-                for (const v of vals) {
-                if (v.length <= bestLen || text[i] !== v[0] || i + v.length > text.length) continue;
-                let match = true;
-                for (let c = 1; c < v.length; c++) {
-                    if (text[i + c] !== v[c]) { match = false; break; }
-                }
-                if (match) { best = e; bestLen = v.length; }
+                for (const f of fieldNames) {
+                    const fv = e[f];
+                    const vals = Array.isArray(fv) ? fv : (fv ? [fv] : []);
+                    for (const v of vals) {
+                        if (v.length <= bestLen || text[i] !== v[0] || i + v.length > text.length) continue;
+                        let match = true;
+                        for (let c = 1; c < v.length; c++) {
+                            if (text[i + c] !== v[c]) { match = false; break; }
+                        }
+                        if (match) { best = e; bestLen = v.length; }
+                    }
                 }
             }
-            }
-            
+
             if (best) {
-            if (inParen) {
-                const m = { ...best, prop: [...(best.prop || []), IDS.CHARACTERS.O] };
-                result.push(m);
+                if (inParen) {
+                    const m = { ...best, prop: [...(best.prop || []), IDS.CHARACTERS.O] };
+                    result.push(m);
+                } else {
+                    result.push(best);
+                }
+                i += bestLen;
             } else {
-                result.push(best);
-            }
-            i += bestLen;
-            } else {
-            i++;
+                i++;
             }
         }
-        
+
         return result;
     },
 
@@ -701,11 +701,11 @@ CHARACTERS = {
             const value = e[field]
             const values = Array.isArray(value) ? value : [value]
             for (const val of values) {
-            if (!val) continue
-            if (text.startsWith(val) && val.length > matchLength) {
-                match = e
-                matchLength = val.length
-            }
+                if (!val) continue
+                if (text.startsWith(val) && val.length > matchLength) {
+                    match = e
+                    matchLength = val.length
+                }
             }
         }
         return match
@@ -747,14 +747,14 @@ CHARACTERS = {
     }
 }
 
-function description(entry){
-  if(!entry.text) return;
-  return entry.text
-    .replaceAll('{name}', entry.name||'')
-    .replaceAll('{name_ipa}', entry.name_ipa||'')
-    .replaceAll('{letter_rom}', entry.letter_rom?.join('" or a "')||'')
-    .replaceAll('{letter_ipa}', entry.letter_ipa||'')
-    .replaceAll('{letter}', entry.letter||'');
+function description(entry) {
+    if (!entry.text) return;
+    return entry.text
+        .replaceAll('{name}', entry.name || '')
+        .replaceAll('{name_ipa}', entry.name_ipa || '')
+        .replaceAll('{letter_rom}', entry.letter_rom?.join('" or a "') || '')
+        .replaceAll('{letter_ipa}', entry.letter_ipa || '')
+        .replaceAll('{letter}', entry.letter || '');
 }
 
 Object.entries(CHARACTERS.MAP).forEach(([key, value]) => {
@@ -1064,8 +1064,8 @@ AFFIXES = {
         },
         ADJECTIVES: {
             get MAP() { return AFFIXES.SUFFIXES.NOUNS.MAP; },
-            get FLAT() { return AFFIXES.SUFFIXES.NOUNS.FLAT; },
-            get MATCHES() { return AFFIXES.SUFFIXES.NOUNS.MATHES; }
+            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP); },
+            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n"); }
         },
         DETERMINERS: {
             MAP: {
@@ -1124,9 +1124,11 @@ AFFIXES = {
                 }
             },
             get FLAT() { return getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP); },
-            get MATCHES() { return Object.entries(AFFIXES.SUFFIXES.DETERMINERS.MAP)
-                           .reduce((acc, [gender, affix]) => { acc[affix] = gender; return acc;}, {}); }
-                    // TODO: edit this thingi
+            get MATCHES() {
+                return Object.entries(AFFIXES.SUFFIXES.DETERMINERS.MAP)
+                    .reduce((acc, [gender, affix]) => { acc[affix] = gender; return acc; }, {});
+            }
+            // TODO: edit this thingi
         },
 
         match(input, map, returnAll = false) {
@@ -1250,26 +1252,26 @@ AFFIXES = {
 // ---------------------------- DICTIONARY ----------------------------
 
 function basicSearch(keyword, wordmap) {
-  const lower = keyword.toLowerCase()
-  return wordmap.filter(w => w.word && w.word.toLowerCase().includes(lower))
+    const lower = keyword.toLowerCase()
+    return wordmap.filter(w => w.word && w.word.toLowerCase().includes(lower))
 }
 
 function basicSearchByDefinition(definition, wordmap) {
-  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
-    .filter(w => w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase()))
+    return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+        .filter(w => w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase()))
 }
 
 function basicSearchByGender(definition, wordmap) {
-  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
-    .filter(w => w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
+    return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+        .filter(w => w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
 }
 
 function mergedSearchByDefinition(definition, wordmap) {
-  return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
-    .filter(w => 
-      (w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase())) ||
-      (w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
-    );
+    return (Array.isArray(wordmap) ? wordmap : Object.values(wordmap))
+        .filter(w =>
+            (w.definition && JSON.stringify(w.definition).toLowerCase().includes(definition.toLowerCase())) ||
+            (w.genders && JSON.stringify(w.genders).toLowerCase().includes(definition.toLowerCase()))
+        );
 }
 
 DICTIONARY = {
@@ -1309,7 +1311,7 @@ DICTIONARY = {
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); }
     },
-    
+
     ADVERBS: {
         MAP: {},
         get FLAT() {
@@ -1318,7 +1320,7 @@ DICTIONARY = {
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADVERBS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); }
     },
-    
+
     AUXILIARIES: {
         MAP: {},
         get FLAT() {
@@ -1327,7 +1329,7 @@ DICTIONARY = {
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.AUXILIARIES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUX.FLAT); }
     },
-    
+
     PREPOSITIONS: {
         MAP: {},
         get FLAT() {
@@ -1336,7 +1338,7 @@ DICTIONARY = {
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PREPOSITIONS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); }
     },
-    
+
     PARTICLES: {
         MAP: {},
         get FLAT() {
@@ -1345,7 +1347,7 @@ DICTIONARY = {
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PARTICLES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); }
     },
-    
+
     DETERMINERS: {
         REGULARS: {
             MAP: {},
@@ -1382,23 +1384,23 @@ DICTIONARY = {
 // ---------------------------- NUMBRES ----------------------------
 
 NUMBERS = {
-    DIGITS: ["q̇em","χu","eχ","fo","se","aq","qah","hog","xēχ","χyz","ez","fyz","selz","agz","qaz","hyz"],
-    DIGITS_SUFFIXES: ["","u","eχ","o","ys","aq","ga","yg"],
-    DIGITS_MULTIPLES: {16:"sē",24:"fōrz",32:"sēlz",40:"qāz",48:"qōz",56:"hōz",64:"lān"},
-    DIGITS_POWERS: {512: "lāran", 4_096: "xeglārn", 32_768: "táħû", 262_144: "torħû"},
+    DIGITS: ["q̇em", "χu", "eχ", "fo", "se", "aq", "qah", "hog", "xēχ", "χyz", "ez", "fyz", "selz", "agz", "qaz", "hyz"],
+    DIGITS_SUFFIXES: ["", "u", "eχ", "o", "ys", "aq", "ga", "yg"],
+    DIGITS_MULTIPLES: { 16: "sē", 24: "fōrz", 32: "sēlz", 40: "qāz", 48: "qōz", 56: "hōz", 64: "lān" },
+    DIGITS_POWERS: { 512: "lāran", 4_096: "xeglārn", 32_768: "táħû", 262_144: "torħû" },
 
     numberToText(n) {
         if (n === 0) return NUMBERS.DIGITS[0];
-        
+
         let parts = [];
         let remaining = n;
-        
+
         const powers = [262_144, 32_768, 4_096, 512];
         for (let power of powers) {
             if (remaining >= power) {
                 let count = Math.floor(remaining / power);
                 remaining = remaining % power;
-                
+
                 if (count === 1) {
                     parts.push(NUMBERS.DIGITS_POWERS[power]);
                 } else {
@@ -1409,12 +1411,12 @@ NUMBERS = {
         }
 
         const multiples = [64, 56, 48, 40, 32, 24, 16]; //edit 
-    
+
         for (let mult of multiples) {
             if (remaining >= mult) {
                 let count = Math.floor(remaining / mult);
                 remaining = remaining % mult;
-                
+
                 if (count === 1) {
                     parts.push(NUMBERS.DIGITS_MULTIPLES[mult]);
                 } else {
@@ -1423,7 +1425,7 @@ NUMBERS = {
                 }
             }
         }
-        
+
         if (remaining > 0 && remaining <= 15) {
             if (parts.length > 0 && remaining <= 7) {
                 parts[parts.length - 1] += NUMBERS.DIGITS_SUFFIXES[remaining];
@@ -1432,7 +1434,7 @@ NUMBERS = {
                 parts.push(NUMBERS.DIGITS[remaining]);
             }
         }
-        
+
         return parts.join(" si ");
     },
 
