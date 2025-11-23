@@ -1078,7 +1078,7 @@ AFFIXES = {
                 [GENDERS.MAP.A.NAME]: "hoq̇"
             },
             IRREGULARS: {
-                MAP: IRREGULARS.MAP = {
+                MAP: {
                     [GENDERS.MAP.E.NAME]: {
                         [IDS.DET_TYPES.NA]: "q̇e",
                         [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyn", [IDS.NUMBERS.P]: "tōn" },
