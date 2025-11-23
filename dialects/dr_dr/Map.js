@@ -1157,7 +1157,7 @@ AFFIXES = {
                 }
             },
             get FLAT() { return getAllValues(AFFIXES.PREFIXES.VERBS.MAP); },
-            get MATCHES() { generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP); }
+            get MATCHES() { return generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP); }
         },
 
         match(input, map, returnAll = false) {
