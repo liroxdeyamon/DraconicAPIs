@@ -821,7 +821,7 @@ GENDERS = {
         };
     },
 
-    combineGenders(entry) {
+    combine(entry) {
         const defMap = {}
         for (const [gender, def] of Object.entries(entry)) {
             if (!defMap[def]) defMap[def] = []
