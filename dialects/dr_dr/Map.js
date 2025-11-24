@@ -1,10 +1,9 @@
 META = {
-    ID: "dr_dr", // for getDialect and getDialectList
+    ID: "dr_dr",
     NAME: "Regular Draconic",
     AUTHOR: "human1011", // in this case human1011 is author of the whole conlang
     DESCRIPTION: "Unmodified version of the conlang.",
     REVISION: "WIP", // aka version or smth, increment on update
-    LISTED: true // for getDialect and getDialectList
 }
 
 // ============================ CLASSES ============================
@@ -854,9 +853,9 @@ function getAllValues(obj) {
 
 function generateSuffixMatches(suffixes, type) {
     const result = {};
-    const isNoun = type === "n";
-
     const suffixPaths = {};
+
+    const isNoun = type === "n" || type === "adj";
 
     if (isNoun) {
         for (const mood in suffixes) {
@@ -867,10 +866,9 @@ function generateSuffixMatches(suffixes, type) {
                         if (!suf) continue;
 
                         if (!suffixPaths[suf]) {
-                            suffixPaths[suf] = { mood, gender, numbers: new Set(), declensions: new Set() };
+                            suffixPaths[suf] = [];
                         }
-                        suffixPaths[suf].numbers.add(num);
-                        suffixPaths[suf].declensions.add(Number(decl));
+                        suffixPaths[suf].push([mood, gender, num, Number(decl)]);
                     }
                 }
             }
@@ -883,9 +881,9 @@ function generateSuffixMatches(suffixes, type) {
                     if (!suf) continue;
 
                     if (!suffixPaths[suf]) {
-                        suffixPaths[suf] = { person: Number(person), gender, numbers: new Set() };
+                        suffixPaths[suf] = [];
                     }
-                    suffixPaths[suf].numbers.add(num);
+                    suffixPaths[suf].push([Number(person), num, gender]);
                 }
             }
         }
@@ -912,18 +910,13 @@ function generateSuffixMatches(suffixes, type) {
             variants = [suf];
         }
 
-        const path = suffixPaths[suf];
-        const numbers = Array.from(path.numbers);
-
-        result[suf] = isNoun
-            ? [suf, variants, [path.mood, path.gender, numbers, Array.from(path.declensions).sort((a, b) => a - b)], "n"]
-            : [suf, variants, [path.person, numbers, path.gender], "v"];
+        result[suf] = [suf, suffixPaths[suf], variants, type];
     }
 
     return result;
 }
 
-function generatePrefixMatches(prefixesMap) {
+function generatePrefixMatches(prefixesMap, type) {
     const result = {};
     const prefixPaths = {};
 
@@ -934,9 +927,9 @@ function generatePrefixMatches(prefixesMap) {
                 if (!prefix) continue;
 
                 if (!prefixPaths[prefix]) {
-                    prefixPaths[prefix] = { person: Number(person), gender, numbers: new Set() };
+                    prefixPaths[prefix] = [];
                 }
-                prefixPaths[prefix].numbers.add(num);
+                prefixPaths[prefix].push([Number(person), num, gender]);
             }
         }
     }
@@ -952,8 +945,7 @@ function generatePrefixMatches(prefixesMap) {
             variants = [prefix];
         }
 
-        const path = prefixPaths[prefix];
-        result[prefix] = [prefix, variants, [path.person, Array.from(path.numbers), path.gender], "v"];
+        result[prefix] = [prefix, prefixPaths[prefix], variants, type];
     }
 
     return result;
@@ -1038,8 +1030,8 @@ AFFIXES = {
                     }
                 }
             },
-            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP); },
-            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n"); }
+            FLAT: {},
+            MATCHES: {}
         },
         VERBS: {
             MAP: {
@@ -1059,13 +1051,13 @@ AFFIXES = {
                     [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "tun", [GENDERS.MAP.R.NAME]: "if", [GENDERS.MAP.MON.NAME]: "ħó", [GENDERS.MAP.I.NAME]: "(ú)cul", [GENDERS.MAP.MAG.NAME]: "ħúχ", [GENDERS.MAP.MUN.NAME]: "(ú)r", [GENDERS.MAP.A.NAME]: "(u)q̇" }
                 }
             },
-            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.VERBS.MAP); },
-            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v"); }
+            FLAT: {},
+            MATCHES: {}
         },
         ADJECTIVES: {
             get MAP() { return AFFIXES.SUFFIXES.NOUNS.MAP; },
-            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP); },
-            get MATCHES() { return generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n"); }
+            get FLAT() { return AFFIXES.SUFFIXES.NOUNS.FLAT; },
+            MATCHES: {}
         },
         DETERMINERS: {
             MAP: {
@@ -1123,12 +1115,8 @@ AFFIXES = {
                     }
                 }
             },
-            get FLAT() { return getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP); },
-            get MATCHES() {
-                return Object.entries(AFFIXES.SUFFIXES.DETERMINERS.MAP)
-                    .reduce((acc, [gender, affix]) => { acc[affix] = gender; return acc; }, {});
-            }
-            // TODO: edit this thingi
+            FLAT: {},
+            MATCHES: {} // TODO: edit this thingi
         },
 
         match(input, map, returnAll = false) {
@@ -1158,8 +1146,8 @@ AFFIXES = {
                     [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "tyn", [GENDERS.MAP.R.NAME]: "tyf", [GENDERS.MAP.MON.NAME]: "tuħ", [GENDERS.MAP.I.NAME]: "tīll", [GENDERS.MAP.MAG.NAME]: "tū", [GENDERS.MAP.MUN.NAME]: "tur", [GENDERS.MAP.A.NAME]: "tu" }
                 }
             },
-            get FLAT() { return getAllValues(AFFIXES.PREFIXES.VERBS.MAP); },
-            get MATCHES() { return generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP); }
+            FLAT: {},
+            MATCHES: {}
         },
 
         match(input, map, returnAll = false) {
@@ -1170,29 +1158,40 @@ AFFIXES = {
             return AFFIXES.connect(prefix, text, "")
         }
     },
-
+    
     match(input, map, isPrefix = false, returnAll = false) {
         if (!input || typeof input !== "string") return null;
-
+        
         const matches = [];
         let best = null;
         let bestLen = 0;
-
+        let bestMatchedVariants = [];
+        
         for (const [key, val] of Object.entries(map)) {
-            const variants = Array.isArray(val[1]) ? val[1] : [key];
+            const variants = Array.isArray(val[2]) ? val[2] : [key];
+            const matchedVariants = [];
+            
             for (const v of variants) {
                 if (typeof v !== "string") continue;
                 const match = isPrefix ? input.startsWith(v) : input.endsWith(v);
-                if (!match) continue;
-
-                if (returnAll) matches.push(val);
-                else if (v.length > bestLen) {
-                    best = val;
-                    bestLen = v.length;
+                if (match) {
+                    matchedVariants.push(v);
                 }
             }
+            
+            if (matchedVariants.length === 0) continue;
+            
+            const longestMatch = Math.max(...matchedVariants.map(v => v.length));
+            
+            if (returnAll) {
+                matches.push([...val.slice(0, 2), matchedVariants, ...val.slice(3)]);
+            } else if (longestMatch > bestLen) {
+                best = [...val.slice(0, 2), matchedVariants, ...val.slice(3)];
+                bestLen = longestMatch;
+                bestMatchedVariants = matchedVariants;
+            }
         }
-
+        
         if (returnAll) return matches.length ? matches : null;
         return best;
     },
@@ -1248,6 +1247,16 @@ AFFIXES = {
     }
 }
 
+AFFIXES.SUFFIXES.NOUNS.FLAT = getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP);
+AFFIXES.SUFFIXES.NOUNS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n");
+AFFIXES.SUFFIXES.VERBS.FLAT =  getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
+AFFIXES.SUFFIXES.VERBS.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v");
+AFFIXES.SUFFIXES.NOUNS.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "adj");
+AFFIXES.SUFFIXES.DETERMINERS.FLAT =  getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
+AFFIXES.SUFFIXES.DETERMINERS.MATCHES = Object.entries(AFFIXES.SUFFIXES.DETERMINERS.MAP)
+        .reduce((acc, [gender, affix]) => { acc[affix] = gender; return acc; }, {});
+AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
+AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, "v");
 
 // ---------------------------- DICTIONARY ----------------------------
 

@@ -42,7 +42,7 @@ function fetchOrigin(word) {
     return null
 }
 
-function fetchOrigins(words) {
+function fetchOrigins(text) {
 
 }
 

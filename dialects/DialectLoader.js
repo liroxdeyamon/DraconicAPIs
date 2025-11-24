@@ -16,7 +16,6 @@ function createSandbox() {
     const proxy = new Proxy(sandbox, handler);
 
     function run(code) {
-        // Only rewrite top-level function and class declarations; let/const/var inside `with` works automatically
         const transformed = code
             .replace(/^\s*function\s+([a-zA-Z_$][\w$]*)/gm, (_, name) => `var ${name} = function ${name}`)
             .replace(/^\s*class\s+([a-zA-Z_$][\w$]*)/gm, (_, name) => `var ${name} = class ${name}`);
@@ -29,7 +28,8 @@ function createSandbox() {
 
 const DIALECTS = {
   MAP: {
-    "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
+    // "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
+    "dr_dr": "http://127.0.0.1:5500/dialects/dr_dr/"
   },
 
   async load(id, dictionary = true, experimental = false, deprecated = false) {
