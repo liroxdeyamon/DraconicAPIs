@@ -28,8 +28,8 @@ function createSandbox() {
 
 const DIALECTS = {
   MAP: {
-    // "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
-    "dr_dr": "http://127.0.0.1:5500/dialects/dr_dr/"
+    "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
+    // "dr_dr": "http://127.0.0.1:5500/dialects/dr_dr/"
   },
 
   async load(id, dictionary = true, experimental = false, deprecated = false) {
