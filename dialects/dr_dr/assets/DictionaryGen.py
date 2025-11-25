@@ -1,10 +1,16 @@
 import pandas as pd
 import re
 
-def read_excel_data():
+def read_excel_data_dict():
     df = pd.read_excel('dictionary.xlsx')
     data_list = df.iloc[:, 0:5].values.tolist()
     return data_list
+
+def read_excel_data_common():
+    df = pd.read_excel('common.xlsx')
+    phrases = df.iloc[1:, 0:3].values.tolist()
+    proverbs = df.iloc[1:, 4:8].values.tolist()
+    return phrases, proverbs
 
 def clean_definition(def_text):
     return re.sub(r'\s*\([^)]*\)\s*', ' ', def_text).strip()
@@ -136,6 +142,15 @@ DICTIONARY.ALL_WORDS.MAP = Object.fromEntries(
 );
 
 // oh my god
+
+COMMON.PHRASES.MAP ={
+PHRASES_HERE
+}
+    
+COMMON.PROVERBS.MAP ={
+PROVRBS_HERE
+}
+
 """
 
 
@@ -148,7 +163,10 @@ if __name__ == "__main__":
     adj_dict = {}
     verbs, adverbs, auxiliaries, prepositions, particles, determiners, conjunctions = [], [], [], [], [], [], []
     
-    data = read_excel_data()
+    phrases, proverbs = [], []
+    
+    phrases_data, proverbs_data = read_excel_data_common()
+    data = read_excel_data_dict()
     for i in data:
         if i[1] == "n":
             word, dec = process_declension(i)
@@ -176,6 +194,16 @@ if __name__ == "__main__":
         elif i[1] == "con":
             conjunctions.append(f'"{i[0]}": new Conjunction("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
 
+
+    for i in phrases_data:
+        if "nan" not in str(i[0]):
+            phrases.append(f'"{i[0]}": new Phrase("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
+
+    for i in proverbs_data:
+        if "nan" not in str(i[0]):
+            proverbs.append(f'"{i[0]}": new Proverb("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
+
+
     nouns = [f'"{word}": {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}'
              if len(decls) > 1 else f'"{word}": {list(decls.values())[0]}'
              for word, decls in sorted(noun_dict.items())]
@@ -194,5 +222,7 @@ if __name__ == "__main__":
                 .replace("PREPOSITIONS_HERE", ",\n".join(prepositions))
                 .replace("PARTICLES_HERE", ",\n".join(particles))
                 .replace("DETERMINERS_HERE", ",\n".join(determiners))
-                .replace("CONJUNCTIONS_HERE", ",\n".join(conjunctions)))
+                .replace("CONJUNCTIONS_HERE", ",\n".join(conjunctions))
+                .replace("PHRASES_HERE", ",\n".join(phrases))
+                .replace("PROVRBS_HERE", ",\n".join(proverbs)))
 

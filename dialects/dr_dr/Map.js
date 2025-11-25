@@ -116,6 +116,24 @@ class Conjunction {
     }
 }
 
+class Phrase {
+    constructor(word, definition, usage_notes) {
+        this.type = "phr"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
+}
+
+class Proverb {
+    constructor(word, definition, usage_notes) {
+        this.type = "prov"
+        this.word = word
+        this.definition = definition
+        this.usage_notes = usage_notes
+    }
+}
+
 
 // ============================ MAPS ============================
 
