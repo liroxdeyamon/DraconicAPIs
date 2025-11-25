@@ -1168,6 +1168,15 @@ AFFIXES = {
         let bestMatchedVariants = [];
         
         for (const [key, val] of Object.entries(map)) {
+            if (!Array.isArray(val)) {
+                if (returnAll) {
+                    matches.push(val);
+                } else if (!best) {
+                    best = val;
+                }
+                continue;
+            }
+            
             const variants = Array.isArray(val[2]) ? val[2] : [key];
             const matchedVariants = [];
             
@@ -1725,5 +1734,14 @@ LUR = {
                 },
             }
         }
+    }
+}
+
+COMMON = {
+    PHRASES: {
+        MAP: {},
+    },
+    PROVERBS: {
+        MAP: {}
     }
 }
