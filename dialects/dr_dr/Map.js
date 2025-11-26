@@ -1187,10 +1187,14 @@ AFFIXES = {
         
         for (const [key, val] of Object.entries(map)) {
             if (!Array.isArray(val)) {
-                if (returnAll) {
-                    matches.push(val);
-                } else if (!best) {
-                    best = val;
+                const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
+                if (match) {
+                    if (returnAll) {
+                        matches.push(val);
+                    } else if (key.length > bestLen) {
+                        best = val;
+                        bestLen = key.length;
+                    }
                 }
                 continue;
             }
