@@ -51,6 +51,6 @@ const DIALECTS = {
   },
 
   async load(id, dictionary = true, experimental = false, deprecated = false) {
-    return await loadUrl(this.MAP[id], dictionary, experimental, deprecated);
+    return await this.loadUrl(this.MAP[id], dictionary, experimental, deprecated);
   }
 };
