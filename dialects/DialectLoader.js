@@ -29,15 +29,13 @@ function createSandbox() {
 const DIALECTS = {
   MAP: {
     "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
-    // "dr_dr": "http://127.0.0.1:5500/dialects/dr_dr/"
   },
 
-  async load(id, dictionary = true, experimental = false, deprecated = false) {
-    const base = this.MAP[id];
+  async loadUrl(url, dictionary = true, experimental = false, deprecated = false) {
     let allCode = '';
 
     async function fetchScript(file) {
-      const res = await fetch(base + file);
+      const res = await fetch(url + file);
       if (!res.ok) return '';
       return await res.text();
     }
@@ -50,5 +48,9 @@ const DIALECTS = {
     const { sandbox, run } = createSandbox();
     run(allCode);
     return sandbox;
+  },
+
+  async load(id, dictionary = true, experimental = false, deprecated = false) {
+    return await loadUrl(this.MAP[id], dictionary, experimental, deprecated);
   }
 };

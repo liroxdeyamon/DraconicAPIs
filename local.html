@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="number" id="numInput" placeholder="number" oninput="document.getElementById('test').textContent = NUMBERS.numberToText(this.value)">
+
+    <div id="test">result</div>
+<!-- <script src="https://draconicconlang.github.io/APIs/dialects/DialectLoader.js"></script> -->
+<script src="./dialects/DialectLoader.js"></script>
+<script>
+DIALECTS.loadUrl("http://127.0.0.1:5500/dialects/dr_dr/").then(DR => {
+  Object.assign(globalThis, DR);
+});
+</script>
+</body>
+</html>
