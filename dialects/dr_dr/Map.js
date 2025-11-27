@@ -881,9 +881,7 @@ function getAllValues(obj) {
 function generateSuffixMatches(suffixes, type) {
     const result = {};
     const suffixPaths = {};
-
     const isNoun = type === "n" || type === "adj";
-
     if (isNoun) {
         for (const mood in suffixes) {
             for (const gender in suffixes[mood]) {
@@ -891,7 +889,6 @@ function generateSuffixMatches(suffixes, type) {
                     for (const decl in suffixes[mood][gender][num]) {
                         const suf = suffixes[mood][gender][num][decl];
                         if (!suf) continue;
-
                         if (!suffixPaths[suf]) {
                             suffixPaths[suf] = [];
                         }
@@ -906,7 +903,6 @@ function generateSuffixMatches(suffixes, type) {
                 for (const gender in suffixes[person][num]) {
                     const suf = suffixes[person][num][gender];
                     if (!suf) continue;
-
                     if (!suffixPaths[suf]) {
                         suffixPaths[suf] = [];
                     }
@@ -915,11 +911,9 @@ function generateSuffixMatches(suffixes, type) {
             }
         }
     }
-
     for (const suf in suffixPaths) {
         const entries = CHARACTERS.textToEntriesByAnyText(suf);
         let variants;
-
         if (entries?.length) {
             const firstEntry = entries[0];
             if (firstEntry.prop?.includes(IDS.CHARACTERS.O)) {
@@ -936,46 +930,37 @@ function generateSuffixMatches(suffixes, type) {
             console.warn(`Could not parse suffix: ${suf}`);
             variants = [suf];
         }
-
         result[suf] = new AffixMatch(type, suf, variants, suffixPaths[suf]);
     }
-
     return result;
 }
 
 function generatePrefixMatches(prefixesMap, type) {
     const result = {};
     const prefixPaths = {};
-
     for (const person in prefixesMap) {
         for (const num in prefixesMap[person]) {
             for (const gender in prefixesMap[person][num]) {
-                const prefix = prefixesMap[person][num][gender];
-                if (!prefix) continue;
-
-                if (!prefixPaths[prefix]) {
-                    prefixPaths[prefix] = [];
+                const pref = prefixesMap[person][num][gender];
+                if (!pref) continue;
+                if (!prefixPaths[pref]) {
+                    prefixPaths[pref] = [];
                 }
-                prefixPaths[prefix].push([Number(person), num, gender]);
+                prefixPaths[pref].push([Number(person), num, gender]);
             }
         }
     }
-
     for (const pref in prefixPaths) {
         const entries = CHARACTERS.textToEntriesByAnyText(pref);
         let variants;
-
         if (entries?.length) {
             const lastEntry = entries[entries.length - 1];
-            variants = lastEntry.prop?.includes(IDS.CHARACTERS.V) ? [pref + CHARACTERS.MAP["ax"].letter, prefix] : [prefix];
+            variants = lastEntry.prop?.includes(IDS.CHARACTERS.V) ? [pref + CHARACTERS.MAP["ax"].letter, pref] : [pref];
         } else {
             variants = [pref];
         }
-
-        result[pref] = new AffixMatch(type, pref, variants, prefixPaths[suf]);
-        
+        result[pref] = new AffixMatch(type, pref, variants, prefixPaths[pref]);
     }
-
     return result;
 }
 
@@ -1195,7 +1180,6 @@ AFFIXES = {
         let bestLen = 0;
         
         for (const [key, val] of Object.entries(map)) {
-            // Handle AffixMatch instances
             if (val instanceof AffixMatch) {
                 const variants = val.variants || [key];
                 const matchedVariants = [];
@@ -1221,7 +1205,6 @@ AFFIXES = {
                 continue;
             }
             
-            // Handle regular objects
             const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
             if (match) {
                 if (returnAll) {
