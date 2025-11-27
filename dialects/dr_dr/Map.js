@@ -31,106 +31,115 @@ class Character {
 
 class Noun {
     constructor(word, declension, genders, usage_notes) {
-        this.type = "n"
         this.word = word
         this.declension = declension
         this.genders = genders
         this.usage_notes = usage_notes
+        this.type = "n"
     }
 }
 
 class Verb {
     constructor(word, definition, forms, usage_notes) {
-        this.type = "v"
         this.word = word
         this.definition = definition
         this.forms = forms
         this.usage_notes = usage_notes
+        this.type = "v"
     }
 }
 
 class Adjective {
     constructor(word, declension, definition, forms, usage_notes) {
-        this.type = "adj"
         this.word = word
         this.declension = declension
         this.definition = definition
         this.forms = forms
         this.usage_notes = usage_notes
+        this.type = "adj"
     }
 }
 
 class Adverb {
     constructor(word, definition, forms, usage_notes) {
-        this.type = "adv"
         this.word = word
         this.definition = definition
         this.forms = forms
         this.usage_notes = usage_notes
+        this.type = "adv"
     }
 }
 
 class Auxiliary {
     constructor(word, definition, forms, usage_notes) {
-        this.type = "aux"
         this.word = word
         this.definition = definition
         this.forms = forms
         this.usage_notes = usage_notes
+        this.type = "aux"
     }
 }
 
 class Preposition {
     constructor(word, definition, usage_notes) {
-        this.type = "pp"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "pp"
     }
 }
 
 class Particle {
     constructor(word, definition, usage_notes) {
-        this.type = "part"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "part"
     }
 }
 
 class Determiner {
     constructor(word, definition, usage_notes) {
-        this.type = "det"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "det"
     }
 }
 
 class Conjunction {
     constructor(word, definition, usage_notes) {
-        this.type = "con"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "con"
     }
 }
 
 class Phrase {
     constructor(word, definition, usage_notes) {
-        this.type = "phr"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "phr"
     }
 }
 
 class Proverb {
     constructor(word, definition, usage_notes) {
-        this.type = "prov"
         this.word = word
         this.definition = definition
         this.usage_notes = usage_notes
+        this.type = "prov"
+    }
+}
+
+class AffixMatch {
+    constructor(type, affix, variants, paths) {
+        this.affix = affix
+        this.variants = variants
+        this.paths = paths
+        this.type = type
     }
 }
 
@@ -928,7 +937,7 @@ function generateSuffixMatches(suffixes, type) {
             variants = [suf];
         }
 
-        result[suf] = [suf, suffixPaths[suf], variants, type];
+        result[suf] = new AffixMatch(type, suf, variants, suffixPaths[suf]);
     }
 
     return result;
@@ -952,18 +961,19 @@ function generatePrefixMatches(prefixesMap, type) {
         }
     }
 
-    for (const prefix in prefixPaths) {
-        const entries = CHARACTERS.textToEntriesByAnyText(prefix);
+    for (const pref in prefixPaths) {
+        const entries = CHARACTERS.textToEntriesByAnyText(pref);
         let variants;
 
         if (entries?.length) {
             const lastEntry = entries[entries.length - 1];
-            variants = lastEntry.prop?.includes(IDS.CHARACTERS.V) ? [prefix + CHARACTERS.MAP["ax"].letter, prefix] : [prefix];
+            variants = lastEntry.prop?.includes(IDS.CHARACTERS.V) ? [pref + CHARACTERS.MAP["ax"].letter, prefix] : [prefix];
         } else {
-            variants = [prefix];
+            variants = [pref];
         }
 
-        result[prefix] = [prefix, prefixPaths[prefix], variants, type];
+        result[pref] = new AffixMatch(type, pref, variants, prefixPaths[suf]);
+        
     }
 
     return result;
@@ -1183,43 +1193,43 @@ AFFIXES = {
         const matches = [];
         let best = null;
         let bestLen = 0;
-        let bestMatchedVariants = [];
         
         for (const [key, val] of Object.entries(map)) {
-            if (!Array.isArray(val)) {
-                const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
-                if (match) {
-                    if (returnAll) {
-                        matches.push(val);
-                    } else if (key.length > bestLen) {
-                        best = val;
-                        bestLen = key.length;
+            // Handle AffixMatch instances
+            if (val instanceof AffixMatch) {
+                const variants = val.variants || [key];
+                const matchedVariants = [];
+                
+                for (const v of variants) {
+                    if (typeof v !== "string") continue;
+                    const match = isPrefix ? input.startsWith(v) : input.endsWith(v);
+                    if (match) {
+                        matchedVariants.push(v);
                     }
+                }
+                
+                if (matchedVariants.length === 0) continue;
+                
+                const longestMatch = Math.max(...matchedVariants.map(v => v.length));
+                
+                if (returnAll) {
+                    matches.push(new AffixMatch(val.type, val.affix, matchedVariants, val.paths));
+                } else if (longestMatch > bestLen) {
+                    best = new AffixMatch(val.type, val.affix, matchedVariants, val.paths);
+                    bestLen = longestMatch;
                 }
                 continue;
             }
             
-            const variants = Array.isArray(val[2]) ? val[2] : [key];
-            const matchedVariants = [];
-            
-            for (const v of variants) {
-                if (typeof v !== "string") continue;
-                const match = isPrefix ? input.startsWith(v) : input.endsWith(v);
-                if (match) {
-                    matchedVariants.push(v);
+            // Handle regular objects
+            const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
+            if (match) {
+                if (returnAll) {
+                    matches.push(val);
+                } else if (key.length > bestLen) {
+                    best = val;
+                    bestLen = key.length;
                 }
-            }
-            
-            if (matchedVariants.length === 0) continue;
-            
-            const longestMatch = Math.max(...matchedVariants.map(v => v.length));
-            
-            if (returnAll) {
-                matches.push([...val.slice(0, 2), matchedVariants, ...val.slice(3)]);
-            } else if (longestMatch > bestLen) {
-                best = [...val.slice(0, 2), matchedVariants, ...val.slice(3)];
-                bestLen = longestMatch;
-                bestMatchedVariants = matchedVariants;
             }
         }
         
