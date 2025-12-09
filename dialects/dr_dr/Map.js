@@ -964,6 +964,45 @@ function generatePrefixMatches(prefixesMap, type) {
     return result;
 }
 
+function generateDeterminerIrregularMatches(irregularsMap, type) {
+    const result = {};
+    const detPaths = {};
+    
+    for (const gender in irregularsMap) {
+        for (const detType in irregularsMap[gender]) {
+            const value = irregularsMap[gender][detType];
+            
+            if (typeof value === "string") {
+                (detPaths[value] ||= []).push([gender, detType]);
+            } else {
+                for (const num in value) {
+                    const det = value[num];
+                    if (det) (detPaths[det] ||= []).push([gender, detType, num]);
+                }
+            }
+        }
+    }
+    
+    for (const det in detPaths) {
+        result[det] = new AffixMatch(type, det, [det], detPaths[det]);
+    }
+    
+    return result;
+}
+
+function generateDeterminerMatches(determinersMap, type) {
+    const result = {};
+    
+    for (const gender in determinersMap) {
+        const det = determinersMap[gender];
+        if (det) {
+            result[det] = new AffixMatch(type, det, [det], [[gender]]);
+        }
+    }
+    
+    return result;
+}
+
 AFFIXES = {
     SUFFIXES: {
         NOUNS: {
@@ -1126,7 +1165,9 @@ AFFIXES = {
                         [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhoq̇", [IDS.NUMBERS.P]: "sōhoq̇" },
                         [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhoq̇", [IDS.NUMBERS.P]: "li'ōq̇" },
                     }
-                }
+                },
+                FLAT: {},
+                MATCHES: {}
             },
             FLAT: {},
             MATCHES: {} // TODO: edit this thingi
@@ -1277,8 +1318,9 @@ AFFIXES.SUFFIXES.VERBS.FLAT =  getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
 AFFIXES.SUFFIXES.VERBS.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v");
 AFFIXES.SUFFIXES.ADJECTIVES.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, "adj");
 AFFIXES.SUFFIXES.DETERMINERS.FLAT =  getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
-AFFIXES.SUFFIXES.DETERMINERS.MATCHES = Object.entries(AFFIXES.SUFFIXES.DETERMINERS.MAP)
-        .reduce((acc, [gender, affix]) => { acc[affix] = gender; return acc; }, {});
+AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, "det")
+AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.FLAT = getAllValues(AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MAP);
+AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MATCHES = generateDeterminerIrregularMatches(AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MAP, "det");
 AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
 AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, "v");
 
@@ -1376,14 +1418,11 @@ DICTIONARY = {
     },
 
     DETERMINERS: {
-        REGULARS: {
-            MAP: {},
-            get FLAT() {
-                return Object.values(this.MAP);
-            },
+        MAP: {},
+        get FLAT() {
+            return Object.values(this.MAP);
         },
-        SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS.MAP,
-        IRREGULARS: AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS,
+        SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); }
     },
