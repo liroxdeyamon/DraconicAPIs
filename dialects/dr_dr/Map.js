@@ -964,32 +964,6 @@ function generatePrefixMatches(prefixesMap, type) {
     return result;
 }
 
-function generateDeterminerIrregularMatches(irregularsMap, type) {
-    const result = {};
-    const detPaths = {};
-    
-    for (const gender in irregularsMap) {
-        for (const detType in irregularsMap[gender]) {
-            const value = irregularsMap[gender][detType];
-            
-            if (typeof value === "string") {
-                (detPaths[value] ||= []).push([gender, detType]);
-            } else {
-                for (const num in value) {
-                    const det = value[num];
-                    if (det) (detPaths[det] ||= []).push([gender, detType, num]);
-                }
-            }
-        }
-    }
-    
-    for (const det in detPaths) {
-        result[det] = new AffixMatch(type, det, [det], detPaths[det]);
-    }
-    
-    return result;
-}
-
 function generateDeterminerMatches(determinersMap, type) {
     const result = {};
     
@@ -1120,54 +1094,6 @@ AFFIXES = {
                 [GENDERS.MAP.MAG.NAME]: "huχ",
                 [GENDERS.MAP.MUN.NAME]: "thok",
                 [GENDERS.MAP.A.NAME]: "hoq̇"
-            },
-            IRREGULARS: {
-                MAP: {
-                    [GENDERS.MAP.E.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyn", [IDS.NUMBERS.P]: "tōn" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēn", [IDS.NUMBERS.P]: "sōn" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēn", [IDS.NUMBERS.P]: "li'ōn" },
-                    },
-                    [GENDERS.MAP.R.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyf", [IDS.NUMBERS.P]: "tōf" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēf", [IDS.NUMBERS.P]: "sōf" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēf", [IDS.NUMBERS.P]: "li'ōf" },
-                    },
-                    [GENDERS.MAP.MON.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tó", [IDS.NUMBERS.P]: "tô" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēħó", [IDS.NUMBERS.P]: "sōħó" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēħó", [IDS.NUMBERS.P]: "li'ô" },
-                    },
-                    [GENDERS.MAP.I.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tīl", [IDS.NUMBERS.P]: "tūl" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēllīl", [IDS.NUMBERS.P]: "sōllīl" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēllīl", [IDS.NUMBERS.P]: "li'llīl" },
-                    },
-                    [GENDERS.MAP.MAG.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tuχ", [IDS.NUMBERS.P]: "tōχ" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhuχ", [IDS.NUMBERS.P]: "sōhuχ" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhuχ", [IDS.NUMBERS.P]: "li'ōχ" },
-                    },
-                    [GENDERS.MAP.MUN.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyrk", [IDS.NUMBERS.P]: "tōk" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sērk", [IDS.NUMBERS.P]: "sōthok" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lērk", [IDS.NUMBERS.P]: "li'ōk" },
-                    },
-                    [GENDERS.MAP.A.NAME]: {
-                        [IDS.DET_TYPES.NA]: "q̇e",
-                        [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "toq̇", [IDS.NUMBERS.P]: "tōq̇" },
-                        [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhoq̇", [IDS.NUMBERS.P]: "sōhoq̇" },
-                        [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhoq̇", [IDS.NUMBERS.P]: "li'ōq̇" },
-                    }
-                },
-                FLAT: {},
-                MATCHES: {}
             },
             FLAT: {},
             MATCHES: {} // TODO: edit this thingi
@@ -1319,8 +1245,6 @@ AFFIXES.SUFFIXES.VERBS.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.M
 AFFIXES.SUFFIXES.ADJECTIVES.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, "adj");
 AFFIXES.SUFFIXES.DETERMINERS.FLAT =  getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
 AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, "det")
-AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.FLAT = getAllValues(AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MAP);
-AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MATCHES = generateDeterminerIrregularMatches(AFFIXES.SUFFIXES.DETERMINERS.IRREGULARS.MAP, "det");
 AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
 AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, "v");
 
@@ -1423,6 +1347,55 @@ DICTIONARY = {
             return Object.values(this.MAP);
         },
         SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS,
+        IRREGULARS: {
+            MAP: {
+                [GENDERS.MAP.E.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyn", [IDS.NUMBERS.P]: "tōn" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēn", [IDS.NUMBERS.P]: "sōn" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēn", [IDS.NUMBERS.P]: "li'ōn" },
+                },
+                [GENDERS.MAP.R.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyf", [IDS.NUMBERS.P]: "tōf" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēf", [IDS.NUMBERS.P]: "sōf" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēf", [IDS.NUMBERS.P]: "li'ōf" },
+                },
+                [GENDERS.MAP.MON.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tó", [IDS.NUMBERS.P]: "tô" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēħó", [IDS.NUMBERS.P]: "sōħó" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēħó", [IDS.NUMBERS.P]: "li'ô" },
+                },
+                [GENDERS.MAP.I.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tīl", [IDS.NUMBERS.P]: "tūl" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēllīl", [IDS.NUMBERS.P]: "sōllīl" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēllīl", [IDS.NUMBERS.P]: "li'llīl" },
+                },
+                [GENDERS.MAP.MAG.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tuχ", [IDS.NUMBERS.P]: "tōχ" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhuχ", [IDS.NUMBERS.P]: "sōhuχ" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhuχ", [IDS.NUMBERS.P]: "li'ōχ" },
+                },
+                [GENDERS.MAP.MUN.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyrk", [IDS.NUMBERS.P]: "tōk" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sērk", [IDS.NUMBERS.P]: "sōthok" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lērk", [IDS.NUMBERS.P]: "li'ōk" },
+                },
+                [GENDERS.MAP.A.NAME]: {
+                    [IDS.DET_TYPES.NA]: "q̇e",
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "toq̇", [IDS.NUMBERS.P]: "tōq̇" },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhoq̇", [IDS.NUMBERS.P]: "sōhoq̇" },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhoq̇", [IDS.NUMBERS.P]: "li'ōq̇" },
+                }
+            },
+            get FLAT() {
+                return Object.values(this.MAP);
+            },
+        },
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); }
     },
