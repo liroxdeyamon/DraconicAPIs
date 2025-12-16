@@ -29,90 +29,76 @@ class Character {
     }
 }
 
-class Noun {
+class Word {
+    constructor(word, definition, usage_notes, declension, genders, forms, type) {
+        this.word = word;
+        this.definition = definition;
+        this.usage_notes = usage_notes;
+        this.declension = declension;
+        this.genders = genders;
+        this.forms = forms;
+        this.type = type;
+    }
+
+    splitForms() {
+        if (!this.forms) {
+            return [this.word];
+        }
+        return [this.word, ...this.forms.split(", ")];
+    }
+}
+
+class Noun extends Word {
     constructor(word, declension, genders, usage_notes) {
-        this.word = word
-        this.declension = declension
-        this.genders = genders
-        this.usage_notes = usage_notes
-        this.type = "n"
+        super(word, undefined, usage_notes, declension, genders, undefined, "n");
     }
 }
 
-class Verb {
+class Verb extends Word {
     constructor(word, definition, forms, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.forms = forms
-        this.usage_notes = usage_notes
-        this.type = "v"
+        super(word, definition, usage_notes, undefined, undefined, forms, "v");
     }
 }
 
-class Adjective {
+class Adjective extends Word {
     constructor(word, declension, definition, forms, usage_notes) {
-        this.word = word
-        this.declension = declension
-        this.definition = definition
-        this.forms = forms
-        this.usage_notes = usage_notes
-        this.type = "adj"
+        super(word, definition, usage_notes, declension, undefined, forms, "adj");
     }
 }
 
-class Adverb {
+class Adverb extends Word {
     constructor(word, definition, forms, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.forms = forms
-        this.usage_notes = usage_notes
-        this.type = "adv"
+        super(word, definition, usage_notes, undefined, undefined, forms, "adv");
     }
 }
 
-class Auxiliary {
+class Auxiliary extends Word {
     constructor(word, definition, forms, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.forms = forms
-        this.usage_notes = usage_notes
-        this.type = "aux"
+        super(word, definition, usage_notes, undefined, undefined, forms, "aux");
     }
 }
 
-class Preposition {
+class Preposition extends Word {
     constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "pp"
+        super(word, definition, usage_notes, undefined, undefined, undefined, "pp");
     }
 }
 
-class Particle {
+class Particle extends Word {
     constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "part"
+        super(word, definition, usage_notes, undefined, undefined, undefined, "part");
     }
 }
 
-class Determiner {
+class Determiner extends Word {
     constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "det"
+        super(word, definition, usage_notes, undefined, undefined, undefined, "det");
     }
 }
 
-class Conjunction {
+class Conjunction extends Word {
     constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "con"
+        super(word, definition, usage_notes, undefined, undefined, undefined, "con");
     }
 }
 
