@@ -176,6 +176,10 @@ IDS = {
         I: "Sheet Ignore",
         D: "Different", // ??
         O: "Optional"
+    },
+    FORMS: {
+        R: 'Regular',
+        E: 'Elative'
     }
 }
 
@@ -952,14 +956,14 @@ function generatePrefixMatches(prefixesMap, type) {
 
 function generateDeterminerMatches(determinersMap, type) {
     const result = {};
-    
+
     for (const gender in determinersMap) {
         const det = determinersMap[gender];
         if (det) {
             result[det] = new AffixMatch(type, det, [det], [[gender]]);
         }
     }
-    
+
     return result;
 }
 
@@ -1124,19 +1128,19 @@ AFFIXES = {
             return AFFIXES.connect(prefix, text, "")
         }
     },
-    
+
     match(input, map, isPrefix = false, returnAll = false) {
         if (!input || typeof input !== "string") return null;
-        
+
         const matches = [];
         let best = null;
         let bestLen = 0;
-        
+
         for (const [key, val] of Object.entries(map)) {
             if (val instanceof AffixMatch) {
                 const variants = val.variants || [key];
                 const matchedVariants = [];
-                
+
                 for (const v of variants) {
                     if (typeof v !== "string") continue;
                     const match = isPrefix ? input.startsWith(v) : input.endsWith(v);
@@ -1144,11 +1148,11 @@ AFFIXES = {
                         matchedVariants.push(v);
                     }
                 }
-                
+
                 if (matchedVariants.length === 0) continue;
-                
+
                 const longestMatch = Math.max(...matchedVariants.map(v => v.length));
-                
+
                 if (returnAll) {
                     matches.push(new AffixMatch(val.type, val.affix, matchedVariants, val.paths));
                 } else if (longestMatch > bestLen) {
@@ -1157,7 +1161,7 @@ AFFIXES = {
                 }
                 continue;
             }
-            
+
             const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
             if (match) {
                 if (returnAll) {
@@ -1168,7 +1172,7 @@ AFFIXES = {
                 }
             }
         }
-        
+
         if (returnAll) return matches.length ? matches : null;
         return best;
     },
@@ -1226,10 +1230,10 @@ AFFIXES = {
 
 AFFIXES.SUFFIXES.NOUNS.FLAT = getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP);
 AFFIXES.SUFFIXES.NOUNS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n");
-AFFIXES.SUFFIXES.VERBS.FLAT =  getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
-AFFIXES.SUFFIXES.VERBS.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v");
-AFFIXES.SUFFIXES.ADJECTIVES.MATCHES =  generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, "adj");
-AFFIXES.SUFFIXES.DETERMINERS.FLAT =  getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
+AFFIXES.SUFFIXES.VERBS.FLAT = getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
+AFFIXES.SUFFIXES.VERBS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v");
+AFFIXES.SUFFIXES.ADJECTIVES.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, "adj");
+AFFIXES.SUFFIXES.DETERMINERS.FLAT = getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
 AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, "det")
 AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
 AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, "v");
