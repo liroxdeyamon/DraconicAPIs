@@ -1,9 +1,17 @@
 META = {
+    // Basic info
     ID: "dr_dr",
-    NAME: "Regular Draconic",
-    AUTHOR: "human1011", // in this case human1011 is author of the whole conlang
+    NAME: "Classic Draconic",
     DESCRIPTION: "Unmodified version of the conlang.",
-    REVISION: "WIP", // aka version or smth, increment on update
+    // Attribution
+    AUTHOR: "human1011", // in this case human1011 is author of the whole conlang
+    MENTAINERS: ["_eXeCutie", "SuPDuZz", "LiroxDeYamon"], // people keeping dialect up to date
+    // Update things
+    // Classic draconic's updates are monitored in draconic-changes channel on discord
+    // Code changes don't count as an update, unless they change the dialect in some way
+    REVISION: 8, // aka version or smth, increment on update, please do not farm revisions via minor changes
+    LAST_UPDATED: "2026-01-13", // YYYY-MM-DD format
+    STATUS: "WIP" // WIP - there be alot of changes; STABLE - the dialect is done, but there be additions sometimes (like new words or phrases); ARCHIVED - no changes will be made anymore
 }
 
 // ============================ CLASSES ============================
@@ -1418,60 +1426,149 @@ NUMBERS = {
     DIGITS_MULTIPLES: { 16: "sē", 24: "fōrz", 32: "sēlz", 40: "qāz", 48: "qōz", 56: "hōz", 64: "lān" },
     DIGITS_POWERS: { 512: "lāran", 4_096: "xeglārn", 32_768: "táħû", 262_144: "torħû" },
 
-    numberToText(n) {
-        if (n === 0) return NUMBERS.DIGITS[0];
+    DIGITS_SHORT: {"t": 1, "c": 2, "k": 3, "q": 4, "q̇": 5, "'": 6, "tr": 7, "kx": 16, "qχ": 24, "qħ": 32, "q̇ħ": 40, "d": 48, "z": 56, "g": 64, "f": 512, "th": 4096, "ll": 32768, "x": 262144},
 
+    numberToText(n) {
+        if (n === 0) return this.DIGITS[0];
+        
         let parts = [];
         let remaining = n;
-
-        const powers = [262_144, 32_768, 4_096, 512];
-        for (let power of powers) {
-            if (remaining >= power) {
-                let count = Math.floor(remaining / power);
-                remaining = remaining % power;
-
-                if (count === 1) {
-                    parts.push(NUMBERS.DIGITS_POWERS[power]);
-                } else {
-                    let countStr = NUMBERS.numberToText(count);
-                    parts.push(countStr + " " + NUMBERS.DIGITS_POWERS[power]);
-                }
+        
+        const scales = [
+            ...Object.keys(this.DIGITS_POWERS).map(Number).sort((a, b) => b - a),
+            ...Object.keys(this.DIGITS_MULTIPLES).map(Number).sort((a, b) => b - a)
+        ];
+        
+        for (let scale of scales) {
+            if (remaining >= scale) {
+                let count = Math.floor(remaining / scale);
+                remaining %= scale;
+                
+                const scaleName = this.DIGITS_POWERS[scale] || this.DIGITS_MULTIPLES[scale];
+                parts.push(count === 1 ? scaleName : `${this.numberToText(count)} ${scaleName}`);
             }
         }
-
-        const multiples = [64, 56, 48, 40, 32, 24, 16]; //edit 
-
-        for (let mult of multiples) {
-            if (remaining >= mult) {
-                let count = Math.floor(remaining / mult);
-                remaining = remaining % mult;
-
-                if (count === 1) {
-                    parts.push(NUMBERS.DIGITS_MULTIPLES[mult]);
-                } else {
-                    let countStr = NUMBERS.numberToText(count);
-                    parts.push(countStr + " " + NUMBERS.DIGITS_MULTIPLES[mult]);
-                }
-            }
-        }
-
+        
         if (remaining > 0 && remaining <= 15) {
             if (parts.length > 0 && remaining <= 7) {
-                parts[parts.length - 1] += NUMBERS.DIGITS_SUFFIXES[remaining];
+                parts[parts.length - 1] += this.DIGITS_SUFFIXES[remaining];
             } else {
-                parts[parts.length - 1] += NUMBERS.DIGITS_SUFFIXES[remaining];
-                parts.push(NUMBERS.DIGITS[remaining]);
+                parts.push(this.DIGITS[remaining]);
             }
         }
+        
+        return parts.join(" si ").replace(/sē([æaeiouyāēīōū])/gi, "sēh$1");
+    },
+    
+    numberToTextShort(n) {
+        if (n === 0) return "#";
+        let result = "#";
+        const keys = Object.keys(NUMBERS.DIGITS_SHORT).sort((a, b) => 
+            NUMBERS.DIGITS_SHORT[b] - NUMBERS.DIGITS_SHORT[a]
+        );
+        
+        for (let key of keys) {
+            const value = NUMBERS.DIGITS_SHORT[key];
+            if (n >= value) {
+                let count = Math.floor(n / value);
+                n = n % value;
+                
+                if (count === 1) {
+                    result += key;
+                } else {
+                    const countStr = NUMBERS.numberToTextShort(count).slice(1);
+                    result += countStr + key;
+                }
+            }
+        }
+        return result;
+    },
 
-        return parts.join(" si ");
+    textToNumberShort(text) {
+        if (!text || text === "#") return 0;
+        text = text.replace(/^#/, '');
+        if (text === '') return 0;
+        
+        const entries = CHARACTERS.textToEntriesByAnyText(text);
+        if (!entries || entries.length === 0) return 0;
+        
+        let symbolString = '';
+        for (let entry of entries) {
+            if (entry.letter) symbolString += entry.letter;
+        }
+        
+        const sortedKeys = Object.keys(NUMBERS.DIGITS_SHORT).sort((a, b) => 
+            b.length - a.length || NUMBERS.DIGITS_SHORT[b] - NUMBERS.DIGITS_SHORT[a]
+        );
+        
+        let values = [];
+        let i = 0;
+        
+        while (i < symbolString.length) {
+            let matched = false;
+            for (let key of sortedKeys) {
+                if (symbolString.substring(i, i + key.length) === key) {
+                    values.push(NUMBERS.DIGITS_SHORT[key]);
+                    i += key.length;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) i++;
+        }
+        
+        if (values.length === 0) return 0;
+        
+        let total = 0;
+        
+        for (let i = 0; i < values.length; i++) {
+            if (i + 1 < values.length && values[i + 1] > values[i]) {
+                total += values[i] * values[i + 1];
+                i++;
+            } else {
+                total += values[i];
+            }
+        }
+        
+        return total;
     },
 
     textToNumber(text) {
         return "NOOO DONT MAKE ME DO THIS";
-    }
-}
+    },
 
+    testShortConversion(iterations = 1000, maxNumber = 10000) {
+        let errors = 0;
+        
+        for (let i = 0; i < iterations; i++) {
+            let original = Math.floor(Math.random() * maxNumber);
+            let short = NUMBERS.numberToTextShort(original);
+            let converted = NUMBERS.textToNumberShort(short);
+            
+            if (original !== converted) {
+                console.log(`Error: ${original} != ${converted} (short: ${short})`);
+                errors++;
+            }
+        }
+        
+        console.log(`Tested ${iterations}, ${errors} errors`);
+        return errors;
+    },
+
+    testShortConversionUntilError() {
+        let n = 1;
+        while (true) {
+            let short = NUMBERS.numberToTextShort(n);
+            let converted = NUMBERS.textToNumberShort(short);
+            if (n !== converted) {
+                console.log(`Error at ${n}: ${n} != ${converted} (short: ${short})`);
+                return n;
+            }
+            n++;
+            console.log(n)
+        }
+}
+}
 
 // ---------------------------- MISC ----------------------------
 // TODO edit idk
