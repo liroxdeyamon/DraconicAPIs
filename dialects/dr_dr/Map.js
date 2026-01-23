@@ -1271,6 +1271,74 @@ function mergedSearchByDefinition(definition, wordmap) {
         );
 }
 
+function charTriples(str) {
+  const s = str.toLowerCase();
+  const triples = new Set();
+  
+  for (let i = 0; i < s.length - 2; i++) {
+    triples.add(s.slice(i, i + 3));
+  }
+
+  return triples;
+}
+
+function tripleScore(query, text) {
+  const qTrip = charTriples(query);
+  const tTrip = charTriples(text);
+  let common = 0;
+  
+  for (let tri of qTrip) {
+    if (tTrip.has(tri)) common++;
+  }
+  
+  return common / Math.max(1, qTrip.size);
+}
+
+function tripletsFetch(query, limit = 5, list) {
+  const q = query.toLowerCase();
+  const qLen = q.length;
+  const results = [];
+  
+  for (const s of list) {
+    if (!(s instanceof Noun) && typeof s.definition !== "string") continue;
+    
+    let score = 0;
+    
+    if (s instanceof Noun) {
+      const gendersText = Object.entries(GENDERS.combine(s.genders)).map(([k, v]) => `${k}: ${v}`).join(', ');
+      score = tripleScore(q, gendersText) * 200;
+      const wordLower = s.word.toLowerCase();
+      if (wordLower === q) score += 300;
+      else if (wordLower.startsWith(q)) score += 100;
+      else if (wordLower.includes(q)) score += 20;
+      score += 20 / Math.max(1, gendersText.length);
+    } else {
+      const defLower = s.definition.toLowerCase();
+      score = tripleScore(q, defLower) * 200;
+      if (defLower === q) score += 300;
+      else if (defLower.startsWith(q)) score += 200;
+      else {
+        let exactMatches = 0;
+        let idx = 0;
+        while ((idx = defLower.indexOf(q, idx)) !== -1) {
+          const before = idx === 0 || /\W/.test(defLower[idx - 1]);
+          const after = idx + qLen >= defLower.length || /\W/.test(defLower[idx + qLen]);
+          if (before && after) exactMatches++;
+          idx += qLen;
+        }
+        score += exactMatches * 150;
+        if (defLower.includes(q)) score += 10;
+      }
+      score += 20 / Math.max(1, defLower.length);
+    }
+    
+    results.push({ s, score });
+  }
+  
+  results.sort((a, b) => b.score - a.score);
+  return results.slice(0, limit).map(r => r.s);
+}
+
 DICTIONARY = {
     NOUNS: {
         MAP: {},
@@ -1414,7 +1482,9 @@ DICTIONARY = {
         },
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
         fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); }
-    }
+    },
+
+    advancedFetchByDefinition(def, limit = 5) { return tripletsFetch(def, limit, DICTIONARY.ALL_WORDS.FLAT); }
 }
 
 

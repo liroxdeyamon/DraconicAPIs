@@ -58,10 +58,10 @@ def process_genders(entry):
     else:
         if text.startswith('(') and ')' in text:
             gsrc, text = text.split(')', 1)
-            src = gsrc.strip('()') or entry[3].strip('()')
+            src = gsrc.strip('()') or re.sub(r'[().,]', '', entry[3])
         else:
-            src = entry[3].strip('()')
-        abbrs = [a.strip() for a in src.replace('.', '').split(',') if a]
+            src = re.sub(r'[().,]', '', entry[3])
+        abbrs = [a.strip() for a in src.split() if a]
         add(abbrs, text.strip())
 
     return result
@@ -225,4 +225,3 @@ if __name__ == "__main__":
                 .replace("CONJUNCTIONS_HERE", ",\n".join(conjunctions))
                 .replace("PHRASES_HERE", ",\n".join(phrases))
                 .replace("PROVRBS_HERE", ",\n".join(proverbs)))
-
