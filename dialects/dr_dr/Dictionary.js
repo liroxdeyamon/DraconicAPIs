@@ -133,7 +133,7 @@ DICTIONARY.NOUNS.MAP = {
 "oχħó": new Noun("oχħó", 4, {'Exalted': 'a common Draconic name; fighter, soldier', 'Rational': 'fighter, soldier', 'Monstrous': 'fighter, soldier', 'Irrational': 'fighter, soldier', 'Magical': 'playfighting, especially among dragons', 'Mundane': 'bruise', 'Abstract': 'battle, physical struggle; physical violence'}, ""),
 "pán": new Noun("pán", 3, {'Exalted': 'ruler; judge', 'Rational': 'ruler; judge', 'Monstrous': 'ruler; judge', 'Irrational': 'ruler; judge', 'Magical': 'karma', 'Mundane': 'court', 'Abstract': 'joy; justice'}, ""),
 "qar": new Noun("qar", 1, {'Rational': 'the center of a hive mind', 'Monstrous': 'the center of a hive mind', 'Irrational': 'the center of a hive mind', 'Magical': 'heart', 'Mundane': 'heart', 'Abstract': '(figurative) heart; core, center'}, " in the Mundane, sense 'heart' is strictly anatomical, whereas in the Magical, it typically refers more to sensation or emotion"),
-"qathur": new Noun("qathur", 2, {}, ""),
+"qathur": new Noun("qathur", 2, {'Abstract': '(literal) depth; (definite plural) The Deep, the depths of the seas as personified or referenced abstractly'}, ""),
 "qaχ": new Noun("qaχ", 2, {'Magical': 'fire, blaze', 'Mundane': 'spark; small fire; candle, torch', 'Abstract': 'life'}, ""),
 "qerxex": new Noun("qerxex", 2, {'Exalted': 'owner; lord or lady', 'Rational': 'owner; lord or lady', 'Monstrous': 'owner; lord or lady', 'Irrational': 'owner; lord or lady', 'Magical': 'material component for spells', 'Mundane': 'money, currency', 'Abstract': 'purchase'}, ""),
 "quχūχ": new Noun("quχūχ", 1, {'Exalted': 'a dragon who is exceptionally powerful, intelligent, or talented for their age; a gifted child; a savant'}, ""),

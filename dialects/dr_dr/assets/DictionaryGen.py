@@ -57,8 +57,17 @@ def process_genders(entry):
                 add(abbrs, p[1].strip())
     else:
         if text.startswith('(') and ')' in text:
-            gsrc, text = text.split(')', 1)
-            src = gsrc.strip('()') or re.sub(r'[().,]', '', entry[3])
+            gsrc, remaining_text = text.split(')', 1)
+            extracted_src = gsrc.strip('()')
+            # Check if the extracted source contains valid gender abbreviations
+            test_abbrs = [a.strip() for a in extracted_src.replace('.', '').split(',') if a.strip()]
+            if any(abbr in GENDERS for abbr in test_abbrs):
+                # Use the extracted gender source
+                src = extracted_src
+                text = remaining_text
+            else:
+                # Fall back to entry[3]
+                src = re.sub(r'[().,]', '', entry[3])
         else:
             src = re.sub(r'[().,]', '', entry[3])
         abbrs = [a.strip() for a in src.split() if a]
