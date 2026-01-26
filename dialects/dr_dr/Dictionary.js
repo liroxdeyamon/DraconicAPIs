@@ -925,6 +925,26 @@ DICTIONARY.ALL_WORDS.MAP = Object.fromEntries(
     })
 );
 
+function generateFlat(map) {
+    return Object.values(map).flatMap(value => {
+        if (value.word === undefined) {
+            return Object.values(value);
+        }
+        return [value];
+    });
+};
+
+DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
+DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);
+DICTIONARY.ADJECTIVES.FLAT = generateFlat(DICTIONARY.ADJECTIVES.MAP);
+DICTIONARY.ADVERBS.FLAT = generateFlat(DICTIONARY.ADVERBS.MAP);
+DICTIONARY.AUXILIARIES.FLAT = generateFlat(DICTIONARY.AUXILIARIES.MAP);
+DICTIONARY.PREPOSITIONS.FLAT = generateFlat(DICTIONARY.PREPOSITIONS.MAP);
+DICTIONARY.PARTICLES.FLAT = generateFlat(DICTIONARY.PARTICLES.MAP);
+DICTIONARY.DETERMINERS.FLAT = generateFlat(DICTIONARY.DETERMINERS.MAP);
+DICTIONARY.CONJUNCTIONS.FLAT = generateFlat(DICTIONARY.CONJUNCTIONS.MAP);
+DICTIONARY.ALL_WORDS.FLAT = generateFlat(DICTIONARY.ALL_WORDS.MAP);
+
 // oh my god
 
 COMMON.PHRASES.MAP ={

@@ -1271,80 +1271,116 @@ function mergedSearchByDefinition(definition, wordmap) {
         );
 }
 
-function charTriples(str) {
-  const s = str.toLowerCase();
-  const triples = new Set();
-  
-  for (let i = 0; i < s.length - 2; i++) {
-    triples.add(s.slice(i, i + 3));
-  }
 
-  return triples;
-}
-
-function tripleScore(query, text) {
-  const qTrip = charTriples(query);
-  const tTrip = charTriples(text);
-  let common = 0;
-  
-  for (let tri of qTrip) {
-    if (tTrip.has(tri)) common++;
-  }
-  
-  return common / Math.max(1, qTrip.size);
-}
-
-function tripletsFetch(query, limit = 5, list) {
-  const q = query.toLowerCase();
-  const qLen = q.length;
-  const results = [];
-  
-  for (const s of list) {
-    if (!(s instanceof Noun) && typeof s.definition !== "string") continue;
+function generateVariations(str) {
+    const couples = [
+        ["'", "`", "'"],
+        ["a", "ā", "á", "à", "â", "aa"],
+        ["o", "ō", "ó", "ò", "ô", "oo"],
+        ["u", "ū", "ú", "ù", "û", "uu"],
+        ["i", "ī", "ii"],
+        ["e", "ē", "ee"],
+        ["ae", "æ"],
+        ["ng", "ŋ"],
+        ["Q", "q̇"],
+        ["H", "ħ"],
+        ["X", "χ"]
+    ];
     
-    let score = 0;
-    
-    if (s instanceof Noun) {
-      const gendersText = Object.entries(GENDERS.combine(s.genders)).map(([k, v]) => `${k}: ${v}`).join(', ');
-      score = tripleScore(q, gendersText) * 200;
-      const wordLower = s.word.toLowerCase();
-      if (wordLower === q) score += 300;
-      else if (wordLower.startsWith(q)) score += 100;
-      else if (wordLower.includes(q)) score += 20;
-      score += 20 / Math.max(1, gendersText.length);
-    } else {
-      const defLower = s.definition.toLowerCase();
-      score = tripleScore(q, defLower) * 200;
-      if (defLower === q) score += 300;
-      else if (defLower.startsWith(q)) score += 200;
-      else {
-        let exactMatches = 0;
-        let idx = 0;
-        while ((idx = defLower.indexOf(q, idx)) !== -1) {
-          const before = idx === 0 || /\W/.test(defLower[idx - 1]);
-          const after = idx + qLen >= defLower.length || /\W/.test(defLower[idx + qLen]);
-          if (before && after) exactMatches++;
-          idx += qLen;
-        }
-        score += exactMatches * 150;
-        if (defLower.includes(q)) score += 10;
-      }
-      score += 20 / Math.max(1, defLower.length);
+    const map = new Map();
+    for (const g of couples) {
+        for (const c of g) map.set(c.toLowerCase(), g.map(x => x.toLowerCase()));
     }
     
-    results.push({ s, score });
+    function expand(s, i = 0) {
+        if (i >= s.length) return [s];
+        
+        for (let len = Math.min(3, s.length - i); len >= 1; len--) {
+            const sub = s.slice(i, i + len);
+            const group = map.get(sub);
+            if (group) {
+                const rest = expand(s, i + len);
+                return group.flatMap(v => rest.map(r => v + r));
+            }
+        }
+        
+        return expand(s, i + 1).map(r => s[i] + r);
+    }
+    
+    return expand(str.toLowerCase());
+}
+
+function charTriples(str, accurate = false) {
+    const s = str.toLowerCase();
+    const triples = new Set();
+    
+    const variations = accurate ? generateVariations(s) : [s];
+    
+    for (const v of variations) {
+        if (v.length > 3) {
+            for (let i = 0; i < v.length - 2; i++) {
+                triples.add(v.slice(i, i + 3));
+            }
+        } else triples.add(v);
+    }
+    
+    return triples;
+}
+
+function scoreTriples(query, text, accurate = false) {
+    const qTrip = charTriples(query, accurate);
+    const qTripBasic = charTriples(query);
+    const tTrip = charTriples(text);
+
+    query = query.toLowerCase();
+    text = text.toLowerCase();
+    
+    let common = 0;
+    for (let tri of qTrip) {
+        if (tTrip.has(tri)) common++;
+    }
+    
+    let score = common / Math.max(1, qTripBasic.size) * 200; 
+    
+    if (text === query) score += 300;
+    else if (text.startsWith(query)) score += 100;
+    else {
+        const wordBoundaryRegex = new RegExp(`\\b${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+        const exactMatches = (text.match(wordBoundaryRegex) || []).length;
+        score += exactMatches * 70;
+        if (exactMatches === 0 && text.includes(query)) score += 10;
+    }
+    
+    return score + 20 / Math.max(1, text.length);
+}
+
+function fuzzyFetch(query, list, mode, limit = 5) {
+  const q = query.toLowerCase();
+  const results = [];
+  
+  for (const item of list) {
+    let score = 0;
+    if (mode === "definition") score = scoreTriples(q, (item instanceof Noun) ? Object.entries(GENDERS.combine(item.genders)).map(([k, v]) => `${k}: ${v}`).join(', ').toLowerCase() : item.definition.toLowerCase()) * 200;
+    else if (mode === "word") score = scoreTriples(q, item.word.toLowerCase(), true);
+    if (score > 0) results.push({ item, score });
   }
   
   results.sort((a, b) => b.score - a.score);
-  return results.slice(0, limit).map(r => r.s);
+  return results.slice(0, limit).map(r => r.item);
+}
+
+function fuzzyFetchDefinition(query, list, limit = 5) {
+  ;
+}
+
+function fuzzyFetchWord(query, list, limit = 5) {
+  return fuzzyFetch(query, list, "word", limit);
 }
 
 DICTIONARY = {
     NOUNS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
-        },
+        FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.NOUNS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.NOUNS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.NOUNS.FLAT); }
@@ -1352,9 +1388,7 @@ DICTIONARY = {
 
     VERBS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
-        },
+        FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.VERBS,
         PREFIXES: AFFIXES.PREFIXES.VERBS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.VERBS.FLAT); },
@@ -1363,9 +1397,7 @@ DICTIONARY = {
 
     ADJECTIVES: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP).flatMap(v => typeof v === 'object' && !v.word ? Object.values(v) : [v])
-        },
+        FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); }
@@ -1373,45 +1405,35 @@ DICTIONARY = {
 
     ADVERBS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADVERBS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); }
     },
 
     AUXILIARIES: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.AUXILIARIES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUX.FLAT); }
     },
 
     PREPOSITIONS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PREPOSITIONS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); }
     },
 
     PARTICLES: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PARTICLES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); }
     },
 
     DETERMINERS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS,
         IRREGULARS: {
             MAP: {
@@ -1468,23 +1490,20 @@ DICTIONARY = {
 
     CONJUNCTIONS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.CONJUNCTIONS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.CONJUNCTIONS.FLAT); }
     },
 
     ALL_WORDS: {
         MAP: {},
-        get FLAT() {
-            return Object.values(this.MAP);
-        },
+        FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
         fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); }
     },
 
-    advancedFetchByDefinition(def, limit = 5) { return tripletsFetch(def, limit, DICTIONARY.ALL_WORDS.FLAT); }
+    fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, "definition", limit); },
+    fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, "word", limit); }
 }
 
 
