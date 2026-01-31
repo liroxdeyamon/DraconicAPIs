@@ -37,94 +37,94 @@ class Character {
     }
 }
 
-class Word {
-    constructor(word, definition, usage_notes, declension, genders, forms, type) {
-        this.word = word;
+class Lexeme {
+    constructor(text, definition, forms, usage_notes, type) {
+        this.text = text;
         this.definition = definition;
-        this.usage_notes = usage_notes;
-        this.declension = declension;
-        this.genders = genders;
         this.forms = forms;
+        this.usage_notes = usage_notes;
         this.type = type;
+    }
+}
+
+class Word extends Lexeme {
+    constructor(text, definition, forms, usage_notes, type) {
+        super(text, definition, forms, usage_notes, type);
+        this.word = text; // compatibility
     }
 
     splitForms() {
-        if (!this.forms) {
-            return [this.word];
-        }
+        if (!this.forms) return [this.word];
         return [this.word, ...this.forms.split(", ")];
     }
 }
 
 class Noun extends Word {
     constructor(word, declension, genders, usage_notes) {
-        super(word, undefined, usage_notes, declension, genders, undefined, "n");
+        super(word, Object.entries(GENDERS.combine(genders)).map(([k, v]) => `${k}: ${v}`).join("\n"), undefined, usage_notes, "n");
+        this.declension = declension;
+        this.genders = genders;
     }
 }
 
 class Verb extends Word {
     constructor(word, definition, forms, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, forms, "v");
+        super(word, definition, forms, usage_notes, "v");
     }
 }
 
 class Adjective extends Word {
     constructor(word, declension, definition, forms, usage_notes) {
-        super(word, definition, usage_notes, declension, undefined, forms, "adj");
+        super(word, definition, forms, usage_notes, "adj");
+        this.declension = declension;
     }
 }
 
 class Adverb extends Word {
     constructor(word, definition, forms, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, forms, "adv");
+        super(word, definition, forms, usage_notes, "adv");
     }
 }
 
 class Auxiliary extends Word {
     constructor(word, definition, forms, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, forms, "aux");
+        super(word, definition, forms, usage_notes, "aux");
     }
 }
 
 class Preposition extends Word {
     constructor(word, definition, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, undefined, "pp");
+        super(word, definition, undefined, usage_notes, "pp");
     }
 }
 
 class Particle extends Word {
     constructor(word, definition, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, undefined, "part");
+        super(word, definition, undefined, usage_notes, "part");
     }
 }
 
 class Determiner extends Word {
     constructor(word, definition, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, undefined, "det");
+        super(word, definition, undefined, usage_notes, "det");
     }
 }
 
 class Conjunction extends Word {
     constructor(word, definition, usage_notes) {
-        super(word, definition, usage_notes, undefined, undefined, undefined, "con");
+        super(word, definition, undefined, usage_notes, "con");
     }
 }
 
-class Phrase {
-    constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "phr"
+class Phrase extends Lexeme {
+    constructor(text, definition, usage_notes) {
+        super(text, definition, undefined, usage_notes, "phr");
     }
 }
 
-class Proverb {
-    constructor(word, definition, usage_notes) {
-        this.word = word
-        this.definition = definition
-        this.usage_notes = usage_notes
-        this.type = "prov"
+class Proverb extends Lexeme {
+    constructor(text, definition, usage_notes) {
+        super(text, definition, undefined, usage_notes, "prov");
     }
 }
 
@@ -1383,7 +1383,8 @@ DICTIONARY = {
         FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.NOUNS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.NOUNS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.NOUNS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.NOUNS.FLAT); },
+        random() { return DICTIONARY.NOUNS.FLAT[Math.floor(Math.random() * DICTIONARY.NOUNS.FLAT.length)]; }
     },
 
     VERBS: {
@@ -1392,7 +1393,8 @@ DICTIONARY = {
         SUFFIXES: AFFIXES.SUFFIXES.VERBS,
         PREFIXES: AFFIXES.PREFIXES.VERBS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.VERBS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.VERBS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.VERBS.FLAT); },
+        random() { return DICTIONARY.VERBS.FLAT[Math.floor(Math.random() * DICTIONARY.VERBS.FLAT.length)]; }
     },
 
     ADJECTIVES: {
@@ -1400,35 +1402,40 @@ DICTIONARY = {
         FLAT: [],
         SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); },
+        random() { return DICTIONARY.ADJECTIVES.FLAT[Math.floor(Math.random() * DICTIONARY.ADJECTIVES.FLAT.length)]; }
     },
 
     ADVERBS: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADVERBS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); },
+        random() { return DICTIONARY.ADVERBS.FLAT[Math.floor(Math.random() * DICTIONARY.ADVERBS.FLAT.length)]; }
     },
 
     AUXILIARIES: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.AUXILIARIES.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUX.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUXILIARIES.FLAT); },
+        random() { return DICTIONARY.AUXILIARIES.FLAT[Math.floor(Math.random() * DICTIONARY.AUXILIARIES.FLAT.length)]; }
     },
 
     PREPOSITIONS: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PREPOSITIONS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); },
+        random() { return DICTIONARY.PREPOSITIONS.FLAT[Math.floor(Math.random() * DICTIONARY.PREPOSITIONS.FLAT.length)]; }
     },
 
     PARTICLES: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PARTICLES.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); },
+        random() { return DICTIONARY.PARTICLES.FLAT[Math.floor(Math.random() * DICTIONARY.PARTICLES.FLAT.length)]; }
     },
 
     DETERMINERS: {
@@ -1483,23 +1490,28 @@ DICTIONARY = {
             get FLAT() {
                 return Object.values(this.MAP);
             },
+            fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.IRREGULARS.FLAT); },
+            random() { return DICTIONARY.DETERMINERS.IRREGULARS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.IRREGULARS.FLAT.length)]; }
         },
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); },
+        random() { return DICTIONARY.DETERMINERS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.FLAT.length)]; }
     },
 
     CONJUNCTIONS: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.CONJUNCTIONS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.CONJUNCTIONS.FLAT); }
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.CONJUNCTIONS.FLAT); },
+        random() { return DICTIONARY.CONJUNCTIONS.FLAT[Math.floor(Math.random() * DICTIONARY.CONJUNCTIONS.FLAT.length)]; }
     },
 
     ALL_WORDS: {
         MAP: {},
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
-        fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); }
+        fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); },
+        random() { return DICTIONARY.ALL_WORDS.FLAT[Math.floor(Math.random() * DICTIONARY.ALL_WORDS.FLAT.length)]; }
     },
 
     fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, "definition", limit); },
