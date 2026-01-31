@@ -1354,27 +1354,19 @@ function scoreTriples(query, text, accurate = false) {
     return score + 20 / Math.max(1, text.length);
 }
 
-function fuzzyFetch(query, list, mode, limit = 5) {
+function fuzzyFetch(query, list, is_word, limit = 5) {
   const q = query.toLowerCase();
   const results = [];
   
   for (const item of list) {
     let score = 0;
-    if (mode === "definition") score = scoreTriples(q, (item instanceof Noun) ? Object.entries(GENDERS.combine(item.genders)).map(([k, v]) => `${k}: ${v}`).join(', ').toLowerCase() : item.definition.toLowerCase()) * 200;
-    else if (mode === "word") score = scoreTriples(q, item.word.toLowerCase(), true);
+    if (!is_word) score = scoreTriples(q, item.definition.toLowerCase()) * 200;
+    else score = scoreTriples(q, item.word.toLowerCase(), true);
     if (score > 0) results.push({ item, score });
   }
   
   results.sort((a, b) => b.score - a.score);
   return results.slice(0, limit).map(r => r.item);
-}
-
-function fuzzyFetchDefinition(query, list, limit = 5) {
-  ;
-}
-
-function fuzzyFetchWord(query, list, limit = 5) {
-  return fuzzyFetch(query, list, "word", limit);
 }
 
 DICTIONARY = {
@@ -1384,7 +1376,9 @@ DICTIONARY = {
         SUFFIXES: AFFIXES.SUFFIXES.NOUNS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.NOUNS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.NOUNS.FLAT); },
-        random() { return DICTIONARY.NOUNS.FLAT[Math.floor(Math.random() * DICTIONARY.NOUNS.FLAT.length)]; }
+        random() { return DICTIONARY.NOUNS.FLAT[Math.floor(Math.random() * DICTIONARY.NOUNS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.NOUNS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.NOUNS.FLAT, true, limit); }
     },
 
     VERBS: {
@@ -1394,7 +1388,9 @@ DICTIONARY = {
         PREFIXES: AFFIXES.PREFIXES.VERBS,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.VERBS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.VERBS.FLAT); },
-        random() { return DICTIONARY.VERBS.FLAT[Math.floor(Math.random() * DICTIONARY.VERBS.FLAT.length)]; }
+        random() { return DICTIONARY.VERBS.FLAT[Math.floor(Math.random() * DICTIONARY.VERBS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.VERBS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.VERBS.FLAT, true, limit); }
     },
 
     ADJECTIVES: {
@@ -1403,7 +1399,9 @@ DICTIONARY = {
         SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES,
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); },
-        random() { return DICTIONARY.ADJECTIVES.FLAT[Math.floor(Math.random() * DICTIONARY.ADJECTIVES.FLAT.length)]; }
+        random() { return DICTIONARY.ADJECTIVES.FLAT[Math.floor(Math.random() * DICTIONARY.ADJECTIVES.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ADJECTIVES.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ADJECTIVES.FLAT, true, limit); }
     },
 
     ADVERBS: {
@@ -1411,7 +1409,9 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADVERBS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); },
-        random() { return DICTIONARY.ADVERBS.FLAT[Math.floor(Math.random() * DICTIONARY.ADVERBS.FLAT.length)]; }
+        random() { return DICTIONARY.ADVERBS.FLAT[Math.floor(Math.random() * DICTIONARY.ADVERBS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ADVERBS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ADVERBS.FLAT, true, limit); }
     },
 
     AUXILIARIES: {
@@ -1419,7 +1419,9 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.AUXILIARIES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUXILIARIES.FLAT); },
-        random() { return DICTIONARY.AUXILIARIES.FLAT[Math.floor(Math.random() * DICTIONARY.AUXILIARIES.FLAT.length)]; }
+        random() { return DICTIONARY.AUXILIARIES.FLAT[Math.floor(Math.random() * DICTIONARY.AUXILIARIES.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.AUXILIARIES.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.AUXILIARIES.FLAT, true, limit); }
     },
 
     PREPOSITIONS: {
@@ -1427,7 +1429,9 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PREPOSITIONS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); },
-        random() { return DICTIONARY.PREPOSITIONS.FLAT[Math.floor(Math.random() * DICTIONARY.PREPOSITIONS.FLAT.length)]; }
+        random() { return DICTIONARY.PREPOSITIONS.FLAT[Math.floor(Math.random() * DICTIONARY.PREPOSITIONS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.PREPOSITIONS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.PREPOSITIONS.FLAT, true, limit); }
     },
 
     PARTICLES: {
@@ -1435,7 +1439,9 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.PARTICLES.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); },
-        random() { return DICTIONARY.PARTICLES.FLAT[Math.floor(Math.random() * DICTIONARY.PARTICLES.FLAT.length)]; }
+        random() { return DICTIONARY.PARTICLES.FLAT[Math.floor(Math.random() * DICTIONARY.PARTICLES.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.PARTICLES.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.PARTICLES.FLAT, true, limit); }
     },
 
     DETERMINERS: {
@@ -1491,11 +1497,14 @@ DICTIONARY = {
                 return Object.values(this.MAP);
             },
             fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.IRREGULARS.FLAT); },
-            random() { return DICTIONARY.DETERMINERS.IRREGULARS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.IRREGULARS.FLAT.length)]; }
+            random() { return DICTIONARY.DETERMINERS.IRREGULARS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.IRREGULARS.FLAT.length)]; },
+            fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.DETERMINERS.IRREGULARS.FLAT, true, limit); }
         },
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); },
-        random() { return DICTIONARY.DETERMINERS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.FLAT.length)]; }
+        random() { return DICTIONARY.DETERMINERS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.DETERMINERS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.DETERMINERS.FLAT, true, limit); }
     },
 
     CONJUNCTIONS: {
@@ -1503,7 +1512,9 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.CONJUNCTIONS.FLAT); },
         fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.CONJUNCTIONS.FLAT); },
-        random() { return DICTIONARY.CONJUNCTIONS.FLAT[Math.floor(Math.random() * DICTIONARY.CONJUNCTIONS.FLAT.length)]; }
+        random() { return DICTIONARY.CONJUNCTIONS.FLAT[Math.floor(Math.random() * DICTIONARY.CONJUNCTIONS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.CONJUNCTIONS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.CONJUNCTIONS.FLAT, true, limit); }
     },
 
     ALL_WORDS: {
@@ -1511,11 +1522,13 @@ DICTIONARY = {
         FLAT: [],
         fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
         fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); },
-        random() { return DICTIONARY.ALL_WORDS.FLAT[Math.floor(Math.random() * DICTIONARY.ALL_WORDS.FLAT.length)]; }
+        random() { return DICTIONARY.ALL_WORDS.FLAT[Math.floor(Math.random() * DICTIONARY.ALL_WORDS.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, true, limit); }
     },
 
-    fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, "definition", limit); },
-    fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, "word", limit); }
+    fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, false, limit); },
+    fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, true, limit); }
 }
 
 
