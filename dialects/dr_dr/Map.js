@@ -14,132 +14,6 @@ META = {
     STATUS: "WIP" // WIP - there be alot of changes; STABLE - the dialect is done, but there be additions sometimes (like new words or phrases); ARCHIVED - no changes will be made anymore
 }
 
-// ============================ CLASSES ============================
-
-class Character {
-    constructor({
-        name, name_ipa, letter, letter_rom, letter_ipa,
-        letter_glyph, letter_discord, text = mainText,
-        prop = [], table_prop = {}, allophones = {}, sound = null
-    }) {
-        this.name = name
-        this.name_ipa = name_ipa
-        this.letter = letter
-        this.letter_rom = letter_rom
-        this.letter_ipa = letter_ipa
-        this.letter_glyph = letter_glyph
-        this.letter_discord = letter_discord
-        this.text = text
-        this.prop = prop
-        this.table_prop = table_prop
-        this.allophones = allophones
-        this.sound = sound
-    }
-}
-
-class Lexeme {
-    constructor(text, definition, forms, usage_notes, type) {
-        this.text = text;
-        this.definition = definition;
-        this.forms = forms;
-        this.usage_notes = usage_notes;
-        this.type = type;
-    }
-}
-
-class Word extends Lexeme {
-    constructor(text, definition, forms, usage_notes, type) {
-        super(text, definition, forms, usage_notes, type);
-        this.word = text; // compatibility
-    }
-
-    splitForms() {
-        if (!this.forms) return [this.word];
-        return [this.word, ...this.forms.split(", ")];
-    }
-}
-
-class Noun extends Word {
-    constructor(word, declension, genders, usage_notes) {
-        super(word, Object.entries(GENDERS.combine(genders)).map(([k, v]) => `${k}: ${v}`).join("\n"), undefined, usage_notes, "n");
-        this.declension = declension;
-        this.genders = genders;
-    }
-}
-
-class Verb extends Word {
-    constructor(word, definition, forms, usage_notes) {
-        super(word, definition, forms, usage_notes, "v");
-    }
-}
-
-class Adjective extends Word {
-    constructor(word, declension, definition, forms, usage_notes) {
-        super(word, definition, forms, usage_notes, "adj");
-        this.declension = declension;
-    }
-}
-
-class Adverb extends Word {
-    constructor(word, definition, forms, usage_notes) {
-        super(word, definition, forms, usage_notes, "adv");
-    }
-}
-
-class Auxiliary extends Word {
-    constructor(word, definition, forms, usage_notes) {
-        super(word, definition, forms, usage_notes, "aux");
-    }
-}
-
-class Preposition extends Word {
-    constructor(word, definition, usage_notes) {
-        super(word, definition, undefined, usage_notes, "pp");
-    }
-}
-
-class Particle extends Word {
-    constructor(word, definition, usage_notes) {
-        super(word, definition, undefined, usage_notes, "part");
-    }
-}
-
-class Determiner extends Word {
-    constructor(word, definition, usage_notes) {
-        super(word, definition, undefined, usage_notes, "det");
-    }
-}
-
-class Conjunction extends Word {
-    constructor(word, definition, usage_notes) {
-        super(word, definition, undefined, usage_notes, "con");
-    }
-}
-
-class Phrase extends Lexeme {
-    constructor(text, definition, usage_notes) {
-        super(text, definition, undefined, usage_notes, "phr");
-    }
-}
-
-class Proverb extends Lexeme {
-    constructor(text, definition, usage_notes) {
-        super(text, definition, undefined, usage_notes, "prov");
-    }
-}
-
-class AffixMatch {
-    constructor(type, affix, variants, paths) {
-        this.affix = affix
-        this.variants = variants
-        this.paths = paths
-        this.type = type
-    }
-}
-
-
-// ============================ MAPS ============================
-
 // ---------------------------- IDS ----------------------------
 
 IDS = {
@@ -188,9 +62,149 @@ IDS = {
     FORMS: {
         R: 'Regular',
         E: 'Elative'
+    },
+    WORDS: {
+        N: "Noun",
+        V: "Verb",
+        ADJ: "Adjective",
+        ADV: "Adverb",
+        AUX: "Auxiliary",
+        PP: "Preposition",
+        PART: "Particle",
+        DET: "Determiner",
+        PROV: "Proverb"
+    },
+    PHRASES: {
+        PHR: "Phrase",
+        PROV: "Proverb"
     }
 }
 
+// ============================ CLASSES ============================
+
+class Character {
+    constructor({
+        name, name_ipa, letter, letter_rom, letter_ipa,
+        letter_glyph, letter_discord, text = mainText,
+        prop = [], table_prop = {}, allophones = {}, sound = null
+    }) {
+        this.name = name
+        this.name_ipa = name_ipa
+        this.letter = letter
+        this.letter_rom = letter_rom
+        this.letter_ipa = letter_ipa
+        this.letter_glyph = letter_glyph
+        this.letter_discord = letter_discord
+        this.text = text
+        this.prop = prop
+        this.table_prop = table_prop
+        this.allophones = allophones
+        this.sound = sound
+    }
+}
+
+class Lexeme {
+    constructor(text, definition, forms, usage_notes, type) {
+        this.text = text;
+        this.definition = definition;
+        this.forms = forms;
+        this.usage_notes = usage_notes;
+        this.type = type;
+    }
+}
+
+class Word extends Lexeme {
+    constructor(text, definition, forms, usage_notes, type) {
+        super(text, definition, forms, usage_notes, type);
+        this.word = text; // compatibility
+    }
+
+    splitForms() {
+        if (!this.forms) return [this.word];
+        return [this.word, ...this.forms.split(", ")];
+    }
+}
+
+class Noun extends Word {
+    constructor(word, declension, genders, usage_notes) {
+        super(word, Object.entries(GENDERS.combine(genders)).map(([k, v]) => `${k}: ${v}`).join("\n"), undefined, usage_notes, IDS.WORDS.N);
+        this.declension = declension;
+        this.genders = genders;
+    }
+}
+
+class Verb extends Word {
+    constructor(word, definition, forms, usage_notes) {
+        super(word, definition, forms, usage_notes, IDS.WORDS.V);
+    }
+}
+
+class Adjective extends Word {
+    constructor(word, declension, definition, forms, usage_notes) {
+        super(word, definition, forms, usage_notes, IDS.WORDS.ADJ);
+        this.declension = declension;
+    }
+}
+
+class Adverb extends Word {
+    constructor(word, definition, forms, usage_notes) {
+        super(word, definition, forms, usage_notes, IDS.WORDS.ADV);
+    }
+}
+
+class Auxiliary extends Word {
+    constructor(word, definition, forms, usage_notes) {
+        super(word, definition, forms, usage_notes, IDS.WORDS.AUX);
+    }
+}
+
+class Preposition extends Word {
+    constructor(word, definition, usage_notes) {
+        super(word, definition, undefined, usage_notes, IDS.WORDS.PP);
+    }
+}
+
+class Particle extends Word {
+    constructor(word, definition, usage_notes) {
+        super(word, definition, undefined, usage_notes, IDS.WORDS.PART);
+    }
+}
+
+class Determiner extends Word {
+    constructor(word, definition, usage_notes) {
+        super(word, definition, undefined, usage_notes, IDS.WORDS.DET);
+    }
+}
+
+class Conjunction extends Word {
+    constructor(word, definition, usage_notes) {
+        super(word, definition, undefined, usage_notes, IDS.WORDS.CON);
+    }
+}
+
+class Phrase extends Lexeme {
+    constructor(text, definition, usage_notes) {
+        super(text, definition, undefined, usage_notes, IDS.PHRASES.PHR);
+    }
+}
+
+class Proverb extends Lexeme {
+    constructor(text, definition, usage_notes) {
+        super(text, definition, undefined, usage_notes, IDS.PHRASES.PROV);
+    }
+}
+
+class AffixMatch {
+    constructor(type, affix, variants, paths) {
+        this.affix = affix
+        this.variants = variants
+        this.paths = paths
+        this.type = type
+    }
+}
+
+
+// ============================ MAPS ============================
 
 // ---------------------------- CHARACTERS ----------------------------
 
@@ -619,7 +633,7 @@ CHARACTERS = {
         }),
         "q̇em": new Character({ // 46
             name: "q̇em", name_ipa: "/ʡem/",
-            letter: "", letter_rom: [""], letter_ipa: "", letter_glyph: "\uE029", letter_discord: ":Qem:",
+            letter: "", letter_rom: ["#"], letter_ipa: "", letter_glyph: "\uE029", letter_discord: ":Qem:",
             text: `pronounced {name_ipa}, unlike most of the other symbols, this one doesn"t have a direct translation to a romanized way of writing. \n
         In draconic the symbol has three different uses, it can be used as a rough equivelent of a hyphen, which means it can be optionally used to connect compounds or conjoin propositions to their nouns.\n
         It can also stand in for the number 0, or proceed a string of letters to indicate that they are numbers.\n
