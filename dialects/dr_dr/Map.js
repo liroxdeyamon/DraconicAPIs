@@ -749,6 +749,10 @@ CHARACTERS = {
         return match
     },
 
+    entriesToField(entries, field, ignore_optional = false) {
+        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => Array.isArray(e[field]) ? e[field][0] || "" : e[field] || "").join("");
+    },
+
     textToEntriesByAnyText(text) { return CHARACTERS.entriesFromField(text, ["letter", "letter_rom", "letter_discord", "letter_glyph"]); },
 
     textToEntriesByText(text) { return CHARACTERS.entriesFromField(text, ["letter"]); },
@@ -758,15 +762,6 @@ CHARACTERS = {
     textToEntriesByDiscord(text) { return CHARACTERS.entriesFromField(text, ["letter_discord"]); },
 
     textToEntriesByGlyph(text) { return CHARACTERS.entriesFromField(text, ["letter_glyph"]); },
-
-    entriesFromField(text, fields) {
-        return CHARACTERS.FLAT.filter(e =>
-            fields.some(f => {
-                const v = e[f];
-                return Array.isArray(v) ? v.includes(text) : v === text;
-            })
-        );
-    },
 
     entriesToText(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter", ignore_optional); },
 
