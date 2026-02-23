@@ -759,21 +759,17 @@ CHARACTERS = {
 
     textToEntriesByGlyph(text) { return CHARACTERS.entriesFromField(text, ["letter_glyph"]); },
 
-    entriesToText(entries, ignore_optional = false) {
-        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => e.letter || "").join("");
+    entriesToField(entries, field, ignore_optional = false) {
+        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => Array.isArray(e[field]) ? e[field][0] || "" : e[field] || "").join("");
     },
 
-    entriesToRom(entries, ignore_optional = false) {
-        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => e.letter_rom[0] || "").join("");
-    },
+    entriesToText(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter", ignore_optional); },
 
-    entriesToDiscord(entries, ignore_optional = false) {
-        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => e.letter_discord || "").join("");
-    },
+    entriesToRom(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter_rom", ignore_optional); },
 
-    entriesToGlyphs(entries, ignore_optional = false) {
-        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => e.letter_glyph || "").join("");
-    },
+    entriesToDiscord(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter_discord", ignore_optional); },
+
+    entriesToGlyphs(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter_glyph", ignore_optional); },
 
     getPyricEquivalent(entry) {
         if (!entry || !entry.prop.includes(IDS.CHARACTERS.V)) return null;

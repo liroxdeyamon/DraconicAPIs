@@ -1,7 +1,7 @@
 import fontforge
 import psMat
 
-target_top = 1000
+target_top = 1400
 margin = 50
 font = fontforge.activeFont()
 
@@ -22,4 +22,4 @@ for name in font:
     target_center = (new_width + margin*2) / 2
     glyph_center = (left*scale + right*scale) / 2
     move_x = target_center - glyph_center
-    glyph.transform(psMat.translate(move_x,0))
+    glyph.transform(psMat.translate(move_x,-400))
