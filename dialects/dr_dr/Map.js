@@ -677,7 +677,7 @@ CHARACTERS = {
     random(vowels = true, consonants = true, pyric_vowels = true, pyric_consonants = true) {
         const pool = [];
 
-        for (const e of CHARACTERS) {
+        for (const e of CHARACTERS.FLAT) {
             if (!e.name) continue;
 
             if (e.prop.includes(IDS.CHARACTERS.C) && consonants) pool.push(e);
@@ -759,8 +759,13 @@ CHARACTERS = {
 
     textToEntriesByGlyph(text) { return CHARACTERS.entriesFromField(text, ["letter_glyph"]); },
 
-    entriesToField(entries, field, ignore_optional = false) {
-        return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => Array.isArray(e[field]) ? e[field][0] || "" : e[field] || "").join("");
+    entriesFromField(text, fields) {
+        return CHARACTERS.FLAT.filter(e =>
+            fields.some(f => {
+                const v = e[f];
+                return Array.isArray(v) ? v.includes(text) : v === text;
+            })
+        );
     },
 
     entriesToText(entries, ignore_optional = false) { return CHARACTERS.entriesToField(entries, "letter", ignore_optional); },
