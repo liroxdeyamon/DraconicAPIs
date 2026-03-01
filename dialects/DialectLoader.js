@@ -14,9 +14,11 @@ function createSandbox() {
     const proxy = new Proxy(sandbox, handler);
     function run(code) {
         const transformed = code
+            .replace(/"use strict";?/g, '')
+            .replace(/'use strict';?/g, '')
             .replace(/^\s*function\s+([a-zA-Z_$][\w$]*)/gm, (_, name) => `var ${name} = function ${name}`)
             .replace(/^\s*class\s+([a-zA-Z_$][\w$]*)/gm, (_, name) => `var ${name} = class ${name}`);
-        return eval(`(function(){ with(proxy) { ${transformed} } })()`);
+        return new Function('proxy', `with(proxy) { ${transformed} }`)(proxy);
     }
     return { sandbox: proxy, run };
 }

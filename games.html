@@ -9,11 +9,11 @@
     <input type="number" id="numInput" placeholder="number" oninput="document.getElementById('test').textContent = NUMBERS.numberToText(this.value)">
 
     <div id="test">result</div>
-<script src="https://draconicconlang.github.io/APIs/dialects/DialectLoader.js"></script>
-<script>
-DIALECTS.load("dr_dr").then(DR => {
-  Object.assign(globalThis, DR);
-});
+<script type="module">
+    import { DIALECTS } from "https://draconicconlang.github.io/APIs/dialects/DialectLoader.js";
+    DIALECTS.load("dr_dr").then(DR => {
+        Object.assign(globalThis, DR);
+    });
 </script>
 </body>
 </html>
