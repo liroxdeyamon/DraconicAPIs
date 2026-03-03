@@ -59,14 +59,11 @@ def process_genders(entry):
         if text.startswith('(') and ')' in text:
             gsrc, remaining_text = text.split(')', 1)
             extracted_src = gsrc.strip('()')
-            # Check if the extracted source contains valid gender abbreviations
             test_abbrs = [a.strip() for a in extracted_src.replace('.', '').split(',') if a.strip()]
             if any(abbr in GENDERS for abbr in test_abbrs):
-                # Use the extracted gender source
                 src = extracted_src
                 text = remaining_text
             else:
-                # Fall back to entry[3]
                 src = re.sub(r'[().,]', '', entry[3])
         else:
             src = re.sub(r'[().,]', '', entry[3])
@@ -129,26 +126,46 @@ CONJUNCTIONS_HERE
 
 // ^^==== CACHE =====^^
 
-DICTIONARY.ALL_WORDS.MAP = Object.fromEntries(
-    Object.entries({
-        ...DICTIONARY.NOUNS.MAP,
-        ...DICTIONARY.VERBS.MAP,
-        ...DICTIONARY.ADJECTIVES.MAP,
-        ...DICTIONARY.ADVERBS.MAP,
-        ...DICTIONARY.AUXILIARIES.MAP,
-        ...DICTIONARY.PREPOSITIONS.MAP,
-        ...DICTIONARY.PARTICLES.MAP,
-        ...DICTIONARY.DETERMINERS.MAP,
-        ...DICTIONARY.CONJUNCTIONS.MAP,
-    })
-    .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-    .map(([key, value]) => {
-        if (typeof value === 'object' && !Array.isArray(value) && Object.values(value)[0] instanceof Noun) {
-            return [key, value];
+DICTIONARY.ALL_WORDS.MAP = (() => {
+    const sources = [
+        [DICTIONARY.NOUNS.MAP,        IDS.WORDS.N],
+        [DICTIONARY.VERBS.MAP,        IDS.WORDS.V],
+        [DICTIONARY.ADJECTIVES.MAP,   IDS.WORDS.ADJ],
+        [DICTIONARY.ADVERBS.MAP,      IDS.WORDS.ADV],
+        [DICTIONARY.AUXILIARIES.MAP,  IDS.WORDS.AUX],
+        [DICTIONARY.PREPOSITIONS.MAP, IDS.WORDS.PP],
+        [DICTIONARY.PARTICLES.MAP,    IDS.WORDS.PART],
+        [DICTIONARY.DETERMINERS.MAP,  IDS.WORDS.DET],
+        [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
+    ];
+
+    // Collect all entries, grouping by key, tagged with their source word type
+    const collected = {};
+    for (const [map, wordType] of sources) {
+        for (const [key, value] of Object.entries(map)) {
+            if (!(key in collected)) collected[key] = [];
+            collected[key].push({ entry: value, wordType });
         }
-        return [key, value];
-    })
-);
+    }
+
+    // Build final map: wrap duplicates in a Grouped (ML)
+    const result = {};
+    for (const [key, entries] of Object.entries(collected)) {
+        if (entries.length === 1) {
+            result[key] = entries[0].entry;
+        } else {
+            const typeMap = {};
+            for (const { entry, wordType } of entries) {
+                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
+            }
+            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.WORDS));
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+    );
+})();
 
 function generateFlat(map) {
     return Object.values(map).flatMap(value => {
@@ -209,7 +226,6 @@ if __name__ == "__main__":
             adj_dict[word][dec] = f'new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", "")
         elif i[1] == "v":
             verbs.append(f'"{i[0]}": new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-
         elif i[1] == "adv":
             adverbs.append(f'"{i[0]}": new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
         elif i[1] == "aux":
@@ -223,7 +239,6 @@ if __name__ == "__main__":
         elif i[1] == "con":
             conjunctions.append(f'"{i[0]}": new Conjunction("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
 
-
     for i in phrases_data:
         if "nan" not in str(i[0]):
             phrases.append(f'"{i[0]}": new Phrase("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
@@ -232,12 +247,11 @@ if __name__ == "__main__":
         if "nan" not in str(i[0]):
             proverbs.append(f'"{i[0]}": new Proverb("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
 
-
-    nouns = [f'"{word}": {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}'
+    nouns = [f'"{word}": new Grouped(IDS.OTHER.MD, {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}, [1,2,3,4], IDS.WORDS.N)'
              if len(decls) > 1 else f'"{word}": {list(decls.values())[0]}'
              for word, decls in sorted(noun_dict.items())]
     
-    adjectives = [f'"{word}": {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}'
+    adjectives = [f'"{word}": new Grouped(IDS.OTHER.MD, {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}, [1,2,3,4], IDS.WORDS.ADJ)'
                  if len(decls) > 1 else f'"{word}": {list(decls.values())[0]}'
                  for word, decls in sorted(adj_dict.items())]
 

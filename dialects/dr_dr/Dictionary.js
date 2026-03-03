@@ -3,7 +3,7 @@
 
 DICTIONARY.NOUNS.MAP = {
 "afuχ": new Noun("afuχ", 3, {'Magical': 'life cycle, circle of life', 'Mundane': 'wheel', 'Abstract': 'cycle, circle'}, ""),
-"axa": {1: new Noun("axa", 1, {'Abstract': 'negativity; negation'}, ""),2: new Noun("axa", 2, {'Monstrous': 'eyebat; cyclops', 'Magical': 'eye', 'Mundane': 'eye', 'Abstract': 'sight, vision'}, "")},
+"axa": new Grouped(IDS.OTHER.MD, {1: new Noun("axa", 1, {'Abstract': 'negativity; negation'}, ""),2: new Noun("axa", 2, {'Monstrous': 'eyebat; cyclops', 'Magical': 'eye', 'Mundane': 'eye', 'Abstract': 'sight, vision'}, "")}, [1,2,3,4], IDS.WORDS.N),
 "cellâlq": new Noun("cellâlq", 3, {'Monstrous': 'giant fire elemental, especially if violent', 'Irrational': 'flame as personified', 'Magical': 'firestorm, inferno; (definite) Hell', 'Mundane': 'cinder, ember', 'Abstract': 'uncontained or unchecked power; plague'}, ""),
 "cerχalli": new Noun("cerχalli", 1, {'Magical': 'potion vial; any container for magical substance', 'Mundane': 'vial, flask, cup, any small container for liquid'}, ""),
 "cillu": new Noun("cillu", 1, {'Mundane': 'ceiling, roof; overhang', 'Abstract': 'top, highest part'}, ""),
@@ -23,7 +23,7 @@ DICTIONARY.NOUNS.MAP = {
 "fuχħālt": new Noun("fuχħālt", 2, {'Abstract': 'width'}, ""),
 "fæfē": new Noun("fæfē", 1, {'Monstrous': 'fog monster', 'Magical': 'stormclouds', 'Mundane': 'thick fog', 'Abstract': 'bewilderment, incredulity'}, ""),
 "fē": new Noun("fē", 1, {'Irrational': 'small air elemental; air sprite', 'Magical': 'ethereal mist; ethereal fog', 'Mundane': 'mist; light fog', 'Abstract': 'haze, daze; translucence'}, ""),
-"fēl": {1: new Noun("fēl", 1, {'Magical': 'silk', 'Mundane': 'cream; yogurt'}, ""),3: new Noun("fēl", 3, {'Magical': 'siphon of energy', 'Mundane': 'drain, siphon', 'Abstract': 'drainage'}, "")},
+"fēl": new Grouped(IDS.OTHER.MD, {1: new Noun("fēl", 1, {'Magical': 'silk', 'Mundane': 'cream; yogurt'}, ""),3: new Noun("fēl", 3, {'Magical': 'siphon of energy', 'Mundane': 'drain, siphon', 'Abstract': 'drainage'}, "")}, [1,2,3,4], IDS.WORDS.N),
 "fēltū": new Noun("fēltū", 1, {'Exalted': 'a historically common Draconic name', 'Rational': 'a historically common Draconic name; succubus; incubus', 'Monstrous': 'succubus; incubus', 'Irrational': 'farm animal', 'Magical': 'uncontrollable laughter', 'Mundane': 'cheese', 'Abstract': 'cheeriness, gaiety; luck, good fortune'}, " the sense 'Draconic name' has become increasingly rare in the modern day"),
 "fōlnty": new Noun("fōlnty", 3, {'Abstract': 'regularity, order; sequence; cleanliness'}, ""),
 "fōxeh": new Noun("fōxeh", 3, {'Rational': 'prey, particularly as food', 'Monstrous': 'prey, particularly as food', 'Irrational': 'prey, particularly as food', 'Magical': 'sacrificial item, offering; meat, flesh; corpse, carcass', 'Mundane': 'meat, flesh; corpse, carcass', 'Abstract': 'embarassment; failure, rejection'}, " sense 'corpse, carcass' can never refer to the corpse of an Exalted being"),
@@ -145,7 +145,7 @@ DICTIONARY.NOUNS.MAP = {
 "qēdzeg": new Noun("qēdzeg", 3, {'Abstract': 'paradox, contradiction'}, ""),
 "qēr'a": new Noun("qēr'a", 2, {'Magical': 'portal (to foreign plane)', 'Mundane': 'entrance', 'Abstract': 'beginning; preface, introduction; greeting'}, ""),
 "qērur": new Noun("qērur", 2, {'Magical': 'portal (to home plane)', 'Mundane': 'exit', 'Abstract': 'end, ending, terminal, finish; farewell; epilogue'}, ""),
-"qērx": {2: new Noun("qērx", 2, {'Exalted': 'merchant, shopkeep', 'Rational': 'merchant, shopkeep', 'Monstrous': 'merchant, shopkeep', 'Irrational': 'merchant, shopkeep', 'Magical': 'goods', 'Mundane': 'goods', 'Abstract': 'trade; economy'}, ""),3: new Noun("qērx", 3, {'Magical': 'prophesization magic; crystal ball', 'Mundane': 'crystal ball', 'Abstract': 'prediction'}, "")},
+"qērx": new Grouped(IDS.OTHER.MD, {2: new Noun("qērx", 2, {'Exalted': 'merchant, shopkeep', 'Rational': 'merchant, shopkeep', 'Monstrous': 'merchant, shopkeep', 'Irrational': 'merchant, shopkeep', 'Magical': 'goods', 'Mundane': 'goods', 'Abstract': 'trade; economy'}, ""),3: new Noun("qērx", 3, {'Magical': 'prophesization magic; crystal ball', 'Mundane': 'crystal ball', 'Abstract': 'prediction'}, "")}, [1,2,3,4], IDS.WORDS.N),
 "qērxaχ": new Noun("qērxaχ", 1, {'Exalted': 'prophet; oracle', 'Rational': 'prophet; oracle', 'Monstrous': 'prophet; oracle', 'Irrational': 'prophet; oracle', 'Magical': 'temple, shrine', 'Mundane': 'temple, shrine', 'Abstract': 'prophesy'}, ""),
 "qħón": new Noun("qħón", 3, {'Magical': 'tail', 'Mundane': 'tail'}, ""),
 "qħôn": new Noun("qħôn", 3, {'Monstrous': 'creature with many appendages', 'Irrational': 'creature with many appendages', 'Mundane': 'tentacle; appendage'}, ""),
@@ -215,7 +215,7 @@ DICTIONARY.NOUNS.MAP = {
 "thutrûllīqu": new Noun("thutrûllīqu", 1, {'Exalted': 'a creature which sustains itself via the consumption of blood', 'Rational': 'a creature which sustains itself via the consumption of blood', 'Monstrous': 'a creature which sustains itself via the consumption of blood; vampire (in bat form)', 'Irrational': 'a creature which sustains itself via the consumption of blood; vampire bat', 'Mundane': 'syringe', 'Abstract': 'vampirism; the practice of drinking blood'}, ""),
 "thæf": new Noun("thæf", 1, {'Monstrous': 'shadow monster, shadowy creature', 'Irrational': 'shadow monster, shadowy creature', 'Magical': 'wing, especially of a dragon', 'Mundane': 'wing; limb', 'Abstract': 'side, flank; edge, ridge; extent, degree'}, ""),
 "thō": new Noun("thō", 4, {'Exalted': 'guard, guardian', 'Rational': 'guard, guardian', 'Monstrous': 'guard, guardian', 'Irrational': 'guard, guardian', 'Magical': 'obstacle, impediment, blockage', 'Mundane': 'obstacle, impediment, blockage', 'Abstract': 'issue, problem, obstacle; security'}, ""),
-"thō'": {2: new Noun("thō'", 2, {'Exalted': 'a tank, one who can withstand much attack and damage;', 'Rational': 'a tank, one who can withstand much attack and damage;', 'Monstrous': 'a tank, one who can withstand much attack and damage;', 'Irrational': 'a tank, one who can withstand much attack and damage;', 'Magical': 'runestone', 'Mundane': 'boulder; a tough or rigid thing', 'Abstract': 'stone as a material; toughness, rigidity'}, " sometimes used as an informal form of address for friends among dragons"),4: new Noun("thō'", 4, {'Monstrous': 'troll'}, " can ocassionally be used as an insult when used in other animate genders")},
+"thō'": new Grouped(IDS.OTHER.MD, {2: new Noun("thō'", 2, {'Exalted': 'a tank, one who can withstand much attack and damage;', 'Rational': 'a tank, one who can withstand much attack and damage;', 'Monstrous': 'a tank, one who can withstand much attack and damage;', 'Irrational': 'a tank, one who can withstand much attack and damage;', 'Magical': 'runestone', 'Mundane': 'boulder; a tough or rigid thing', 'Abstract': 'stone as a material; toughness, rigidity'}, " sometimes used as an informal form of address for friends among dragons"),4: new Noun("thō'", 4, {'Monstrous': 'troll'}, " can ocassionally be used as an insult when used in other animate genders")}, [1,2,3,4], IDS.WORDS.N),
 "thōχō": new Noun("thōχō", 3, {'Monstrous': 'giant worm'}, ""),
 "thū'xæ": new Noun("thū'xæ", 2, {'Magical': 'storm, tempest, violent weather; rage, fury', 'Mundane': 'sky; thick and elevated clouds', 'Abstract': '(figurative) atmosphere, the mood of an enviroment; medium, material of surrounding environment'}, " sense 'rage, fury' usually indicates an uncharacteristically reckless/irrational tantrum in the heat of the moment"),
 "thūltrû": new Noun("thūltrû", 4, {'Exalted': 'a member of kin by blood; a trustworthy individual;', 'Rational': 'a member of kin by blood; a trustworthy individual;', 'Monstrous': 'a member of kin by blood; a trustworthy individual;', 'Irrational': 'a member of kin by blood; a trustworthy individual;', 'Magical': 'blood believed to have magical properties', 'Mundane': 'blood; sap of a plant; any liquid vital to life', 'Abstract': 'familial relationship by birth; trust; livelihood'}, " common term of address for family and close friends among dragons"),
@@ -904,26 +904,46 @@ DICTIONARY.CONJUNCTIONS.MAP = {
 
 // ^^==== CACHE =====^^
 
-DICTIONARY.ALL_WORDS.MAP = Object.fromEntries(
-    Object.entries({
-        ...DICTIONARY.NOUNS.MAP,
-        ...DICTIONARY.VERBS.MAP,
-        ...DICTIONARY.ADJECTIVES.MAP,
-        ...DICTIONARY.ADVERBS.MAP,
-        ...DICTIONARY.AUXILIARIES.MAP,
-        ...DICTIONARY.PREPOSITIONS.MAP,
-        ...DICTIONARY.PARTICLES.MAP,
-        ...DICTIONARY.DETERMINERS.MAP,
-        ...DICTIONARY.CONJUNCTIONS.MAP,
-    })
-    .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-    .map(([key, value]) => {
-        if (typeof value === 'object' && !Array.isArray(value) && Object.values(value)[0] instanceof Noun) {
-            return [key, value];
+DICTIONARY.ALL_WORDS.MAP = (() => {
+    const sources = [
+        [DICTIONARY.NOUNS.MAP,        IDS.WORDS.N],
+        [DICTIONARY.VERBS.MAP,        IDS.WORDS.V],
+        [DICTIONARY.ADJECTIVES.MAP,   IDS.WORDS.ADJ],
+        [DICTIONARY.ADVERBS.MAP,      IDS.WORDS.ADV],
+        [DICTIONARY.AUXILIARIES.MAP,  IDS.WORDS.AUX],
+        [DICTIONARY.PREPOSITIONS.MAP, IDS.WORDS.PP],
+        [DICTIONARY.PARTICLES.MAP,    IDS.WORDS.PART],
+        [DICTIONARY.DETERMINERS.MAP,  IDS.WORDS.DET],
+        [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
+    ];
+
+    // Collect all entries, grouping by key, tagged with their source word type
+    const collected = {};
+    for (const [map, wordType] of sources) {
+        for (const [key, value] of Object.entries(map)) {
+            if (!(key in collected)) collected[key] = [];
+            collected[key].push({ entry: value, wordType });
         }
-        return [key, value];
-    })
-);
+    }
+
+    // Build final map: wrap duplicates in a Grouped (ML)
+    const result = {};
+    for (const [key, entries] of Object.entries(collected)) {
+        if (entries.length === 1) {
+            result[key] = entries[0].entry;
+        } else {
+            const typeMap = {};
+            for (const { entry, wordType } of entries) {
+                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
+            }
+            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.WORDS));
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+    );
+})();
 
 function generateFlat(map) {
     return Object.values(map).flatMap(value => {

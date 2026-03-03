@@ -5,7 +5,13 @@ META = {
     DESCRIPTION: "Unmodified version of the conlang.",
     // Attribution
     AUTHOR: "human1011", // in this case human1011 is author of the whole conlang
-    MENTAINERS: ["_eXeCutie", "SuPDuZz", "LiroxDeYamon"], // people keeping dialect up to date
+    MAINTAINERS: ["_eXeCutie", "SuPDuZz", "LiroxDeYamon"], // people keeping dialect up to date
+    // Dependencies
+    DEPENDENCIES: [
+        // "Map.js": ["dr_ex", "dr_ex"], // executes code from another dialect on map load BEFORE this map
+        // "Dictionary.js": ["dr_ex", "dr_ex"], // executes code from another dialect on dictionary load BEFORE this dictionary
+        // you get it
+    ],
     // Update things
     // Classic draconic's updates are monitored in draconic-changes channel on discord
     // Code changes don't count as an update, unless they change the dialect in some way
@@ -64,6 +70,9 @@ IDS = {
         E: 'Elative'
     },
     WORDS: {
+        // Object.keys(IDS.WORDS) >> [N, V, ..., CON]
+        // Object.values(IDS.WORDS) >> [Noun, Verb, ..., Conjuction]
+        // just a reminder :3
         N: "Noun",
         V: "Verb",
         ADJ: "Adjective",
@@ -72,11 +81,15 @@ IDS = {
         PP: "Preposition",
         PART: "Particle",
         DET: "Determiner",
-        PROV: "Proverb"
+        CON: "Conjuction"
     },
     PHRASES: {
         PHR: "Phrase",
         PROV: "Proverb"
+    },
+    OTHER: {
+        ML: "MultiLexemic",
+        MD: "MultiDeclensional"
     }
 }
 
@@ -203,6 +216,21 @@ class AffixMatch {
     }
 }
 
+class Grouped {
+    constructor(type, map, acceptable, unifiedType = null) {
+        this.values = {}
+        this.acceptable = acceptable
+        this.unifiedType = unifiedType
+        this.available = []
+        for (const key of acceptable) {
+            if (key in map) {
+                this.values[key] = map[key]
+                this.available.push(key)
+            }
+        }
+        this.type = type
+    }
+}
 
 // ============================ MAPS ============================
 
@@ -799,7 +827,7 @@ Object.entries(CHARACTERS.MAP).forEach(([key, value]) => {
 // ---------------------------- GENDERS ----------------------------
 
 GENDERS = {
-    MAP: {
+    MAP: { // TODO: maybe redo like IDS.WORDS
         E: { NAME: "Exalted", SHORT: "e" },
         R: { NAME: "Rational", SHORT: "r" },
         MON: { NAME: "Monstrous", SHORT: "mon" },
@@ -889,7 +917,7 @@ function getAllValues(obj) {
 function generateSuffixMatches(suffixes, type) {
     const result = {};
     const suffixPaths = {};
-    const isNoun = type === "n" || type === "adj";
+    const isNoun = type === IDS.WORDS.N || type === IDS.WORDS.ADJ;
     if (isNoun) {
         for (const mood in suffixes) {
             for (const gender in suffixes[mood]) {
@@ -1247,14 +1275,14 @@ AFFIXES = {
 }
 
 AFFIXES.SUFFIXES.NOUNS.FLAT = getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP);
-AFFIXES.SUFFIXES.NOUNS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, "n");
+AFFIXES.SUFFIXES.NOUNS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, IDS.WORDS.N);
 AFFIXES.SUFFIXES.VERBS.FLAT = getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
-AFFIXES.SUFFIXES.VERBS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, "v");
-AFFIXES.SUFFIXES.ADJECTIVES.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, "adj");
+AFFIXES.SUFFIXES.VERBS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, IDS.WORDS.V);
+AFFIXES.SUFFIXES.ADJECTIVES.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, IDS.WORDS.ADJ);
 AFFIXES.SUFFIXES.DETERMINERS.FLAT = getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
-AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, "det")
+AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, IDS.WORDS.DET)
 AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
-AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, "v");
+AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, IDS.WORDS.V);
 
 // ---------------------------- DICTIONARY ----------------------------
 
