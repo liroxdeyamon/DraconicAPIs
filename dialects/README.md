@@ -55,7 +55,62 @@ Contains main information of the dialect.
 - **STABLE** - the dialect is basically done, but there be additions sometimes (like new words or phrases)
 - **ARCHIVED** - no changes will be made anymore, only bug fixes if necessary, or not ¯\\\_(ツ)\_/¯
 
-Example usage:
+## IDS
+Key-value pairs of IDs and their values.
+
+Includes both short and long from of something, for example lexeme type.
+
+Used for consistency and to avoid typos.
+
+## MAIN STRUCTURE
+### MAP
+Key-value pairs for various things *(maps for short)*.
+
+### FLAT
+Arrays of values of maps *(flats for short)*, pregenerated for performance *(hopefully)*.
+
+Usually found in pairs with maps.
+
+### MATCHES
+Pregenerated objects used for affix matching.
+
+Consists of the affix, its word type, all possible paths to that affix and all possible variants of that affix.
+
+Usually found in affix map holders *(`AFFIXES.WORD.MATCHES`)*
+
+### Grouped
+Object meant for combining lexemes with same word but different word types/declensions.
+
+Consists of word, type *(for now either `IDS.OTHER.ML` - MultiLexemic or `IDS.OTHER.MD` - MultiDeclensional)* its combined type *(if possible)*, available types array *(may be integers if type is MD)*, and acceptable types array.
+
+Be aware that MultiDeclensional can appear inside MultiLexemic's Noun or Adjective, see `"fēl"`.
+
+Usually found in `DICTIONARY.ALL_WORDS.MAP`
+
+## CHARACTERS
+Map holder for characters, where map consists of string-`Character` pairs *(charmap for short)*.
+
+Contains auxiliary functions for converting text to `Character` arrays *(entries for short)* and back to text.
+
+### Character
+Object for Draconic character.
+
+Consists of 
+
+Usually found in charmap.
+
+## GENDERS
+## AFFIXES
+## DICTIONARY
+
+# BASIC GUIDE
+Keep in mind that if you don't add dependencies, you would need to write all the code yourself.
+
+Examples here are shown for case **WITH** main dependency as Classic Draconic
+
+All examples can be found in **Example Draconic** unlisted dialect *(`"dr_ex"`)*.
+
+## Metadata
 ```js
 META = {
     // Basic info
@@ -80,16 +135,110 @@ META = {
     STATUS: "WIP" // WIP - there be alot of changes; STABLE - the dialect is done, but there be additions sometimes (like new words or phrases); ARCHIVED - no changes will be made anymore
 }
 ```
-## IDS
-## MAIN STRUCTURE
-### MAP
-### FLAT
-### MATCHES
-## CHARACTERS
-## GENDERS
-## AFFIXES
-## DICTIONARY
 
+## Letters
+Classic Draconic already have 40+ letters, but in case you want to add more, you can add this to your `Map.js`:
+```js
+CHARACTERS.MAP["character_name"] = new Character({
+    name: "character_name", name_ipa: "/example_ipa/",
+    letter: "t", letter_rom: ["t"], letter_ipa: "/t̪/", letter_glyph: "\uE000", letter_discord: ":t_:",
+    text: mainText,
+    prop: [IDS.CHARACTERS.C],
+    allophones: { "/t̪̚/": allophones["word-final"] },
+    sound: soundPath + "0-0.mp3"
+});
+```
 
-# Conslusion
+If you want to change properties:
+```js
+CHARACTERS.MAP["character_name"]["some_property"] = somevalue;
+```
+
+Elif you want to delete a letter: 
+```js
+delete CHARACTERS.MAP["character_name"];
+```
+
+After all manipulations, if some of your letters' descriptions contains values with `"{}"`, it's better to use this:
+```js
+Object.entries(CHARACTERS.MAP).forEach(([key, value]) => {
+    value.description = description(value);
+});
+```
+
+## Words
+Adding words:
+```js
+DICTIONARY.NOUNS.MAP = {...DICTIONARY.NOUNS.MAP, ...{
+"afuχ": new Noun("afuχ", 3, {'Magical': 'life cycle, circle of life', 'Mundane': 'wheel', 'Abstract': 'cycle, circle'}, ""),
+"axa": {1: new Noun("axa", 1, {'Abstract': 'negativity; negation'}, ""),2: new Noun("axa", 2, {'Monstrous': 'eyebat; cyclops', 'Magical': 'eye', 'Mundane': 'eye', 'Abstract': 'sight, vision'}, "")},
+"cellâlq": new Noun("cellâlq", 3, {'Monstrous': 'giant fire elemental, especially if violent', 'Irrational': 'flame as personified', 'Magical': 'firestorm, inferno; (definite) Hell', 'Mundane': 'cinder, ember', 'Abstract': 'uncontained or unchecked power; plague'}, ""),
+// ...
+}} // repeat for every lexeme/phrase type
+```
+
+Deleting or editing words is the same as deleting/editing characters
+
+Though, it's better to use generator of some sort, so you can easily convert `.csv` into `.js`.
+
+At the end, please generate ALL_WORDS and cache all of your dictionary flats:
+```js
+DICTIONARY.ALL_WORDS.MAP = (() => {
+    const sources = [
+        [DICTIONARY.NOUNS.MAP,        IDS.WORDS.N],
+        [DICTIONARY.VERBS.MAP,        IDS.WORDS.V],
+        [DICTIONARY.ADJECTIVES.MAP,   IDS.WORDS.ADJ],
+        [DICTIONARY.ADVERBS.MAP,      IDS.WORDS.ADV],
+        [DICTIONARY.AUXILIARIES.MAP,  IDS.WORDS.AUX],
+        [DICTIONARY.PREPOSITIONS.MAP, IDS.WORDS.PP],
+        [DICTIONARY.PARTICLES.MAP,    IDS.WORDS.PART],
+        [DICTIONARY.DETERMINERS.MAP,  IDS.WORDS.DET],
+        [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
+    ];
+
+    const collected = {};
+    for (const [map, wordType] of sources) {
+        for (const [key, value] of Object.entries(map)) {
+            if (!(key in collected)) collected[key] = [];
+            collected[key].push({ entry: value, wordType });
+        }
+    }
+
+    const result = {};
+    for (const [key, entries] of Object.entries(collected)) {
+        if (entries.length === 1) {
+            result[key] = entries[0].entry;
+        } else {
+            const typeMap = {};
+            for (const { entry, wordType } of entries) {
+                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
+            }
+            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.WORDS));
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+    );
+})();
+
+DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
+DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);
+DICTIONARY.ADJECTIVES.FLAT = generateFlat(DICTIONARY.ADJECTIVES.MAP);
+DICTIONARY.ADVERBS.FLAT = generateFlat(DICTIONARY.ADVERBS.MAP);
+DICTIONARY.AUXILIARIES.FLAT = generateFlat(DICTIONARY.AUXILIARIES.MAP);
+DICTIONARY.PREPOSITIONS.FLAT = generateFlat(DICTIONARY.PREPOSITIONS.MAP);
+DICTIONARY.PARTICLES.FLAT = generateFlat(DICTIONARY.PARTICLES.MAP);
+DICTIONARY.DETERMINERS.FLAT = generateFlat(DICTIONARY.DETERMINERS.MAP);
+DICTIONARY.CONJUNCTIONS.FLAT = generateFlat(DICTIONARY.CONJUNCTIONS.MAP);
+DICTIONARY.ALL_WORDS.FLAT = generateFlat(DICTIONARY.ALL_WORDS.MAP);
+```
+
+## Affixes
+
+```js
+
+```
+
+# Conclusion
 If you have any questions or suggestions, you can ask in this repo's discussions/issues or in the [**DraconicAPIs** branch of draconic-tools channel](https://discord.com/channels/1315098863694250075/1433758501577953280) on [human1011's discord](https://discord.com/invite/By5MxEy6MT). 

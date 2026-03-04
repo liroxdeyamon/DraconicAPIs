@@ -25,23 +25,57 @@ function createSandbox() {
 
 export const DIALECTS = {
     MAP: {
-        "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/"
+        "dr_dr": "https://draconicconlang.github.io/APIs/dialects/dr_dr/",
+        "dr_ex": "https://draconicconlang.github.io/APIs/dialects/dr_ex/"
     },
+
     async loadUrl(url, dictionary = true, experimental = false, deprecated = false) {
-        let allCode = '';
-        async function fetchScript(file) {
-            const res = await fetch(url + file);
+        const { sandbox, run } = createSandbox();
+
+        async function fetchScript(baseUrl, file) {
+            const res = await fetch(baseUrl + file);
             if (!res.ok) return '';
             return await res.text();
         }
-        allCode += await fetchScript("Map.js");
-        if (dictionary)   allCode += '\n' + (await fetchScript("Dictionary.js")   || '');
-        if (experimental) allCode += '\n' + (await fetchScript("Experimental.js") || '');
-        if (deprecated)   allCode += '\n' + (await fetchScript("Deprecated.js")   || '');
-        const { sandbox, run } = createSandbox();
-        run(allCode);
+
+        const ownMapCode = await fetchScript(url, "Map.js");
+        let meta = null;
+        if (ownMapCode) {
+            const { sandbox: tempSandbox, run: tempRun } = createSandbox();
+            try { tempRun(ownMapCode); } catch (_) {}
+            meta = tempSandbox.META ?? null;
+        }
+
+        async function loadFile(file) {
+            let code = '';
+            const deps = meta?.DEPENDENCIES?.[file];
+            if (Array.isArray(deps)) {
+                for (const depId of deps) {
+                    const depUrl = DIALECTS.MAP[depId];
+                    if (depUrl) code += await fetchScript(depUrl, file) + '\n';
+                }
+            }
+            code += await fetchScript(url, file);
+            return code;
+        }
+
+        run(await loadFile("Map.js"));
+
+        const filesToLoad = [
+            [dictionary,   "Dictionary.js"],
+            [experimental, "Experimental.js"],
+            [deprecated,   "Deprecated.js"],
+        ];
+
+        for (const [enabled, file] of filesToLoad) {
+            if (!enabled) continue;
+            const code = await loadFile(file);
+            if (code.trim()) run(code);
+        }
+
         return sandbox;
     },
+
     async load(id, dictionary = true, experimental = false, deprecated = false) {
         return await this.loadUrl(this.MAP[id], dictionary, experimental, deprecated);
     }
