@@ -6,13 +6,39 @@
     <title>Document</title>
 </head>
 <body>
-    <input type="number" id="numInput" placeholder="number" oninput="document.getElementById('test').textContent = NUMBERS.numberToText(this.value)">
+    <div id="onloaded" style="display: none;">
+        <input type="number" id="numInput" placeholder="number" oninput="document.getElementById('test').textContent = NUMBERS.numberToText(this.value)">
+        <div id="test">result</div>
 
-    <div id="test">result</div>
+        <input type="text" id="txtInput" name="text" id="translator">
+        <button type="button" id="translate_button" >Translate</button>
+        <ul id="result"></ul>
+    </div>
+
 <script type="module">
     import { DIALECTS } from "./dialects/DialectLoader.js";
-    const DR = await DIALECTS.loadUrl("http://127.0.0.1:5501/dialects/dr_ex/");
+    const DR = await DIALECTS.loadUrl("http://127.0.0.1:5501/dialects/dr_dr/");
     Object.assign(globalThis, DR);
+
+    const onloaded = document.getElementById("onloaded")
+
+    const txtInput = document.getElementById("txtInput")
+    const translate_button = document.getElementById("translate_button")
+    const result = document.getElementById("result")
+
+    function test_translate() {
+        result.innerHTML = "";
+        txtInput.value.split(" ").forEach(word => {
+            const obj = DICTIONARY.fuzzyFetchByWord(word)[0];
+            const prefix = AFFIXES.PREFIXES.match(word, AFFIXES.PREFIXES.MATCHES)?.[0]?.affix ?? "";
+            const suffix = AFFIXES.SUFFIXES.match(word, AFFIXES.SUFFIXES.MATCHES)?.[0]?.affix ?? "";
+            result.innerHTML += `<li>${prefix}- ${obj.text} (${obj.declension}) -${suffix} - ${obj.definition}</li>`;
+        });
+    }
+
+    translate_button.addEventListener("click", test_translate);
+
+    onloaded.style.display = "block"
 </script>
 </body>
 </html>

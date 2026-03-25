@@ -16,35 +16,44 @@ DICTIONARY.NOUNS.MAP = {...DICTIONARY.NOUNS.MAP, ...{
 
 
 // for consistency
-DICTIONARY.ALL_WORDS.MAP = Object.fromEntries(
-    Object.entries({
-        ...DICTIONARY.NOUNS.MAP,
-        ...DICTIONARY.VERBS.MAP,
-        ...DICTIONARY.ADJECTIVES.MAP,
-        ...DICTIONARY.ADVERBS.MAP,
-        ...DICTIONARY.AUXILIARIES.MAP,
-        ...DICTIONARY.PREPOSITIONS.MAP,
-        ...DICTIONARY.PARTICLES.MAP,
-        ...DICTIONARY.DETERMINERS.MAP,
-        ...DICTIONARY.CONJUNCTIONS.MAP,
-    })
-    .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-    .map(([key, value]) => {
-        if (typeof value === 'object' && !Array.isArray(value) && Object.values(value)[0] instanceof Noun) {
-            return [key, value];
-        }
-        return [key, value];
-    })
-);
+DICTIONARY.ALL_WORDS.MAP = (() => {
+    const sources = [
+        [DICTIONARY.NOUNS.MAP,        IDS.WORDS.N],
+        [DICTIONARY.VERBS.MAP,        IDS.WORDS.V],
+        [DICTIONARY.ADJECTIVES.MAP,   IDS.WORDS.ADJ],
+        [DICTIONARY.ADVERBS.MAP,      IDS.WORDS.ADV],
+        [DICTIONARY.AUXILIARIES.MAP,  IDS.WORDS.AUX],
+        [DICTIONARY.PREPOSITIONS.MAP, IDS.WORDS.PP],
+        [DICTIONARY.PARTICLES.MAP,    IDS.WORDS.PART],
+        [DICTIONARY.DETERMINERS.MAP,  IDS.WORDS.DET],
+        [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
+    ];
 
-function generateFlat(map) {
-    return Object.values(map).flatMap(value => {
-        if (value.word === undefined) {
-            return Object.values(value);
+    const collected = {};
+    for (const [map, wordType] of sources) {
+        for (const [key, value] of Object.entries(map)) {
+            if (!(key in collected)) collected[key] = [];
+            collected[key].push({ entry: value, wordType });
         }
-        return [value];
-    });
-};
+    }
+
+    const result = {};
+    for (const [key, entries] of Object.entries(collected)) {
+        if (entries.length === 1) {
+            result[key] = entries[0].entry;
+        } else {
+            const typeMap = {};
+            for (const { entry, wordType } of entries) {
+                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
+            }
+            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.WORDS));
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+    );
+})();
 
 DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
 DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);

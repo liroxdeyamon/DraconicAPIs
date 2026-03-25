@@ -917,17 +917,14 @@ function getAllValues(obj) {
 function generateSuffixMatches(suffixes, type) {
     const result = {};
     const suffixPaths = {};
-    const isNoun = type === IDS.WORDS.N || type === IDS.WORDS.ADJ;
-    if (isNoun) {
+    if (type === IDS.WORDS.N || type === IDS.WORDS.ADJ) {
         for (const mood in suffixes) {
             for (const gender in suffixes[mood]) {
                 for (const num in suffixes[mood][gender]) {
                     for (const decl in suffixes[mood][gender][num]) {
                         const suf = suffixes[mood][gender][num][decl];
                         if (!suf) continue;
-                        if (!suffixPaths[suf]) {
-                            suffixPaths[suf] = [];
-                        }
+                        if (!suffixPaths[suf]) suffixPaths[suf] = [];
                         suffixPaths[suf].push([mood, gender, num, Number(decl)]);
                     }
                 }
@@ -939,9 +936,7 @@ function generateSuffixMatches(suffixes, type) {
                 for (const gender in suffixes[person][num]) {
                     const suf = suffixes[person][num][gender];
                     if (!suf) continue;
-                    if (!suffixPaths[suf]) {
-                        suffixPaths[suf] = [];
-                    }
+                    if (!suffixPaths[suf]) suffixPaths[suf] = [];
                     suffixPaths[suf].push([Number(person), num, gender]);
                 }
             }
@@ -950,22 +945,16 @@ function generateSuffixMatches(suffixes, type) {
     for (const suf in suffixPaths) {
         const entries = CHARACTERS.textToEntriesByAnyText(suf);
         let variants;
-        if (entries?.length) {
-            const firstEntry = entries[0];
-            if (firstEntry.prop?.includes(IDS.CHARACTERS.O)) {
-                variants = [CHARACTERS.entriesToText(entries), CHARACTERS.entriesToText(entries, true)];
-            } else if (firstEntry.prop?.includes(IDS.CHARACTERS.V)) {
-                const pyric = CHARACTERS.getPyricEquivalent(firstEntry);
-                variants = pyric != null
-                    ? [suf, CHARACTERS.entriesToText([pyric, ...entries.slice(1)])]
-                    : [suf];
-            } else {
-                variants = [suf];
-            }
-        } else {
+        if (!entries?.length) {
             console.warn(`Could not parse suffix: ${suf}`);
-            variants = [suf];
+            continue
         }
+        const firstEntry = entries[0];
+        if (firstEntry.prop?.includes(IDS.CHARACTERS.O)) variants = [CHARACTERS.entriesToText(entries), CHARACTERS.entriesToText(entries, true)];
+        else if (firstEntry.prop?.includes(IDS.CHARACTERS.V)) {
+            const pyric = CHARACTERS.getPyricEquivalent(firstEntry);
+            variants = pyric != null ? [suf, CHARACTERS.entriesToText([pyric, ...entries.slice(1)])] : [suf];
+        } else variants = [suf];
         result[suf] = new AffixMatch(type, suf, variants, suffixPaths[suf]);
     }
     return result;
@@ -1135,13 +1124,15 @@ AFFIXES = {
             MATCHES: {} // TODO: edit this thingi
         },
 
-        match(input, map, returnAll = false) {
+        match(input, map, returnAll = true) {
             return AFFIXES.match(input, map, false, returnAll)
         },
 
         connect(text, suffix) {
             return AFFIXES.connect("", text, suffix)
-        }
+        },
+
+        MATCHES: {}
     },
     PREFIXES: {
         VERBS: {
@@ -1172,10 +1163,12 @@ AFFIXES = {
 
         connect(text, prefix) {
             return AFFIXES.connect(prefix, text, "")
-        }
+        },
+
+        MATCHES: {}
     },
 
-    match(input, map, isPrefix = false, returnAll = false) {
+    match(input, map, isPrefix = false, returnAll = true) {
         if (!input || typeof input !== "string") return null;
 
         const matches = [];
@@ -1284,6 +1277,17 @@ AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXE
 AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
 AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, IDS.WORDS.V);
 
+AFFIXES.SUFFIXES.MATCHES = {
+    ...AFFIXES.SUFFIXES.VERBS.MATCHES,
+    ...AFFIXES.SUFFIXES.ADJECTIVES.MATCHES,
+    ...AFFIXES.SUFFIXES.NOUNS.MATCHES,
+    ...AFFIXES.SUFFIXES.DETERMINERS.MATCHES
+};
+
+AFFIXES.PREFIXES.MATCHES = {
+    ...AFFIXES.PREFIXES.VERBS.MATCHES
+};
+
 // ---------------------------- DICTIONARY ----------------------------
 
 function basicSearch(keyword, wordmap) {
@@ -1329,10 +1333,8 @@ function generateVariations(str) {
     for (const g of couples) {
         for (const c of g) map.set(c.toLowerCase(), g.map(x => x.toLowerCase()));
     }
-    
     function expand(s, i = 0) {
         if (i >= s.length) return [s];
-        
         for (let len = Math.min(3, s.length - i); len >= 1; len--) {
             const sub = s.slice(i, i + len);
             const group = map.get(sub);
@@ -1341,19 +1343,15 @@ function generateVariations(str) {
                 return group.flatMap(v => rest.map(r => v + r));
             }
         }
-        
         return expand(s, i + 1).map(r => s[i] + r);
     }
-    
     return expand(str.toLowerCase());
 }
 
 function charTriples(str, accurate = false) {
     const s = str.toLowerCase();
     const triples = new Set();
-    
     const variations = accurate ? generateVariations(s) : [s];
-    
     for (const v of variations) {
         if (v.length > 3) {
             for (let i = 0; i < v.length - 2; i++) {
@@ -1361,7 +1359,6 @@ function charTriples(str, accurate = false) {
             }
         } else triples.add(v);
     }
-    
     return triples;
 }
 
@@ -1369,17 +1366,11 @@ function scoreTriples(query, text, accurate = false) {
     const qTrip = charTriples(query, accurate);
     const qTripBasic = charTriples(query);
     const tTrip = charTriples(text);
-
-    query = query.toLowerCase();
-    text = text.toLowerCase();
-    
     let common = 0;
     for (let tri of qTrip) {
         if (tTrip.has(tri)) common++;
     }
-    
-    let score = common / Math.max(1, qTripBasic.size) * 200; 
-    
+    let score = common / Math.max(1, qTripBasic.size) * 200;
     if (text === query) score += 300;
     else if (text.startsWith(query)) score += 100;
     else {
@@ -1388,23 +1379,20 @@ function scoreTriples(query, text, accurate = false) {
         score += exactMatches * 70;
         if (exactMatches === 0 && text.includes(query)) score += 10;
     }
-    
     return score + 20 / Math.max(1, text.length);
 }
 
 function fuzzyFetch(query, list, is_word, limit = 5) {
-  const q = query.toLowerCase();
-  const results = [];
-  
-  for (const item of list) {
-    let score = 0;
-    if (!is_word) score = scoreTriples(q, item.definition.toLowerCase()) * 200;
-    else score = scoreTriples(q, item.word.toLowerCase(), true);
-    if (score > 0) results.push({ item, score });
-  }
-  
-  results.sort((a, b) => b.score - a.score);
-  return results.slice(0, limit).map(r => r.item);
+    const q = query.toLowerCase();
+    const results = [];
+    for (const item of list) {
+        let score = 0;
+        if (!is_word) score = scoreTriples(q, item.definition.toLowerCase());
+        else score = scoreTriples(q, item.word.toLowerCase(), true);
+        if (score > 0) results.push({ item, score });
+    }
+    results.sort((a, b) => b.score - a.score);
+    return results.slice(0, limit).map(r => r.item);
 }
 
 DICTIONARY = {

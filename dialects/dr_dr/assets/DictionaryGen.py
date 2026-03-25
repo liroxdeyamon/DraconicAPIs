@@ -139,7 +139,6 @@ DICTIONARY.ALL_WORDS.MAP = (() => {
         [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
     ];
 
-    // Collect all entries, grouping by key, tagged with their source word type
     const collected = {};
     for (const [map, wordType] of sources) {
         for (const [key, value] of Object.entries(map)) {
@@ -148,7 +147,6 @@ DICTIONARY.ALL_WORDS.MAP = (() => {
         }
     }
 
-    // Build final map: wrap duplicates in a Grouped (ML)
     const result = {};
     for (const [key, entries] of Object.entries(collected)) {
         if (entries.length === 1) {
@@ -169,12 +167,12 @@ DICTIONARY.ALL_WORDS.MAP = (() => {
 
 function generateFlat(map) {
     return Object.values(map).flatMap(value => {
-        if (value.word === undefined) {
-            return Object.values(value);
-        }
+        if (!(value instanceof Grouped)) return [value];
+        if (value.type === IDS.OTHER.ML) return Object.values(value.values).flatMap(v => v instanceof Grouped && v.type === IDS.OTHER.MD ? Object.values(v.values) : [v]);
+        if (value.type === IDS.OTHER.MD) return Object.values(value.values);
         return [value];
     });
-};
+}
 
 DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
 DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);
