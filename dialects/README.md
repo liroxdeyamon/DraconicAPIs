@@ -1,18 +1,24 @@
 # NEW DIALECT SUBMISSIONS ARE PAUSED UNTIL CLASSIC DRACONIC IS FULLY STANDARDIZED
 # NOTICE
-If you decide to include your dialect in here, you should comply with these rules:
+If you decide to include your dialect in here, you should comply with these rules (prob would reform after Classic Draconic's release):
 - **Licensing**: The Draconic Language is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), so you need to license your dialect the same and state original author.
 - **Stay consistent**: Some developers may not want to struggle to integrate your dialect into their projects. Avoid changing names or structures arbitrarily, unless Classic ones are changed. In other words - stick to Classic Draconic's structure.
 - **Deprecate properly**: If you remove or replace functions or mappings, mark them as deprecated in the original JS and include them in Deprecated.js to maintain compatibility. You may leave them as-is without updates. If they cannot work under any circumstances, you may delete them.
-- **Work in branches**: Make all changes in separate branches rather than directly in the main one. When you are done updating and testing everything, you may create a pull request. (Or you can host it on your side, just let me know, and the repo need to be public as well)
-- **Respect other's boundaries**: Do not edit other's dialects in any way. Classic Draconic is maintained by LiroxDeYamon, _eXeCutie and SuPDuZz.
+- **Work in branches**: Make all changes in separate branches rather than directly in the main one. When you are done updating and testing everything, you may create a pull request. Please respect other's boundaries, don't edit other's dialects in any way.  Classic Draconic is maintained by LiroxDeYamon, _eXeCutie and SuPDuZz.
+- **Security concerns**: The system executes any JavaScript code you put in it, so for security reasons, hosting the dialect outside this repository is prohibited (it won't be listed here as public, you would need to use custom link to load the dialect, which is not the best idea again due to security reasons), and every push requests will be reviewed for malware and such by API's author.
+- **Dependencies**: Do not rely on external modules/libraries as this may be again a security concern and may increase load time.
+- **Usage of AI and LLMs**: Any dialects created with the assistance of an AI or LLM will not be regarded as legitimate by me and my project team, and I will claim the right to refute access to hosting the dialect publicly through the APIs for any such case, given it surpasses a level of severity I myself will be the judge of. Assistance of an AI or LLM includes AI generated artwork*, music, text (phrases, words, definitions, etc.), or other assets. The only allowed usage of AI is through code generation, spell/grammar checks, and providence of advice or ideas in a more general sense. *(the amount of AI art is already sickening)
+
+You need a name for your dialect (ex Example Draconic, you could even remove "Draconic" from the name) and its unique abbreviated form. There are some rules that apply (would reform after Classic Draconic's release):
+- **Reserved names** (a big *, todo: edit): Do not use words like "extended", "reimagined", etc., as they be too generic and versatile. <!-- idk, prob remove that later -->
+- **Abbreviations** The abbreviated form must be unique, begin with `"dr_"` (the language family), and end with a two-letter code representing the dialect. (ex `"dr_ex"`)
 #### Happy codding!
 
 # FILE STRUCTURE
 ## ./assets/
 Assets for the dialect.
 
-Contains images, audio, font, etc, may contain files like generators or other unsorted files.
+Contains images, audio, font, etc., may contain files like generators or other unsorted files.
 
 ## ./Map.js
 Main data and functions.

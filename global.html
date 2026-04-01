@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="onloaded" style="display: none;">
-        <h1>Bare bones API usage (LOCAL)</h1>
+        <h1>Bare bones API usage</h1>
         <h2>NUMEBRS TOOL</h2>
         <h3>May be incorrect on large numbers or upon editing short number (#nmbr)!</h3>
         <div>
@@ -18,7 +18,7 @@
         <h2>TRANSLATING TOOL</h2>
         <div>
             <input type="text" id="txtInput1" name="text" id="translator" placeholder="text in draconic" style="display: flex; width: 100%;">
-            <button type="button" id="translate_button1" style="display: flex;">Parse words</button>
+            <button type="button" id="translate_button1" style="display: flex;">Parse words (not tested)</button>
             <ul id="result1"></ul>
         </div>
         <div>
@@ -30,8 +30,8 @@
     </div>
 
 <script type="module">
-    import { DIALECTS } from "./dialects/DialectLoader.js";
-    const DR = await DIALECTS.loadUrl("http://127.0.0.1:5501/dialects/dr_dr/");
+    import { DIALECTS } from "https://draconicconlang.github.io/APIs/dialects/DialectLoader.js";
+    const DR = await DIALECTS.load("dr_dr");
     Object.assign(globalThis, DR);
 
     const onloaded = document.getElementById("onloaded")
@@ -97,6 +97,9 @@
     translate_button2.addEventListener("click", test_translate2);
 
     onloaded.style.display = "block"
+</script>
+<script type="module">
+
 </script>
 </body>
 </html>

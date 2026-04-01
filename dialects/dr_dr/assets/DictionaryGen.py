@@ -16,20 +16,99 @@ def clean_definition(def_text):
     return re.sub(r'\s*\([^)]*\)\s*', ' ', def_text).strip()
 
 GENDERS = {
-    'mag': ['Magical'],
-    'mun': ['Mundane'],
-    'a': ['Abstract'],
-    'e': ['Exalted'],
-    'r': ['Rational'],
-    'mon': ['Monstrous'],
-    'i': ['Irrational'],
-    'animates': ['Exalted', 'Rational', 'Monstrous', 'Irrational'],
-    'animate': ['Exalted', 'Rational', 'Monstrous', 'Irrational'],
-    'inanimates': ['Magical', 'Mundane', 'Abstract'],
-    'inanimate': ['Magical', 'Mundane', 'Abstract'],
-    'all': ['Exalted', 'Rational', 'Monstrous', 'Irrational',
-            'Magical', 'Mundane', 'Abstract']
+    "mag": "IDS.GENDERS.MAG",
+    "mun": "IDS.GENDERS.MUN",
+    "a": "IDS.GENDERS.A",
+    "e": "IDS.GENDERS.E",
+    "r": "IDS.GENDERS.R",
+    "mon": "IDS.GENDERS.MON",
+    "i": "IDS.GENDERS.I",
+    "animates": "IDS.GENDER_GROUPS.ANIM",
+    "animate": "IDS.GENDER_GROUPS.ANIM",
+    "inanimates": "IDS.GENDER_GROUPS.INANIM",
+    "inanimate": "IDS.GENDER_GROUPS.INANIM",
+    "all": "IDS.GENDER_GROUPS.A"
 }
+
+dictionarydata = """
+// vv==== CACHE =====vv
+
+DICTIONARY.addArray(Array.of(
+WORDS_HERE
+));
+
+// ^^==== CACHE =====^^
+
+DICTIONARY.ALL_GENDERS.MAP = (() => {
+    const sources = [
+        [DICTIONARY.NOUNS.MAP,        IDS.GENDERS.N],
+        [DICTIONARY.VERBS.MAP,        IDS.GENDERS.V],
+        [DICTIONARY.ADJECTIVES.MAP,   IDS.GENDERS.ADJ],
+        [DICTIONARY.ADVERBS.MAP,      IDS.GENDERS.ADV],
+        [DICTIONARY.AUXILIARIES.MAP,  IDS.GENDERS.AUX],
+        [DICTIONARY.PREPOSITIONS.MAP, IDS.GENDERS.PP],
+        [DICTIONARY.PARTICLES.MAP,    IDS.GENDERS.PART],
+        [DICTIONARY.DETERMINERS.MAP,  IDS.GENDERS.DET],
+        [DICTIONARY.CONJUNCTIONS.MAP, IDS.GENDERS.CON],
+    ];
+
+    const collected = {};
+    for (const [map, wordType] of sources) {
+        for (const [key, value] of Object.entries(map)) {
+            if (!(key in collected)) collected[key] = [];
+            collected[key].push({ entry: value, wordType });
+        }
+    }
+
+    const result = {};
+    for (const [key, entries] of Object.entries(collected)) {
+        if (entries.length === 1) {
+            result[key] = entries[0].entry;
+        } else {
+            const typeMap = {};
+            for (const { entry, wordType } of entries) {
+                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
+            }
+            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.GENDERS));
+        }
+    }
+
+    return Object.fromEntries(
+        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+    );
+})();
+
+function generateFlat(map) {
+    return Object.values(map).flatMap(value => {
+        if (!(value instanceof Grouped)) return [value];
+        if (value.type === IDS.OTHER.ML) return Object.values(value.values).flatMap(v => v instanceof Grouped && v.type === IDS.OTHER.MD ? Object.values(v.values) : [v]);
+        if (value.type === IDS.OTHER.MD) return Object.values(value.values);
+        return [value];
+    });
+}
+
+DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
+DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);
+DICTIONARY.ADJECTIVES.FLAT = generateFlat(DICTIONARY.ADJECTIVES.MAP);
+DICTIONARY.ADVERBS.FLAT = generateFlat(DICTIONARY.ADVERBS.MAP);
+DICTIONARY.AUXILIARIES.FLAT = generateFlat(DICTIONARY.AUXILIARIES.MAP);
+DICTIONARY.PREPOSITIONS.FLAT = generateFlat(DICTIONARY.PREPOSITIONS.MAP);
+DICTIONARY.PARTICLES.FLAT = generateFlat(DICTIONARY.PARTICLES.MAP);
+DICTIONARY.DETERMINERS.FLAT = generateFlat(DICTIONARY.DETERMINERS.MAP);
+DICTIONARY.CONJUNCTIONS.FLAT = generateFlat(DICTIONARY.CONJUNCTIONS.MAP);
+DICTIONARY.ALL_GENDERS.FLAT = generateFlat(DICTIONARY.ALL_GENDERS.MAP);
+
+// oh my god
+
+COMMON.PHRASES.MAP ={
+PHRASES_HERE
+}
+    
+COMMON.PROVERBS.MAP ={
+PROVRBS_HERE
+}
+
+"""
 
 def process_genders(entry):
     result = {}
@@ -72,6 +151,9 @@ def process_genders(entry):
 
     return result
 
+def process_genders_dict(d):
+    items = ", ".join(f'[{k}]: "{v}"' for k, v in d.items())
+    return "{" + items + "}"
 
 def process_declension(entry):
     declension = "1"
@@ -84,128 +166,14 @@ def process_declension(entry):
 
     return word, declension
 
-
-dictionarydata = """
-// vv==== CACHE =====vv
-
-DICTIONARY.NOUNS.MAP = {
-NOUNS_HERE
-}
-
-DICTIONARY.VERBS.MAP = {
-VERBS_HERE
-}
-
-DICTIONARY.ADJECTIVES.MAP = {
-ADJECTIVES_HERE
-}
-
-DICTIONARY.ADVERBS.MAP = {
-ADVERBS_HERE
-}
-
-DICTIONARY.AUXILIARIES.MAP = {
-AUXILIARIES_HERE
-}
-
-DICTIONARY.PREPOSITIONS.MAP = {
-PREPOSITIONS_HERE
-}
-
-DICTIONARY.PARTICLES.MAP = {
-PARTICLES_HERE
-}
-
-DICTIONARY.DETERMINERS.MAP = {
-DETERMINERS_HERE
-}
-
-DICTIONARY.CONJUNCTIONS.MAP = {
-CONJUNCTIONS_HERE
-}
-
-// ^^==== CACHE =====^^
-
-DICTIONARY.ALL_WORDS.MAP = (() => {
-    const sources = [
-        [DICTIONARY.NOUNS.MAP,        IDS.WORDS.N],
-        [DICTIONARY.VERBS.MAP,        IDS.WORDS.V],
-        [DICTIONARY.ADJECTIVES.MAP,   IDS.WORDS.ADJ],
-        [DICTIONARY.ADVERBS.MAP,      IDS.WORDS.ADV],
-        [DICTIONARY.AUXILIARIES.MAP,  IDS.WORDS.AUX],
-        [DICTIONARY.PREPOSITIONS.MAP, IDS.WORDS.PP],
-        [DICTIONARY.PARTICLES.MAP,    IDS.WORDS.PART],
-        [DICTIONARY.DETERMINERS.MAP,  IDS.WORDS.DET],
-        [DICTIONARY.CONJUNCTIONS.MAP, IDS.WORDS.CON],
-    ];
-
-    const collected = {};
-    for (const [map, wordType] of sources) {
-        for (const [key, value] of Object.entries(map)) {
-            if (!(key in collected)) collected[key] = [];
-            collected[key].push({ entry: value, wordType });
-        }
-    }
-
-    const result = {};
-    for (const [key, entries] of Object.entries(collected)) {
-        if (entries.length === 1) {
-            result[key] = entries[0].entry;
-        } else {
-            const typeMap = {};
-            for (const { entry, wordType } of entries) {
-                typeMap[entry.unifiedType ?? entry.type ?? wordType] = entry;
-            }
-            result[key] = new Grouped(IDS.OTHER.ML, typeMap, Object.values(IDS.WORDS));
-        }
-    }
-
-    return Object.fromEntries(
-        Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
-    );
-})();
-
-function generateFlat(map) {
-    return Object.values(map).flatMap(value => {
-        if (!(value instanceof Grouped)) return [value];
-        if (value.type === IDS.OTHER.ML) return Object.values(value.values).flatMap(v => v instanceof Grouped && v.type === IDS.OTHER.MD ? Object.values(v.values) : [v]);
-        if (value.type === IDS.OTHER.MD) return Object.values(value.values);
-        return [value];
-    });
-}
-
-DICTIONARY.NOUNS.FLAT = generateFlat(DICTIONARY.NOUNS.MAP);
-DICTIONARY.VERBS.FLAT = generateFlat(DICTIONARY.VERBS.MAP);
-DICTIONARY.ADJECTIVES.FLAT = generateFlat(DICTIONARY.ADJECTIVES.MAP);
-DICTIONARY.ADVERBS.FLAT = generateFlat(DICTIONARY.ADVERBS.MAP);
-DICTIONARY.AUXILIARIES.FLAT = generateFlat(DICTIONARY.AUXILIARIES.MAP);
-DICTIONARY.PREPOSITIONS.FLAT = generateFlat(DICTIONARY.PREPOSITIONS.MAP);
-DICTIONARY.PARTICLES.FLAT = generateFlat(DICTIONARY.PARTICLES.MAP);
-DICTIONARY.DETERMINERS.FLAT = generateFlat(DICTIONARY.DETERMINERS.MAP);
-DICTIONARY.CONJUNCTIONS.FLAT = generateFlat(DICTIONARY.CONJUNCTIONS.MAP);
-DICTIONARY.ALL_WORDS.FLAT = generateFlat(DICTIONARY.ALL_WORDS.MAP);
-
-// oh my god
-
-COMMON.PHRASES.MAP ={
-PHRASES_HERE
-}
-    
-COMMON.PROVERBS.MAP ={
-PROVRBS_HERE
-}
-
-"""
-
-
-
 def process_notes(text):
     return str(text).replace('"', "'").replace("nan", "")
 
+def process_final(text):
+    return text.replace("\n", "").replace("-", "").replace(', ""', "")
+
 if __name__ == "__main__":
-    noun_dict = {}
-    adj_dict = {}
-    verbs, adverbs, auxiliaries, prepositions, particles, determiners, conjunctions = [], [], [], [], [], [], []
+    every = []
     
     phrases, proverbs = [], []
     
@@ -214,55 +182,29 @@ if __name__ == "__main__":
     for i in data:
         if i[1] == "n":
             word, dec = process_declension(i)
-            if word not in noun_dict:
-                noun_dict[word] = {}
-            noun_dict[word][dec] = f'new Noun("{word}", {dec}, {process_genders(i)}, "{process_notes(i[4])}")'.replace("\n", "").replace("-", "")
+            every.append(process_final(f'new Noun("{word}", {dec}, {process_genders_dict(process_genders(i))}, "{process_notes(i[4])}")'))
         elif i[1] == "adj":
             word, dec = process_declension(i)
-            if word not in adj_dict:
-                adj_dict[word] = {}
-            adj_dict[word][dec] = f'new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", "")
-        elif i[1] == "v":
-            verbs.append(f'"{i[0]}": new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "adv":
-            adverbs.append(f'"{i[0]}": new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "aux":
-            auxiliaries.append(f'"{i[0]}": new Auxiliary("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "pp":
-            prepositions.append(f'"{i[0]}": new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "part":
-            particles.append(f'"{i[0]}": new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "det":
-            determiners.append(f'"{i[0]}": new Determiner("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
-        elif i[1] == "con":
-            conjunctions.append(f'"{i[0]}": new Conjunction("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'.replace("\n", "").replace("-", ""))
+            every.append(process_final(f'new Adjective("{word}", {dec}, "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'))
+        elif i[1] == "v": every.append(process_final(f'new Verb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'))            
+        elif i[1] == "adv": every.append(process_final(f'new Adverb("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'))
+        elif i[1] == "aux": every.append(process_final(f'new Auxiliary("{i[0]}", "{process_notes(i[2])}", "{i[3]}", "{process_notes(i[4])}")'))
+        elif i[1] == "pp": every.append(process_final(f'new Preposition("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'))
+        elif i[1] == "part": every.append(process_final(f'new Particle("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'))
+        elif i[1] == "det": every.append(process_final(f'new Determiner("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'))
+        elif i[1] == "con": every.append(process_final(f'new Conjunction("{i[0]}", "{process_notes(i[2])}", "{process_notes(i[4])}")'))
 
     for i in phrases_data:
         if "nan" not in str(i[0]):
-            phrases.append(f'"{i[0]}": new Phrase("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
+            phrases.append(f'new Phrase("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
 
     for i in proverbs_data:
         if "nan" not in str(i[0]):
-            proverbs.append(f'"{i[0]}": new Proverb("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
+            proverbs.append(f'new Proverb("{i[0]}", "{process_notes(i[1])}", "{process_notes(i[2])}")'.replace("\n", "").replace("-", ""))
 
-    nouns = [f'"{word}": new Grouped(IDS.OTHER.MD, {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}, [1,2,3,4], IDS.WORDS.N)'
-             if len(decls) > 1 else f'"{word}": {list(decls.values())[0]}'
-             for word, decls in sorted(noun_dict.items())]
-    
-    adjectives = [f'"{word}": new Grouped(IDS.OTHER.MD, {{{",".join(f"{k}: {v}" for k,v in sorted(decls.items()))}}}, [1,2,3,4], IDS.WORDS.ADJ)'
-                 if len(decls) > 1 else f'"{word}": {list(decls.values())[0]}'
-                 for word, decls in sorted(adj_dict.items())]
 
     with open("../Dictionary.js", "w", encoding="utf-8") as f:
         f.write(dictionarydata
-                .replace("NOUNS_HERE", ",\n".join(nouns))
-                .replace("ADVERBS_HERE", ",\n".join(adverbs))
-                .replace("VERBS_HERE", ",\n".join(verbs))
-                .replace("ADJECTIVES_HERE", ",\n".join(adjectives))
-                .replace("AUXILIARIES_HERE", ",\n".join(auxiliaries))
-                .replace("PREPOSITIONS_HERE", ",\n".join(prepositions))
-                .replace("PARTICLES_HERE", ",\n".join(particles))
-                .replace("DETERMINERS_HERE", ",\n".join(determiners))
-                .replace("CONJUNCTIONS_HERE", ",\n".join(conjunctions))
+                .replace("WORDS_HERE", ",\n".join(every))
                 .replace("PHRASES_HERE", ",\n".join(phrases))
                 .replace("PROVRBS_HERE", ",\n".join(proverbs)))
