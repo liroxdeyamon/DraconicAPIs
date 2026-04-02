@@ -28,7 +28,14 @@
             <ul id="result2"></ul>
         </div>
     </div>
-
+<style>
+    pr { color: cyan; }
+    sf { color: cyan; }
+    dc { color: lime; }
+    type { color: orange; }
+    word { color: darkblue; }
+    def { color: gray; }
+</style>
 <script type="module">
     import { DIALECTS } from "./dialects/DialectLoader.js";
     const DR = await DIALECTS.loadUrl("http://127.0.0.1:5501/dialects/dr_dr/");
@@ -52,11 +59,27 @@
 
     function test_translate1() {
         result1.innerHTML = "";
-        txtInput1.value.split(" ").forEach(word => {
-            const obj = DICTIONARY.fuzzyFetchByWord(word)[0];
-            const prefix = AFFIXES.PREFIXES.match(word, AFFIXES.PREFIXES.MATCHES)?.[0]?.affix ?? "";
-            const suffix = AFFIXES.SUFFIXES.match(word, AFFIXES.SUFFIXES.MATCHES)?.[0]?.affix ?? "";
-            result1.innerHTML += `<li>${obj.type} | ${prefix}- ${obj.text} (${obj.declension}) -${suffix} - ${obj.definition}</li>`;
+        
+        txtInput1.value.split(/\s+/).filter(word => word.length > 0).forEach(word => {
+            console.log(word)
+            const obj = DICTIONARY.fuzzyFetchByWord(word, 3);
+
+            let r = "|||";
+            obj.forEach(obj => {
+                if (word.replace(obj.word, "")) {
+                    var prefix = AFFIXES.PREFIXES.match(word, AFFIXES.PREFIXES.MATCHES)?.[0]?.affix ?? "";
+                    var suffix = AFFIXES.SUFFIXES.match(word, AFFIXES.SUFFIXES.MATCHES)?.[0]?.affix ?? "";
+                    if (prefix) prefix = `<pr>${prefix}- </pr>`
+                    if (suffix) suffix = `<sf> -${suffix}</sf>`
+                } else {
+                    var prefix = "";
+                    var suffix = "";
+                } 
+                var declension = obj[0]?.declension ?? "";
+                if (declension) declension = ` <dc>(${declension})</dc>`
+                r += ` <type>${obj.type}</type> | ${prefix}<word>${obj.text}${declension}</word>${suffix} - <def>${obj.definition}</def> |||`;
+            });
+            result1.innerHTML += `<li>${r}</li>`;
         });
     }
 

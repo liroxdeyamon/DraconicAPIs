@@ -1220,40 +1220,31 @@ AFFIXES = {
     },
 
     match(input, map, isPrefix = false, returnAll = true) {
-        if (!input || typeof input !== "string") return null;
-
-        const matches = [];
         let best = null;
         let bestLen = 0;
+        const matches = [];
 
         for (const [key, val] of Object.entries(map)) {
             if (val instanceof AffixMatch) {
-                const variants = val.variants || [key];
                 const matchedVariants = [];
-
-                for (const v of variants) {
+                for (const v of val.variants) {
                     if (typeof v !== "string") continue;
-                    const match = isPrefix ? input.startsWith(v) : input.endsWith(v);
-                    if (match) {
-                        matchedVariants.push(v);
-                    }
+                    if (isPrefix ? input.startsWith(v) : input.endsWith(v)) matchedVariants.push(v);
                 }
 
                 if (matchedVariants.length === 0) continue;
 
                 const longestMatch = Math.max(...matchedVariants.map(v => v.length));
-
-                if (returnAll) {
-                    matches.push(new AffixMatch(val.type, val.affix, matchedVariants, val.paths));
-                } else if (longestMatch > bestLen) {
+                if (returnAll) matches.push(new AffixMatch(val.type, val.affix, matchedVariants, val.paths));
+                else if (longestMatch > bestLen) {
                     best = new AffixMatch(val.type, val.affix, matchedVariants, val.paths);
                     bestLen = longestMatch;
                 }
                 continue;
             }
 
-            const match = isPrefix ? input.startsWith(key) : input.endsWith(key);
-            if (match) {
+            const isMatch = isPrefix ? input.startsWith(key) : input.endsWith(key);
+            if (isMatch) {
                 if (returnAll) {
                     matches.push(val);
                 } else if (key.length > bestLen) {
@@ -1263,7 +1254,18 @@ AFFIXES = {
             }
         }
 
-        if (returnAll) return matches.length ? matches : null;
+        if (returnAll) {
+            if (matches.length === 0) return null;
+
+            return matches.sort((a, b) => {
+                const getLen = (item) => {
+                    if (item instanceof AffixMatch) return Math.max(...item.variants.map(v => v.length));
+                    return typeof item === "string" ? item.length : (item.affix ? item.affix.length : 0);
+                };
+                return getLen(b) - getLen(a);
+            });
+        }
+
         return best;
     },
 
@@ -1364,8 +1366,7 @@ function mergedSearchByDefinition(definition, wordmap) {
         );
 }
 
-
-function generateVariations(str) {
+const VARIATION_MAP = (() => {
     const couples = [
         ["'", "`", "'"],
         ["a", "ā", "á", "à", "â", "aa"],
@@ -1379,16 +1380,19 @@ function generateVariations(str) {
         ["H", "ħ"],
         ["X", "χ"]
     ];
-    
     const map = new Map();
     for (const g of couples) {
         for (const c of g) map.set(c.toLowerCase(), g.map(x => x.toLowerCase()));
     }
+    return map;
+})();
+
+function generateVariations(str) {
     function expand(s, i = 0) {
         if (i >= s.length) return [s];
         for (let len = Math.min(3, s.length - i); len >= 1; len--) {
             const sub = s.slice(i, i + len);
-            const group = map.get(sub);
+            const group = VARIATION_MAP.get(sub);
             if (group) {
                 const rest = expand(s, i + len);
                 return group.flatMap(v => rest.map(r => v + r));
@@ -1396,268 +1400,193 @@ function generateVariations(str) {
         }
         return expand(s, i + 1).map(r => s[i] + r);
     }
-    return expand(str.toLowerCase());
+    return expand(str);
 }
 
 function charTriples(str, accurate = false) {
-    const s = str.toLowerCase();
     const triples = new Set();
-    const variations = accurate ? generateVariations(s) : [s];
+    const variations = accurate ? generateVariations(str) : [str];
     for (const v of variations) {
         if (v.length > 3) {
-            for (let i = 0; i < v.length - 2; i++) {
-                triples.add(v.slice(i, i + 3));
-            }
+            for (let i = 0; i < v.length - 2; i++) triples.add(v.slice(i, i + 3));
         } else triples.add(v);
     }
     return triples;
 }
 
-function scoreTriples(query, text, accurate = false) {
-    const qTrip = charTriples(query, accurate);
-    const qTripBasic = charTriples(query);
+function scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, text) {
     const tTrip = charTriples(text);
     let common = 0;
-    for (let tri of qTrip) {
+    for (const tri of qTrip) {
         if (tTrip.has(tri)) common++;
     }
     let score = common / Math.max(1, qTripBasic.size) * 200;
-    if (text === query) score += 300;
-    else if (text.startsWith(query)) score += 100;
+    if (text === q) score += 300;
+    else if (text.startsWith(q)) score += 100;
     else {
-        const wordBoundaryRegex = new RegExp(`\\b${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
         const exactMatches = (text.match(wordBoundaryRegex) || []).length;
         score += exactMatches * 70;
-        if (exactMatches === 0 && text.includes(query)) score += 10;
+        if (exactMatches === 0 && text.includes(q)) score += 10;
     }
     return score + 20 / Math.max(1, text.length);
 }
 
 function fuzzyFetch(query, list, is_word, limit = 5) {
     const q = query.toLowerCase();
+    const qTrip = charTriples(q, true);
+    const qTripBasic = charTriples(q);
+    const wordBoundaryRegex = new RegExp(`\\b${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
     const results = [];
     for (const item of list) {
-        let score = 0;
-        if (!is_word) score = scoreTriples(q, item.definition.toLowerCase());
-        else score = scoreTriples(q, item.word.toLowerCase(), true);
+        const text = (is_word ? item.word : item.definition).toLowerCase();
+        const score = scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, text);
         if (score > 0) results.push({ item, score });
     }
     results.sort((a, b) => b.score - a.score);
     return results.slice(0, limit).map(r => r.item);
 }
 
+function createWordCategory(extras = {}) {
+    return {
+        MAP: {},
+        FLAT: [],
+        fetch(keyword) { return basicSearch(keyword, this.FLAT); },
+        fetchByDefinition(def) { return basicSearchByGender(def, this.FLAT); },
+        random() { return this.FLAT[Math.floor(Math.random() * this.FLAT.length)]; },
+        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, this.FLAT, false, limit); },
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, this.FLAT, true, limit); },
+        ...extras
+    };
+}
+
+function unpack(entry) {
+    if (!(entry instanceof Grouped)) return [entry];
+    const words = Object.values(entry.values);
+    if (entry instanceof MultiDeclensional) return words;
+    return words.flatMap(unpack);
+}
+
 DICTIONARY = {
-    [IDS.WORDS.N]: {
-        MAP: {},
-        FLAT: [],
-        SUFFIXES: AFFIXES.SUFFIXES.NOUNS,
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.NOUNS.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.NOUNS.FLAT); },
-        random() { return DICTIONARY.NOUNS.FLAT[Math.floor(Math.random() * DICTIONARY.NOUNS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.NOUNS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.NOUNS.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.V]: {
-        MAP: {},
-        FLAT: [],
-        SUFFIXES: AFFIXES.SUFFIXES.VERBS,
-        PREFIXES: AFFIXES.PREFIXES.VERBS,
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.VERBS.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.VERBS.FLAT); },
-        random() { return DICTIONARY.VERBS.FLAT[Math.floor(Math.random() * DICTIONARY.VERBS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.VERBS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.VERBS.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.ADJ]: {
-        MAP: {},
-        FLAT: [],
-        SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES,
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADJECTIVES.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADJECTIVES.FLAT); },
-        random() { return DICTIONARY.ADJECTIVES.FLAT[Math.floor(Math.random() * DICTIONARY.ADJECTIVES.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ADJECTIVES.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ADJECTIVES.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.ADV]: {
-        MAP: {},
-        FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.ADVERBS.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ADVERBS.FLAT); },
-        random() { return DICTIONARY.ADVERBS.FLAT[Math.floor(Math.random() * DICTIONARY.ADVERBS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ADVERBS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ADVERBS.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.AUX]: {
-        MAP: {},
-        FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.AUXILIARIES.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.AUXILIARIES.FLAT); },
-        random() { return DICTIONARY.AUXILIARIES.FLAT[Math.floor(Math.random() * DICTIONARY.AUXILIARIES.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.AUXILIARIES.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.AUXILIARIES.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.PP]: {
-        MAP: {},
-        FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.PREPOSITIONS.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PREPOSITIONS.FLAT); },
-        random() { return DICTIONARY.PREPOSITIONS.FLAT[Math.floor(Math.random() * DICTIONARY.PREPOSITIONS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.PREPOSITIONS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.PREPOSITIONS.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.PART]: {
-        MAP: {},
-        FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.PARTICLES.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.PARTICLES.FLAT); },
-        random() { return DICTIONARY.PARTICLES.FLAT[Math.floor(Math.random() * DICTIONARY.PARTICLES.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.PARTICLES.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.PARTICLES.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.DET]: {
-        MAP: {},
-        FLAT: [],
+    [IDS.WORDS.N]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.NOUNS }),
+    [IDS.WORDS.V]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.VERBS, PREFIXES: AFFIXES.PREFIXES.VERBS }),
+    [IDS.WORDS.ADJ]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES }),
+    [IDS.WORDS.ADV]: createWordCategory(),
+    [IDS.WORDS.AUX]: createWordCategory(),
+    [IDS.WORDS.PP]: createWordCategory(),
+    [IDS.WORDS.PART]: createWordCategory(),
+    [IDS.WORDS.DET]: createWordCategory({
         SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS,
+        fetch(keyword) { return basicSearch(keyword, this.FLAT) || this.IRREGULARS.fetch(keyword); },
+        fuzzyFetchByWord(word, limit = 5) {
+            const std = fuzzyFetch(word, this.FLAT, true, limit);
+            const irr = this.IRREGULARS.fuzzyFetchByWord(word, limit);
+            return [...std, ...irr].slice(0, limit);
+        },
         IRREGULARS: {
             MAP: {
+                [IDS.DET_TYPES.NA]: new Determiner("q̇e", "Negative Article"),
                 [GENDERS.MAP.E.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyn", [IDS.NUMBERS.P]: "tōn" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēn", [IDS.NUMBERS.P]: "sōn" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēn", [IDS.NUMBERS.P]: "li'ōn" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyn", "Definite Article, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("tōn", "Definite Article, Plural, Exalted") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēn", "Proximal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("sōn", "Proximal Demonstrative, Plural, Exalted") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēn", "Distal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("li'ōn", "Distal Demonstrative, Plural, Exalted") },
                 },
                 [GENDERS.MAP.R.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyf", [IDS.NUMBERS.P]: "tōf" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēf", [IDS.NUMBERS.P]: "sōf" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēf", [IDS.NUMBERS.P]: "li'ōf" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyf", "Definite Article, Singular, Rational"), [IDS.NUMBERS.P]: new Determiner("tōf", "Definite Article, Plural, Rational") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēf", "Proximal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("sōf", "Proximal Demonstrative, Plural, Rational") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēf", "Distal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("li'ōf", "Distal Demonstrative, Plural, Rational") },
                 },
                 [GENDERS.MAP.MON.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tó", [IDS.NUMBERS.P]: "tô" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēħó", [IDS.NUMBERS.P]: "sōħó" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēħó", [IDS.NUMBERS.P]: "li'ô" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tó", "Definite Article, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("tô", "Definite Article, Plural, Monstrous") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēħó", "Proximal Demonstrative, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("sōħó", "Proximal Demonstrative, Plural, Monstrous") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēħó", "Distal Demonstrative, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("li'ô", "Distal Demonstrative, Plural, Monstrous") },
                 },
                 [GENDERS.MAP.I.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tīl", [IDS.NUMBERS.P]: "tūl" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēllīl", [IDS.NUMBERS.P]: "sōllīl" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēllīl", [IDS.NUMBERS.P]: "li'llīl" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tīl", "Definite Article, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("tūl", "Definite Article, Plural, Irrational") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēllīl", "Proximal Demonstrative, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("sōllīl", "Proximal Demonstrative, Plural, Irrational") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēllīl", "Distal Demonstrative, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("li'llīl", "Distal Demonstrative, Plural, Irrational") },
                 },
                 [GENDERS.MAP.MAG.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tuχ", [IDS.NUMBERS.P]: "tōχ" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhuχ", [IDS.NUMBERS.P]: "sōhuχ" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhuχ", [IDS.NUMBERS.P]: "li'ōχ" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tuχ", "Definite Article, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("tōχ", "Definite Article, Plural, Magical") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēhuχ", "Proximal Demonstrative, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("sōhuχ", "Proximal Demonstrative, Plural, Magical") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēhuχ", "Distal Demonstrative, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("li'ōχ", "Distal Demonstrative, Plural, Magical") },
                 },
                 [GENDERS.MAP.MUN.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "tyrk", [IDS.NUMBERS.P]: "tōk" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sērk", [IDS.NUMBERS.P]: "sōthok" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lērk", [IDS.NUMBERS.P]: "li'ōk" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyrk", "Definite Article, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("tōk", "Definite Article, Plural, Mundane") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sērk", "Proximal Demonstrative, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("sōthok", "Proximal Demonstrative, Plural, Mundane") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lērk", "Distal Demonstrative, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("li'ōk", "Distal Demonstrative, Plural, Mundane") },
                 },
                 [GENDERS.MAP.A.NAME]: {
-                    [IDS.DET_TYPES.NA]: "q̇e",
-                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: "toq̇", [IDS.NUMBERS.P]: "tōq̇" },
-                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: "sēhoq̇", [IDS.NUMBERS.P]: "sōhoq̇" },
-                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: "lēhoq̇", [IDS.NUMBERS.P]: "li'ōq̇" },
+                    [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("toq̇", "Definite Article, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("tōq̇", "Definite Article, Plural, Abstract") },
+                    [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēhoq̇", "Proximal Demonstrative, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("sōhoq̇", "Proximal Demonstrative, Plural, Abstract") },
+                    [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēhoq̇", "Distal Demonstrative, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("li'ōq̇", "Distal Demonstrative, Plural, Abstract") },
                 }
             },
-            get FLAT() {
-                return Object.values(this.MAP);
+            get FLAT() { 
+                return Object.values(this.MAP).flatMap(g => g instanceof Determiner ? g : Object.values(g)).flatMap(v => (v instanceof Determiner ? v : Object.values(v))); 
             },
-            fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.IRREGULARS.FLAT); },
-            random() { return DICTIONARY.DETERMINERS.IRREGULARS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.IRREGULARS.FLAT.length)]; },
-            fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.DETERMINERS.IRREGULARS.FLAT, true, limit); }
+            fetch(keyword) { return basicSearch(keyword, this.FLAT); },
+            random() { return this.FLAT[Math.floor(Math.random() * this.FLAT.length)]; },
+            fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, this.FLAT, true, limit); }
         },
-        fetch(keyword) { return basicSearch(keyword, DICTIONARY.DETERMINERS.FLAT); },
-        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.DETERMINERS.FLAT); },
-        random() { return DICTIONARY.DETERMINERS.FLAT[Math.floor(Math.random() * DICTIONARY.DETERMINERS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.DETERMINERS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.DETERMINERS.FLAT, true, limit); }
-    },
-
-    [IDS.WORDS.CON]: {
-        MAP: {},
-        FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.CONJUNCTIONS.FLAT); },
-        // fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.CONJUNCTIONS.FLAT); },
-        random() { return DICTIONARY.CONJUNCTIONS.FLAT[Math.floor(Math.random() * DICTIONARY.CONJUNCTIONS.FLAT.length)]; },
-        fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.CONJUNCTIONS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.CONJUNCTIONS.FLAT, true, limit); }
-    },
-
+    }),
+    [IDS.WORDS.CON]: createWordCategory(),
     ALL_WORDS: {
         MAP: {},
         FLAT: [],
-        // fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
-        // fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); },
+        fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
+        fetchByDefinition(def) { return basicSearchByGender(def, DICTIONARY.ALL_WORDS.FLAT); },
         random() { return DICTIONARY.ALL_WORDS.FLAT[Math.floor(Math.random() * DICTIONARY.ALL_WORDS.FLAT.length)]; },
         fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, false, limit); },
-        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, true, limit); }
+        fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, true, limit); },
     },
-    // fetch(keyword) { return basicSearch(keyword, DICTIONARY.ALL_WORDS.FLAT); },
-    // fetchByDefinition(def) { return mergedSearchByDefinition(def, DICTIONARY.ALL_WORDS.FLAT); },    
     random() { return DICTIONARY.ALL_WORDS.FLAT[Math.floor(Math.random() * DICTIONARY.ALL_WORDS.FLAT.length)]; },
     fuzzyFetchByDefinition(def, limit = 5) { return fuzzyFetch(def, DICTIONARY.ALL_WORDS.FLAT, false, limit); },
     fuzzyFetchByWord(word, limit = 5) { return fuzzyFetch(word, DICTIONARY.ALL_WORDS.FLAT, true, limit); },
-    getLink(word) { return DICTIONARY.ALL_WORDS.MAP[word] ?? null; },
-    getCopy(word) {
-        const entry = DICTIONARY.ALL_WORDS.MAP[word];
-        return entry ? structuredClone(entry) : null;
+    getLink(word) { return DICTIONARY.ALL_WORDS.MAP[word] ?? null; }, // unsafe to edit, will alter all copies of it inside dictionary
+    getCopy(obj) {
+        if (obj === null || typeof obj !== 'object') return obj;
+        if (Array.isArray(obj)) return obj.map(item => DICTIONARY.getCopy(item));
+        const clone = Object.create(Object.getPrototypeOf(obj));
+        for (const key of Object.keys(obj)) { clone[key] = DICTIONARY.getCopy(obj[key]); }
+        return clone;
     },
     has(word) { return word in DICTIONARY.ALL_WORDS.MAP; }, 
-add(obj) {
-    const { word, type } = obj;
+    add(obj) {
+        const { word, type } = obj;
+        const typeMap = DICTIONARY[type].MAP;
+        const ex = typeMap[word];
 
-    if (type === IDS.WORDS.N || type === IDS.WORDS.ADJ) {
-        const ex = DICTIONARY[type].MAP[word];
-        if (ex instanceof MultiDeclensional) {
-            ex.values[obj.declension] = obj;
-            if (!ex.available.includes(obj.declension)) ex.available.push(obj.declension);
-        } else if (ex instanceof Word) {
-            const md = new MultiDeclensional({}, type);
-            md.values[ex.declension] = ex;
-            md.values[obj.declension] = obj;
-            md.available = [ex.declension, obj.declension];
-            DICTIONARY[type].MAP[word] = md;
-        } else {
-            DICTIONARY[type].MAP[word] = obj;
-        }
-    } else {
-        DICTIONARY[type].MAP[word] = obj;
-    }
+        if (type === IDS.WORDS.N || type === IDS.WORDS.ADJ) {
+            if (ex instanceof MultiDeclensional) {
+                ex.values[obj.declension] = obj;
+                if (!ex.available.includes(obj.declension)) ex.available.push(obj.declension);
+            } else if (ex instanceof Word) {
+                const md = new MultiDeclensional({}, type);
+                md.values[ex.declension] = ex;
+                md.values[obj.declension] = obj;
+                md.available = [ex.declension, obj.declension];
+                typeMap[word] = md;
+            } else typeMap[word] = obj;
+        } else typeMap[word] = obj;
 
-    const val = DICTIONARY[type].MAP[word];
-    const aw = DICTIONARY.ALL_WORDS.MAP[word];
+        const val = typeMap[word];
+        const aw = DICTIONARY.ALL_WORDS.MAP[word];
 
-    if (!aw) {
-        DICTIONARY.ALL_WORDS.MAP[word] = val instanceof MultiDeclensional
-            ? val
-            : new Lexemic(val);
-    } else if (aw instanceof MultiLexemic) {
-        aw.values[type] = val;
-        if (!aw.available.includes(type)) aw.available.push(type);
-    } else if (aw.available.includes(type)) {
-        if (val instanceof MultiDeclensional)
-            DICTIONARY.ALL_WORDS.MAP[word] = val;
-        else
+        if (!aw) DICTIONARY.ALL_WORDS.MAP[word] = val instanceof MultiDeclensional ? val : new Lexemic(val);
+        else if (aw instanceof MultiLexemic) {
             aw.values[type] = val;
-    } else {
-        DICTIONARY.ALL_WORDS.MAP[word] = new MultiLexemic({ ...aw.values, [type]: val });
-    }
-},
+            if (!aw.available.includes(type)) aw.available.push(type);
+        } else if (aw.available.includes(type)) {
+            if (val instanceof MultiDeclensional) DICTIONARY.ALL_WORDS.MAP[word] = val;
+            else aw.values[type] = val;
+        } else DICTIONARY.ALL_WORDS.MAP[word] = new MultiLexemic({ ...aw.values, [type]: val });
+
+        return DICTIONARY.getLink(obj.word);
+    },
     addArray(arr) {arr.forEach(obj => {DICTIONARY.add(obj)})},
     remove(word, type = null, declension = null) {
         const aw = DICTIONARY.ALL_WORDS.MAP[word];
-        if (!aw) return;
+        if (!aw) return false;
 
         const types = type ? [type] : [...aw.available];
 
@@ -1680,27 +1609,20 @@ add(obj) {
 
         if (aw.available.length === 0) delete DICTIONARY.ALL_WORDS.MAP[word];
         else if (aw.available.length === 1 && aw instanceof MultiLexemic) DICTIONARY.ALL_WORDS.MAP[word] = new Lexemic(aw.values[aw.available[0]]);
+        return true;
     }, // this removes all appearances of words with this id, to remove specific declension or word type, add those fields
     // ex: DICTIONARY.remove("someword", IDS.WORDS.N, 1) --> will remove someword's noun with 1st declension
     // ex: DICTIONARY.remove("someword", IDS.WORDS.ADJ) --> will remove someword's all adjectives
-generateFlats() {
-    function unpack(entry) {
-        if (!(entry instanceof Grouped)) return [entry];
-        const words = Object.values(entry.values);
-        if (entry instanceof MultiDeclensional) return words;
-        return words.flatMap(unpack);
+    generateFlats() {
+        for (const type of Object.values(IDS.WORDS)) { 
+            const cat = DICTIONARY[type];
+            const regularWords = Object.values(cat.MAP).flatMap(unpack);
+            const irregularWords = cat.IRREGULARS ? cat.IRREGULARS.FLAT : [];
+            cat.FLAT = [...irregularWords, ...regularWords];
+        }
+        DICTIONARY.ALL_WORDS.FLAT = Object.values(IDS.WORDS).flatMap(type => DICTIONARY[type].FLAT);
     }
-
-    for (const type of Object.values(IDS.WORDS)) {
-        DICTIONARY[type].FLAT = Object.values(DICTIONARY[type].MAP).flatMap(unpack);
-    }
-
-    DICTIONARY.ALL_WORDS.FLAT = Object.values(IDS.WORDS).flatMap(type =>
-        DICTIONARY[type].FLAT
-    );
 }
-}
-
 
 // ---------------------------- NUMBRES ----------------------------
 
