@@ -101,7 +101,7 @@ IDS = {
         INANIM: "Inanimates",
         A: "All"
     },
-    GENDER_GROUPS_UNPACKED: {
+    GROUPS_UNPACKED: {
     },
     OTHER: {
         ML: "MultiLexemic",
@@ -110,10 +110,16 @@ IDS = {
     }
 }
 
-IDS.GENDER_GROUPS_UNPACKED = {
+IDS.GROUPS_UNPACKED = {
     [IDS.GENDER_GROUPS.ANIM]:   [IDS.GENDERS.E, IDS.GENDERS.R, IDS.GENDERS.MON, IDS.GENDERS.I],
     [IDS.GENDER_GROUPS.INANIM]: [IDS.GENDERS.MAG, IDS.GENDERS.MUN, IDS.GENDERS.A],
     [IDS.GENDER_GROUPS.A]:      Object.values(IDS.GENDERS),
+    ANIM: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.ANIM],
+    INANIM: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.INANIM],
+    A: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.A],
+    ANIMATES: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.ANIM],
+    INANIMIMATES: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.INANIM],
+    ALL: IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.A],
 };
 
 // ============================ CLASSES ============================
@@ -167,11 +173,11 @@ class Noun extends Word {
         this.declension = declension;
         this.genders = {};
         for (const [k, v] of Object.entries(gender)) {
-            const unpacked = Object.entries(IDS.GENDER_GROUPS_UNPACKED).find(([gk]) => gk === k);
+            const unpacked = Object.entries(IDS.GROUPS_UNPACKED).find(([gk]) => gk === k);
             if (unpacked) for (const g of unpacked[1]) this.genders[g] = v;
             else this.genders[k] = v;
         }
-        this.definition = Object.entries(GENDERS.combine(this.genders)).map(([k, v]) => `${k}: ${v}`).join("\n")
+        this.definition = Object.entries(combineGenders(this.genders)).map(([k, v]) => `${k}: ${v}`).join("\n")
     }
 }
 
@@ -757,7 +763,7 @@ CHARACTERS = {
         const pool = [];
 
         for (const e of CHARACTERS.FLAT) {
-            if (!e.name) continue;
+            if (!e) continue;
 
             if (e.prop.includes(IDS.CHARACTERS.C) && consonants) pool.push(e);
             if (e.prop.includes(IDS.CHARACTERS.P) && pyric_consonants) pool.push(e);
@@ -874,87 +880,27 @@ Object.entries(CHARACTERS.MAP).forEach(([key, value]) => {
     value.description = description(value);
 });
 
-
-// ---------------------------- GENDERS ----------------------------
-
-GENDERS = {
-    MAP: { // TODO: maybe redo like IDS.WORDS
-        E: { NAME: "Exalted", SHORT: "e" },
-        R: { NAME: "Rational", SHORT: "r" },
-        MON: { NAME: "Monstrous", SHORT: "mon" },
-        I: { NAME: "Irrational", SHORT: "i" },
-        MAG: { NAME: "Magical", SHORT: "mag" },
-        MUN: { NAME: "Mundane", SHORT: "mun" },
-        A: { NAME: "Abstract", SHORT: "a" }
-    },
-
-    get ANIMATES() {
-        return {
-            NAME: "Animates",
-            AFFECTED: [this.MAP.E, this.MAP.R, this.MAP.MON, this.MAP.I],
-            get FLAT() {
-                return {
-                    NAME: this.AFFECTED.map(g => g.NAME),
-                    SHORT: this.AFFECTED.map(g => g.SHORT)
-                };
-            }
-        };
-    },
-
-    get INANIMATES() {
-        return {
-            NAME: "Inanimates",
-            AFFECTED: [this.MAP.MAG, this.MAP.MUN, this.MAP.A],
-            get FLAT() {
-                return {
-                    NAME: this.AFFECTED.map(g => g.NAME),
-                    SHORT: this.AFFECTED.map(g => g.SHORT)
-                };
-            }
-        };
-    },
-
-    get ALL_GENDERS() {
-        return {
-            NAME: "All",
-            AFFECTED: [this.MAP.E, this.MAP.R, this.MAP.MON, this.MAP.I, this.MAP.MAG, this.MAP.MUN, this.MAP.A],
-            get FLAT() {
-                return {
-                    NAME: this.AFFECTED.map(g => g.NAME),
-                    SHORT: this.AFFECTED.map(g => g.SHORT)
-                };
-            }
-        };
-    },
-
-    get FLAT() {
-        return {
-            NAME: Object.values(this.MAP).map(g => g.NAME),
-            SHORT: Object.values(this.MAP).map(g => g.SHORT)
-        };
-    },
-
-    combine(entry) {
-        const defMap = {}
-        for (const [gender, def] of Object.entries(entry)) {
-            if (!defMap[def]) defMap[def] = []
-            defMap[def].push(gender)
-        }
-
-        const result = {}
-        for (const [def, genders] of Object.entries(defMap)) {
-            const animCheck = GENDERS.ANIMATES.FLAT.NAME.every(g => genders.includes(g))
-            const inanimCheck = GENDERS.INANIMATES.FLAT.NAME.every(g => genders.includes(g))
-            const allCheck = [...GENDERS.ANIMATES.FLAT.NAME, ...GENDERS.INANIMATES.FLAT.NAME].every(g => genders.includes(g))
-
-            if (allCheck) result[GENDERS.ALL_GENDERS.NAME] = def
-            else if (animCheck) result[GENDERS.ANIMATES.NAME] = def
-            else if (inanimCheck) result[GENDERS.INANIMATES.NAME] = def
-            else result[genders.join(", ")] = def
-        }
-        return result
+// todo: move somewhere else
+function combineGenders(entry) {
+    const defMap = {}
+    for (const [gender, def] of Object.entries(entry)) {
+        if (!defMap[def]) defMap[def] = []
+        defMap[def].push(gender)
     }
-};
+
+    const result = {}
+    for (const [def, genders] of Object.entries(defMap)) {
+        const animCheck = IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.ANIM].every(g => genders.includes(g))
+        const inanimCheck = IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.INANIM].every(g => genders.includes(g))
+        const allCheck = IDS.GROUPS_UNPACKED[IDS.GENDER_GROUPS.A].every(g => genders.includes(g))
+
+        if (allCheck) result[IDS.GENDER_GROUPS.A] = def
+        else if (animCheck) result[IDS.GENDER_GROUPS.ANIM] = def
+        else if (inanimCheck) result[IDS.GENDER_GROUPS.INANIM] = def
+        else result[genders.join(", ")] = def
+    }
+    return result
+}
 
 
 // ---------------------------- AFFIXES ----------------------------
@@ -1055,77 +1001,77 @@ function generateDeterminerMatches(determinersMap, type) {
 
 AFFIXES = {
     SUFFIXES: {
-        NOUNS: {
+        [IDS.WORDS.N]: {
             MAP: {
                 [IDS.MOODS.D]: {
-                    [GENDERS.MAP.E.NAME]: {
+                    [IDS.GENDERS.E]: {
                         [IDS.NUMBERS.S]: { 1: "ēn", 2: "æn", 3: "ēn", 4: "ħán" },
                         [IDS.NUMBERS.D]: { 1: "(ē)χen", 2: "(y)χen", 3: "(o)χen", 4: "ħóχħon" },
                         [IDS.NUMBERS.P]: { 1: "illyn", 2: "ān", 3: "ē'yn", 4: "q̇yn" }
                     },
-                    [GENDERS.MAP.R.NAME]: {
+                    [IDS.GENDERS.R]: {
                         [IDS.NUMBERS.S]: { 1: "ēf", 2: "(a)xef", 3: "lef", 4: "lef" },
                         [IDS.NUMBERS.D]: { 1: "eχef", 2: "hyf", 3: "(o)χef", 4: "(o)χef" },
                         [IDS.NUMBERS.P]: { 1: "yf", 2: "hyf", 3: "'yf", 4: "'yf" }
                     },
-                    [GENDERS.MAP.MON.NAME]: {
+                    [IDS.GENDERS.MON]: {
                         [IDS.NUMBERS.S]: { 1: "ô", 2: "ô", 3: "ô", 4: "ô" },
                         [IDS.NUMBERS.D]: { 1: "yħq̇ô", 2: "q̇ô", 3: "q̇ô", 4: "ûq̇ô" },
                         [IDS.NUMBERS.P]: { 1: "oħô", 2: "q̇ô", 3: "q̇ô", 4: "ûq̇ô" }
                     },
-                    [GENDERS.MAP.I.NAME]: {
+                    [IDS.GENDERS.I]: {
                         [IDS.NUMBERS.S]: { 1: "llūl", 2: "cūl", 3: "cūl", 4: "cūl" },
                         [IDS.NUMBERS.D]: { 1: "(æ)llūl", 2: "(')illūl", 3: "(')illūl", 4: "(')illūl" },
                         [IDS.NUMBERS.P]: { 1: "(æ)llūl", 2: "(')illūl", 3: "(')illūl", 4: "(')illūl" } // /\(/o.o\)/\ - Spooky the spider
                     },
-                    [GENDERS.MAP.MAG.NAME]: {
+                    [IDS.GENDERS.MAG]: {
                         [IDS.NUMBERS.S]: { 1: "(ō)χ", 2: "huχ", 3: "huχ", 4: "q̇ħúχ" },
                         [IDS.NUMBERS.D]: { 1: "uχ", 2: "'ūχ", 3: "'ūχ", 4: "(')ūχ" },
                         [IDS.NUMBERS.P]: { 1: "uχ", 2: "'ūχ", 3: "'ūχ", 4: "(')ūχ" }
                     },
-                    [GENDERS.MAP.MUN.NAME]: {
+                    [IDS.GENDERS.MUN]: {
                         [IDS.NUMBERS.S]: { 1: "(e)rk", 2: "tyk", 3: "tyk", 4: "(á)rk" },
                         [IDS.NUMBERS.D]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk" },
                         [IDS.NUMBERS.P]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk" }
                     },
-                    [GENDERS.MAP.A.NAME]: {
+                    [IDS.GENDERS.A]: {
                         [IDS.NUMBERS.S]: { 1: "(y)q̇", 2: "(o)q̇", 3: "(o)q̇", 4: "(ú)ħáq̇" },
                         [IDS.NUMBERS.D]: { 1: "āq̇", 2: "ōq̇", 3: "ōq̇", 4: "ūq̇" },
                         [IDS.NUMBERS.P]: { 1: "āq̇", 2: "ōq̇", 3: "ōq̇", 4: "ūq̇" }
                     }
                 },
                 [IDS.MOODS.R]: {
-                    [GENDERS.MAP.E.NAME]: {
+                    [IDS.GENDERS.E]: {
                         [IDS.NUMBERS.S]: { 1: "oħân", 2: "ħân", 3: "ēqân", 4: "qân" },
                         [IDS.NUMBERS.D]: { 1: "ħân", 2: "(ō)n", 3: "on", 4: "ħûn" },
                         [IDS.NUMBERS.P]: { 1: "illyrn", 2: "(ō)rn", 3: "ē'yrn", 4: "q̇yrn" }
                     },
-                    [GENDERS.MAP.R.NAME]: {
+                    [IDS.GENDERS.R]: {
                         [IDS.NUMBERS.S]: { 1: "oħâf", 2: "ħâf", 3: "(o)qâf", 4: "(o)qâf" },
                         [IDS.NUMBERS.D]: { 1: "īllyf", 2: "(')ūllef", 3: "yf", 4: "yf" },
                         [IDS.NUMBERS.P]: { 1: "īllyf", 2: "(')ūllef", 3: "ūlef", 4: "'ūlef" }
                     },
-                    [GENDERS.MAP.MON.NAME]: {
+                    [IDS.GENDERS.MON]: {
                         [IDS.NUMBERS.S]: { 1: "oħô", 2: "qâħó", 3: "qâħó", 4: "ô" },
                         [IDS.NUMBERS.D]: { 1: "ūħó", 2: "q̇ô", 3: "q̇ô", 4: "ûq̇ô" },
                         [IDS.NUMBERS.P]: { 1: "ōq̇ô", 2: "q̇ô", 3: "q̇ô", 4: "ûq̇ô" }
                     },
-                    [GENDERS.MAP.I.NAME]: {
+                    [IDS.GENDERS.I]: {
                         [IDS.NUMBERS.S]: { 1: "llūl", 2: "qâllūl", 3: "qâllūl", 4: "qâllūl" },
                         [IDS.NUMBERS.D]: { 1: "(y)ll'ūl", 2: "(')llūl", 3: "(')llūl", 4: "(')llūl" },
                         [IDS.NUMBERS.P]: { 1: "(y)ll'ūl", 2: "(')ūcūl", 3: "(')ūcūl", 4: "(')ūcūl" }
                     },
-                    [GENDERS.MAP.MAG.NAME]: {
+                    [IDS.GENDERS.MAG]: {
                         [IDS.NUMBERS.S]: { 1: "(ō)ħúχħ", 2: "(y)q̇ħôχ", 3: "(y)q̇ħôχ", 4: "q̇ħôχ" },
                         [IDS.NUMBERS.D]: { 1: "(a)lluχ", 2: "(y)lūrχ", 3: "(y)lūrχ", 4: "(')ūrχ" },
                         [IDS.NUMBERS.P]: { 1: "(a)lluχ", 2: "(y)lūrχ", 3: "(y)lūrχ", 4: "(')ūrχ" }
                     },
-                    [GENDERS.MAP.MUN.NAME]: {
+                    [IDS.GENDERS.MUN]: {
                         [IDS.NUMBERS.S]: { 1: "(o)ħárk", 2: "ħárk", 3: "ħárk", 4: "q̇ħárk" },
                         [IDS.NUMBERS.D]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk" },
                         [IDS.NUMBERS.P]: { 1: "ōrk", 2: "ōrk", 3: "ōrk", 4: "(')urk" }
                     },  // /\(/o.o\)/\ - Spooky the spider
-                    [GENDERS.MAP.A.NAME]: {
+                    [IDS.GENDERS.A]: {
                         [IDS.NUMBERS.S]: { 1: "aħôq̇", 2: "(y)q̇ħôq̇", 3: "(y)q̇ħôq̇", 4: "áq̇ħôq̇" },
                         [IDS.NUMBERS.D]: { 1: "āq̇", 2: "ōq̇", 3: "ōq̇", 4: "ūq̇" },
                         [IDS.NUMBERS.P]: { 1: "āq̇", 2: "ōq̇", 3: "ōq̇", 4: "ūq̇" }
@@ -1135,41 +1081,41 @@ AFFIXES = {
             FLAT: {},
             MATCHES: {}
         },
-        VERBS: {
+        [IDS.WORDS.V]: {
             MAP: {
                 1: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "(o)n", [GENDERS.MAP.R.NAME]: "(y)f", [GENDERS.MAP.MON.NAME]: "(u)ħó", [GENDERS.MAP.I.NAME]: "llul", [GENDERS.MAP.MAG.NAME]: "(u)χ", [GENDERS.MAP.MUN.NAME]: "(u)r", [GENDERS.MAP.A.NAME]: "(y)q̇" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "(')æ­n", [GENDERS.MAP.R.NAME]: "(')æf", [GENDERS.MAP.MON.NAME]: "(')ô", [GENDERS.MAP.I.NAME]: "(')allūl", [GENDERS.MAP.MAG.NAME]: "(')ōχ", [GENDERS.MAP.MUN.NAME]: "(')ar", [GENDERS.MAP.A.NAME]: "(y)q̇" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "(')æ­n", [GENDERS.MAP.R.NAME]: "(')æf", [GENDERS.MAP.MON.NAME]: "(')ô", [GENDERS.MAP.I.NAME]: "(')allūl", [GENDERS.MAP.MAG.NAME]: "(')ōχ", [GENDERS.MAP.MUN.NAME]: "(')ar", [GENDERS.MAP.A.NAME]: "(y)q̇" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "(o)n", [IDS.GENDERS.R]: "(y)f", [IDS.GENDERS.MON]: "(u)ħó", [IDS.GENDERS.I]: "llul", [IDS.GENDERS.MAG]: "(u)χ", [IDS.GENDERS.MUN]: "(u)r", [IDS.GENDERS.A]: "(y)q̇" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "(')æ­n", [IDS.GENDERS.R]: "(')æf", [IDS.GENDERS.MON]: "(')ô", [IDS.GENDERS.I]: "(')allūl", [IDS.GENDERS.MAG]: "(')ōχ", [IDS.GENDERS.MUN]: "(')ar", [IDS.GENDERS.A]: "(y)q̇" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "(')æ­n", [IDS.GENDERS.R]: "(')æf", [IDS.GENDERS.MON]: "(')ô", [IDS.GENDERS.I]: "(')allūl", [IDS.GENDERS.MAG]: "(')ōχ", [IDS.GENDERS.MUN]: "(')ar", [IDS.GENDERS.A]: "(y)q̇" }
                 },
                 2: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "(u)n", [GENDERS.MAP.R.NAME]: "(u)f", [GENDERS.MAP.MON.NAME]: "(u)ħó", [GENDERS.MAP.I.NAME]: "llul", [GENDERS.MAP.MAG.NAME]: "(u)χ", [GENDERS.MAP.MUN.NAME]: "(u)r", [GENDERS.MAP.A.NAME]: "(u)q̇" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "(o)nēn", [GENDERS.MAP.R.NAME]: "nef", [GENDERS.MAP.MON.NAME]: "(á)ħó", [GENDERS.MAP.I.NAME]: "(á)llul", [GENDERS.MAP.MAG.NAME]: "(ó)nōχ", [GENDERS.MAP.MUN.NAME]: "(á)r", [GENDERS.MAP.A.NAME]: "ħóq̇" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "ħen", [GENDERS.MAP.R.NAME]: "ħáf", [GENDERS.MAP.MON.NAME]: "(á)ħó", [GENDERS.MAP.I.NAME]: "(á)llul", [GENDERS.MAP.MAG.NAME]: "(ó)nōχ", [GENDERS.MAP.MUN.NAME]: "(á)r", [GENDERS.MAP.A.NAME]: "ħóq̇" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "(u)n", [IDS.GENDERS.R]: "(u)f", [IDS.GENDERS.MON]: "(u)ħó", [IDS.GENDERS.I]: "llul", [IDS.GENDERS.MAG]: "(u)χ", [IDS.GENDERS.MUN]: "(u)r", [IDS.GENDERS.A]: "(u)q̇" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "(o)nēn", [IDS.GENDERS.R]: "nef", [IDS.GENDERS.MON]: "(á)ħó", [IDS.GENDERS.I]: "(á)llul", [IDS.GENDERS.MAG]: "(ó)nōχ", [IDS.GENDERS.MUN]: "(á)r", [IDS.GENDERS.A]: "ħóq̇" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "ħen", [IDS.GENDERS.R]: "ħáf", [IDS.GENDERS.MON]: "(á)ħó", [IDS.GENDERS.I]: "(á)llul", [IDS.GENDERS.MAG]: "(ó)nōχ", [IDS.GENDERS.MUN]: "(á)r", [IDS.GENDERS.A]: "ħóq̇" }
                 },
                 3: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "tón", [GENDERS.MAP.R.NAME]: "ħyf", [GENDERS.MAP.MON.NAME]: "(o)ħó", [GENDERS.MAP.I.NAME]: "llul", [GENDERS.MAP.MAG.NAME]: "ħuχ", [GENDERS.MAP.MUN.NAME]: "(u)r", [GENDERS.MAP.A.NAME]: "(ú)q̇" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "(q̇)ân", [GENDERS.MAP.R.NAME]: "(y)q̇ħáf", [GENDERS.MAP.MON.NAME]: "ħó", [GENDERS.MAP.I.NAME]: "(ú)cul", [GENDERS.MAP.MAG.NAME]: "ħúχ", [GENDERS.MAP.MUN.NAME]: "(ú)r", [GENDERS.MAP.A.NAME]: "(u)q̇" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "tun", [GENDERS.MAP.R.NAME]: "if", [GENDERS.MAP.MON.NAME]: "ħó", [GENDERS.MAP.I.NAME]: "(ú)cul", [GENDERS.MAP.MAG.NAME]: "ħúχ", [GENDERS.MAP.MUN.NAME]: "(ú)r", [GENDERS.MAP.A.NAME]: "(u)q̇" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "tón", [IDS.GENDERS.R]: "ħyf", [IDS.GENDERS.MON]: "(o)ħó", [IDS.GENDERS.I]: "llul", [IDS.GENDERS.MAG]: "ħuχ", [IDS.GENDERS.MUN]: "(u)r", [IDS.GENDERS.A]: "(ú)q̇" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "(q̇)ân", [IDS.GENDERS.R]: "(y)q̇ħáf", [IDS.GENDERS.MON]: "ħó", [IDS.GENDERS.I]: "(ú)cul", [IDS.GENDERS.MAG]: "ħúχ", [IDS.GENDERS.MUN]: "(ú)r", [IDS.GENDERS.A]: "(u)q̇" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "tun", [IDS.GENDERS.R]: "if", [IDS.GENDERS.MON]: "ħó", [IDS.GENDERS.I]: "(ú)cul", [IDS.GENDERS.MAG]: "ħúχ", [IDS.GENDERS.MUN]: "(ú)r", [IDS.GENDERS.A]: "(u)q̇" }
                 }
             },
             FLAT: {},
             MATCHES: {}
         },
-        ADJECTIVES: {
-            get MAP() { return AFFIXES.SUFFIXES.NOUNS.MAP; },
-            get FLAT() { return AFFIXES.SUFFIXES.NOUNS.FLAT; },
+        [IDS.WORDS.ADJ]: {
+            get MAP() { return AFFIXES.SUFFIXES[IDS.WORDS.N].MAP; },
+            get FLAT() { return AFFIXES.SUFFIXES[IDS.WORDS.N].FLAT; },
             MATCHES: {}
         },
-        DETERMINERS: {
+        [IDS.WORDS.DET]: {
             MAP: {
-                [GENDERS.MAP.E.NAME]: "hyn",
-                [GENDERS.MAP.R.NAME]: "hyf",
-                [GENDERS.MAP.MON.NAME]: "ħó",
-                [GENDERS.MAP.I.NAME]: "llīl",
-                [GENDERS.MAP.MAG.NAME]: "huχ",
-                [GENDERS.MAP.MUN.NAME]: "thok",
-                [GENDERS.MAP.A.NAME]: "hoq̇"
+                [IDS.GENDERS.E]: "hyn",
+                [IDS.GENDERS.R]: "hyf",
+                [IDS.GENDERS.MON]: "ħó",
+                [IDS.GENDERS.I]: "llīl",
+                [IDS.GENDERS.MAG]: "huχ",
+                [IDS.GENDERS.MUN]: "thok",
+                [IDS.GENDERS.A]: "hoq̇"
             },
             FLAT: {},
             MATCHES: {} // TODO: edit this thingi
@@ -1186,22 +1132,22 @@ AFFIXES = {
         MATCHES: {}
     },
     PREFIXES: {
-        VERBS: {
+        [IDS.WORDS.V]: {
             MAP: {
                 1: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "xen", [GENDERS.MAP.R.NAME]: "xef", [GENDERS.MAP.MON.NAME]: "χħô", [GENDERS.MAP.I.NAME]: "xellu", [GENDERS.MAP.MAG.NAME]: "xo", [GENDERS.MAP.MUN.NAME]: "xyr", [GENDERS.MAP.A.NAME]: "xy" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "xyn", [GENDERS.MAP.R.NAME]: "xyf", [GENDERS.MAP.MON.NAME]: "xóħ", [GENDERS.MAP.I.NAME]: "llu", [GENDERS.MAP.MAG.NAME]: "ho", [GENDERS.MAP.MUN.NAME]: "ry", [GENDERS.MAP.A.NAME]: "hy" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "hen", [GENDERS.MAP.R.NAME]: "hef", [GENDERS.MAP.MON.NAME]: "hô", [GENDERS.MAP.I.NAME]: "llu", [GENDERS.MAP.MAG.NAME]: "ho", [GENDERS.MAP.MUN.NAME]: "ry", [GENDERS.MAP.A.NAME]: "hy" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "xen", [IDS.GENDERS.R]: "xef", [IDS.GENDERS.MON]: "χħô", [IDS.GENDERS.I]: "xellu", [IDS.GENDERS.MAG]: "xo", [IDS.GENDERS.MUN]: "xyr", [IDS.GENDERS.A]: "xy" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "xyn", [IDS.GENDERS.R]: "xyf", [IDS.GENDERS.MON]: "xóħ", [IDS.GENDERS.I]: "llu", [IDS.GENDERS.MAG]: "ho", [IDS.GENDERS.MUN]: "ry", [IDS.GENDERS.A]: "hy" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "hen", [IDS.GENDERS.R]: "hef", [IDS.GENDERS.MON]: "hô", [IDS.GENDERS.I]: "llu", [IDS.GENDERS.MAG]: "ho", [IDS.GENDERS.MUN]: "ry", [IDS.GENDERS.A]: "hy" }
                 },
                 2: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "syn", [GENDERS.MAP.R.NAME]: "sy", [GENDERS.MAP.MON.NAME]: "sô", [GENDERS.MAP.I.NAME]: "sucu", [GENDERS.MAP.MAG.NAME]: "su", [GENDERS.MAP.MUN.NAME]: "syr", [GENDERS.MAP.A.NAME]: "su" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "són", [GENDERS.MAP.R.NAME]: "sónlli", [GENDERS.MAP.MON.NAME]: "sónq̇ħó", [GENDERS.MAP.I.NAME]: "sóncu", [GENDERS.MAP.MAG.NAME]: "thâ", [GENDERS.MAP.MUN.NAME]: "thár", [GENDERS.MAP.A.NAME]: "thá" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "tháħ", [GENDERS.MAP.R.NAME]: "tháll", [GENDERS.MAP.MON.NAME]: "tháq̇ħó", [GENDERS.MAP.I.NAME]: "thácu", [GENDERS.MAP.MAG.NAME]: "thâ", [GENDERS.MAP.MUN.NAME]: "thár", [GENDERS.MAP.A.NAME]: "thá" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "syn", [IDS.GENDERS.R]: "sy", [IDS.GENDERS.MON]: "sô", [IDS.GENDERS.I]: "sucu", [IDS.GENDERS.MAG]: "su", [IDS.GENDERS.MUN]: "syr", [IDS.GENDERS.A]: "su" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "són", [IDS.GENDERS.R]: "sónlli", [IDS.GENDERS.MON]: "sónq̇ħó", [IDS.GENDERS.I]: "sóncu", [IDS.GENDERS.MAG]: "thâ", [IDS.GENDERS.MUN]: "thár", [IDS.GENDERS.A]: "thá" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "tháħ", [IDS.GENDERS.R]: "tháll", [IDS.GENDERS.MON]: "tháq̇ħó", [IDS.GENDERS.I]: "thácu", [IDS.GENDERS.MAG]: "thâ", [IDS.GENDERS.MUN]: "thár", [IDS.GENDERS.A]: "thá" }
                 },
                 3: {
-                    [IDS.NUMBERS.S]: { [GENDERS.MAP.E.NAME]: "ten", [GENDERS.MAP.R.NAME]: "tolli", [GENDERS.MAP.MON.NAME]: "tô", [GENDERS.MAP.I.NAME]: "tócu", [GENDERS.MAP.MAG.NAME]: "toħ", [GENDERS.MAP.MUN.NAME]: "try", [GENDERS.MAP.A.NAME]: "to" },
-                    [IDS.NUMBERS.D]: { [GENDERS.MAP.E.NAME]: "q̇yn", [GENDERS.MAP.R.NAME]: "q̇yll", [GENDERS.MAP.MON.NAME]: "q̇ħó", [GENDERS.MAP.I.NAME]: "q̇ácu", [GENDERS.MAP.MAG.NAME]: "tū", [GENDERS.MAP.MUN.NAME]: "tur", [GENDERS.MAP.A.NAME]: "tu" },
-                    [IDS.NUMBERS.P]: { [GENDERS.MAP.E.NAME]: "tyn", [GENDERS.MAP.R.NAME]: "tyf", [GENDERS.MAP.MON.NAME]: "tuħ", [GENDERS.MAP.I.NAME]: "tīll", [GENDERS.MAP.MAG.NAME]: "tū", [GENDERS.MAP.MUN.NAME]: "tur", [GENDERS.MAP.A.NAME]: "tu" }
+                    [IDS.NUMBERS.S]: { [IDS.GENDERS.E]: "ten", [IDS.GENDERS.R]: "tolli", [IDS.GENDERS.MON]: "tô", [IDS.GENDERS.I]: "tócu", [IDS.GENDERS.MAG]: "toħ", [IDS.GENDERS.MUN]: "try", [IDS.GENDERS.A]: "to" },
+                    [IDS.NUMBERS.D]: { [IDS.GENDERS.E]: "q̇yn", [IDS.GENDERS.R]: "q̇yll", [IDS.GENDERS.MON]: "q̇ħó", [IDS.GENDERS.I]: "q̇ácu", [IDS.GENDERS.MAG]: "tū", [IDS.GENDERS.MUN]: "tur", [IDS.GENDERS.A]: "tu" },
+                    [IDS.NUMBERS.P]: { [IDS.GENDERS.E]: "tyn", [IDS.GENDERS.R]: "tyf", [IDS.GENDERS.MON]: "tuħ", [IDS.GENDERS.I]: "tīll", [IDS.GENDERS.MAG]: "tū", [IDS.GENDERS.MUN]: "tur", [IDS.GENDERS.A]: "tu" }
                 }
             },
             FLAT: {},
@@ -1320,25 +1266,24 @@ AFFIXES = {
     }
 }
 
-AFFIXES.SUFFIXES.NOUNS.FLAT = getAllValues(AFFIXES.SUFFIXES.NOUNS.MAP);
-AFFIXES.SUFFIXES.NOUNS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.NOUNS.MAP, IDS.WORDS.N);
-AFFIXES.SUFFIXES.VERBS.FLAT = getAllValues(AFFIXES.SUFFIXES.VERBS.MAP);
-AFFIXES.SUFFIXES.VERBS.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.VERBS.MAP, IDS.WORDS.V);
-AFFIXES.SUFFIXES.ADJECTIVES.MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES.ADJECTIVES.MAP, IDS.WORDS.ADJ);
-AFFIXES.SUFFIXES.DETERMINERS.FLAT = getAllValues(AFFIXES.SUFFIXES.DETERMINERS.MAP);
-AFFIXES.SUFFIXES.DETERMINERS.MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES.DETERMINERS.MAP, IDS.WORDS.DET)
-AFFIXES.PREFIXES.VERBS.FLAT = getAllValues(AFFIXES.PREFIXES.VERBS.MAP);
-AFFIXES.PREFIXES.VERBS.MATCHES = generatePrefixMatches(AFFIXES.PREFIXES.VERBS.MAP, IDS.WORDS.V);
+AFFIXES.SUFFIXES[IDS.WORDS.N].FLAT = getAllValues(AFFIXES.SUFFIXES[IDS.WORDS.N].MAP);
+AFFIXES.SUFFIXES[IDS.WORDS.N].MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES[IDS.WORDS.N].MAP, IDS.WORDS.N);
+AFFIXES.SUFFIXES[IDS.WORDS.V].FLAT = getAllValues(AFFIXES.SUFFIXES[IDS.WORDS.V].MAP);
+AFFIXES.SUFFIXES[IDS.WORDS.V].MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES[IDS.WORDS.V].MAP, IDS.WORDS.V);
+AFFIXES.SUFFIXES[IDS.WORDS.ADJ].MATCHES = generateSuffixMatches(AFFIXES.SUFFIXES[IDS.WORDS.ADJ].MAP, IDS.WORDS.ADJ);
+AFFIXES.SUFFIXES[IDS.WORDS.DET].FLAT = getAllValues(AFFIXES.SUFFIXES[IDS.WORDS.DET].MAP);
+AFFIXES.SUFFIXES[IDS.WORDS.DET].MATCHES = generateDeterminerMatches(AFFIXES.SUFFIXES[IDS.WORDS.DET].MAP, IDS.WORDS.DET);
+AFFIXES.PREFIXES[IDS.WORDS.V].FLAT = getAllValues(AFFIXES.PREFIXES[IDS.WORDS.V].MAP);
+AFFIXES.PREFIXES[IDS.WORDS.V].MATCHES = generatePrefixMatches(AFFIXES.PREFIXES[IDS.WORDS.V].MAP, IDS.WORDS.V);
 
 AFFIXES.SUFFIXES.MATCHES = {
-    ...AFFIXES.SUFFIXES.VERBS.MATCHES,
-    ...AFFIXES.SUFFIXES.ADJECTIVES.MATCHES,
-    ...AFFIXES.SUFFIXES.NOUNS.MATCHES,
-    ...AFFIXES.SUFFIXES.DETERMINERS.MATCHES
+    ...AFFIXES.SUFFIXES[IDS.WORDS.V].MATCHES,
+    ...AFFIXES.SUFFIXES[IDS.WORDS.ADJ].MATCHES,
+    ...AFFIXES.SUFFIXES[IDS.WORDS.N].MATCHES,
+    ...AFFIXES.SUFFIXES[IDS.WORDS.DET].MATCHES
 };
-
 AFFIXES.PREFIXES.MATCHES = {
-    ...AFFIXES.PREFIXES.VERBS.MATCHES
+    ...AFFIXES.PREFIXES[IDS.WORDS.V].MATCHES
 };
 
 // ---------------------------- DICTIONARY ----------------------------
@@ -1438,8 +1383,10 @@ function fuzzyFetch(query, list, is_word, limit = 5) {
     const wordBoundaryRegex = new RegExp(`\\b${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
     const results = [];
     for (const item of list) {
-        const text = (is_word ? item.word : item.definition).toLowerCase();
-        const score = scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, text);
+        let variants = is_word ? item.splitForms() : [item.definition];
+        if (!Array.isArray(variants)) variants = [variants];
+        let score = 0;
+        for (const variant of variants) score = Math.max(score, scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, String(variant).toLowerCase()));
         if (score > 0) results.push({ item, score });
     }
     results.sort((a, b) => b.score - a.score);
@@ -1467,15 +1414,15 @@ function unpack(entry) {
 }
 
 DICTIONARY = {
-    [IDS.WORDS.N]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.NOUNS }),
-    [IDS.WORDS.V]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.VERBS, PREFIXES: AFFIXES.PREFIXES.VERBS }),
-    [IDS.WORDS.ADJ]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES.ADJECTIVES }),
+    [IDS.WORDS.N]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES[IDS.WORDS.N] }),
+    [IDS.WORDS.V]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES[IDS.WORDS.V], PREFIXES: AFFIXES.PREFIXES[IDS.WORDS.V] }),
+    [IDS.WORDS.ADJ]: createWordCategory({ SUFFIXES: AFFIXES.SUFFIXES[IDS.WORDS.ADJ] }),
     [IDS.WORDS.ADV]: createWordCategory(),
     [IDS.WORDS.AUX]: createWordCategory(),
     [IDS.WORDS.PP]: createWordCategory(),
     [IDS.WORDS.PART]: createWordCategory(),
     [IDS.WORDS.DET]: createWordCategory({
-        SUFFIXES: AFFIXES.SUFFIXES.DETERMINERS,
+        SUFFIXES: AFFIXES.SUFFIXES[IDS.WORDS.DET],
         fetch(keyword) { return basicSearch(keyword, this.FLAT) || this.IRREGULARS.fetch(keyword); },
         fuzzyFetchByWord(word, limit = 5) {
             const std = fuzzyFetch(word, this.FLAT, true, limit);
@@ -1485,37 +1432,37 @@ DICTIONARY = {
         IRREGULARS: {
             MAP: {
                 [IDS.DET_TYPES.NA]: new Determiner("q̇e", "Negative Article"),
-                [GENDERS.MAP.E.NAME]: {
+                [IDS.GENDERS.E]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyn", "Definite Article, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("tōn", "Definite Article, Plural, Exalted") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēn", "Proximal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("sōn", "Proximal Demonstrative, Plural, Exalted") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēn", "Distal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("li'ōn", "Distal Demonstrative, Plural, Exalted") },
                 },
-                [GENDERS.MAP.R.NAME]: {
+                [IDS.GENDERS.R]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyf", "Definite Article, Singular, Rational"), [IDS.NUMBERS.P]: new Determiner("tōf", "Definite Article, Plural, Rational") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēf", "Proximal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("sōf", "Proximal Demonstrative, Plural, Rational") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēf", "Distal Demonstrative, Singular, Exalted"), [IDS.NUMBERS.P]: new Determiner("li'ōf", "Distal Demonstrative, Plural, Rational") },
                 },
-                [GENDERS.MAP.MON.NAME]: {
+                [IDS.GENDERS.MON]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tó", "Definite Article, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("tô", "Definite Article, Plural, Monstrous") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēħó", "Proximal Demonstrative, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("sōħó", "Proximal Demonstrative, Plural, Monstrous") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēħó", "Distal Demonstrative, Singular, Monstrous"), [IDS.NUMBERS.P]: new Determiner("li'ô", "Distal Demonstrative, Plural, Monstrous") },
                 },
-                [GENDERS.MAP.I.NAME]: {
+                [IDS.GENDERS.I]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tīl", "Definite Article, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("tūl", "Definite Article, Plural, Irrational") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēllīl", "Proximal Demonstrative, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("sōllīl", "Proximal Demonstrative, Plural, Irrational") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēllīl", "Distal Demonstrative, Singular, Irrational"), [IDS.NUMBERS.P]: new Determiner("li'llīl", "Distal Demonstrative, Plural, Irrational") },
                 },
-                [GENDERS.MAP.MAG.NAME]: {
+                [IDS.GENDERS.MAG]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tuχ", "Definite Article, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("tōχ", "Definite Article, Plural, Magical") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēhuχ", "Proximal Demonstrative, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("sōhuχ", "Proximal Demonstrative, Plural, Magical") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēhuχ", "Distal Demonstrative, Singular, Magical"), [IDS.NUMBERS.P]: new Determiner("li'ōχ", "Distal Demonstrative, Plural, Magical") },
                 },
-                [GENDERS.MAP.MUN.NAME]: {
+                [IDS.GENDERS.MUN]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("tyrk", "Definite Article, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("tōk", "Definite Article, Plural, Mundane") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sērk", "Proximal Demonstrative, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("sōthok", "Proximal Demonstrative, Plural, Mundane") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lērk", "Distal Demonstrative, Singular, Mundane"), [IDS.NUMBERS.P]: new Determiner("li'ōk", "Distal Demonstrative, Plural, Mundane") },
                 },
-                [GENDERS.MAP.A.NAME]: {
+                [IDS.GENDERS.A]: {
                     [IDS.DET_TYPES.DA]: { [IDS.NUMBERS.S]: new Determiner("toq̇", "Definite Article, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("tōq̇", "Definite Article, Plural, Abstract") },
                     [IDS.DET_TYPES.PDEM]: { [IDS.NUMBERS.S]: new Determiner("sēhoq̇", "Proximal Demonstrative, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("sōhoq̇", "Proximal Demonstrative, Plural, Abstract") },
                     [IDS.DET_TYPES.DDEM]: { [IDS.NUMBERS.S]: new Determiner("lēhoq̇", "Distal Demonstrative, Singular, Abstract"), [IDS.NUMBERS.P]: new Determiner("li'ōq̇", "Distal Demonstrative, Plural, Abstract") },
@@ -1781,35 +1728,35 @@ NUMBERS = {
 
 PRONOUNS = {
     MAP: {
-        [GENDERS.MAP.E.NAME]: {
+        [IDS.GENDER_GROUPS.A.E]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xēn", [IDS.CASE.O]: "xon" }, 2: { [IDS.CASE.S]: "syn", [IDS.CASE.O]: "sun" }, 3: { [IDS.CASE.S]: "tēn", [IDS.CASE.O]: "tôn" } },
             [IDS.NUMBERS.D]: { 1: { [IDS.CASE.S]: "xefyn", [IDS.CASE.O]: "xō'æ­n" }, 2: { [IDS.CASE.S]: "sônen", [IDS.CASE.O]: "sônēn" }, 3: { [IDS.CASE.S]: "toq̇án", [IDS.CASE.O]: "toq̇ân" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hēn", [IDS.CASE.O]: "he'æ­n" }, 2: { [IDS.CASE.S]: "tháħán", [IDS.CASE.O]: "thâħen" }, 3: { [IDS.CASE.S]: "tun", [IDS.CASE.O]: "tūn" } }
         },
-        [GENDERS.MAP.R.NAME]: {
+        [IDS.GENDERS.R]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xēf", [IDS.CASE.O]: "xyf" }, 2: { [IDS.CASE.S]: "syf", [IDS.CASE.O]: "suf" }, 3: { [IDS.CASE.S]: "toq̇llif", [IDS.CASE.O]: "tôħyf" } },
             [IDS.NUMBERS.D]: { 1: { [IDS.CASE.S]: "xef", [IDS.CASE.O]: "xō'æf" }, 2: { [IDS.CASE.S]: "sônllif", [IDS.CASE.O]: "sônēf" }, 3: { [IDS.CASE.S]: "toq̇âf", [IDS.CASE.O]: "toq̇ħáf" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hēf", [IDS.CASE.O]: "he'æf" }, 2: { [IDS.CASE.S]: "thâllif", [IDS.CASE.O]: "tháħáf" }, 3: { [IDS.CASE.S]: "tyf", [IDS.CASE.O]: "tūq̇llif" } }
         },
-        [GENDERS.MAP.MON.NAME]: {
+        [IDS.GENDERS.MON]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "χħô", [IDS.CASE.O]: "xūħó" }, 2: { [IDS.CASE.S]: "sô", [IDS.CASE.O]: "sūħó" }, 3: { [IDS.CASE.S]: "tô", [IDS.CASE.O]: "tōħó" } },
             [IDS.NUMBERS.D]: { 1: { [IDS.CASE.S]: "χħôfó", [IDS.CASE.O]: "xo'ô" }, 2: { [IDS.CASE.S]: "sónq̇ħô", [IDS.CASE.O]: "sônô" }, 3: { [IDS.CASE.S]: "tyq̇âq̇ħó", [IDS.CASE.O]: "tyq̇âħó" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hô", [IDS.CASE.O]: "he'ô" }, 2: { [IDS.CASE.S]: "thâq̇ħô", [IDS.CASE.O]: "thâħó" }, 3: { [IDS.CASE.S]: "tūħó", [IDS.CASE.O]: "tūħó" } }
         },
-        [GENDERS.MAP.I.NAME]: {
+        [IDS.GENDERS.I]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xellūl", [IDS.CASE.O]: "xullūl" }, 2: { [IDS.CASE.S]: "sucūl", [IDS.CASE.O]: "sillūl" }, 3: { [IDS.CASE.S]: "tócūl", [IDS.CASE.O]: "tôllūl" } },
             [IDS.NUMBERS.D]: { 1: { [IDS.CASE.S]: "hyllūl", [IDS.CASE.O]: "hellūl	" }, 2: { [IDS.CASE.S]: "sóncūl", [IDS.CASE.O]: "sónllūl" }, 3: { [IDS.CASE.S]: "tyq̇ácūl", [IDS.CASE.O]: "tyq̇állūl" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hyllūl", [IDS.CASE.O]: "hellūl	" }, 2: { [IDS.CASE.S]: "thâcūl", [IDS.CASE.O]: "thâllūl" }, 3: { [IDS.CASE.S]: "tīllūl", [IDS.CASE.O]: "tûcūl" } }
         },
-        [GENDERS.MAP.MAG.NAME]: {
+        [IDS.GENDERS.MAG]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xōχ", [IDS.CASE.O]: "xūχ" }, 2: { [IDS.CASE.S]: "sōχ", [IDS.CASE.O]: "sūχ" }, 3: { [IDS.CASE.S]: "toħúχ", [IDS.CASE.O]: "tōħúχ" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hōχ", [IDS.CASE.O]: "hūχ" }, 2: { [IDS.CASE.S]: "thâhuχ	", [IDS.CASE.O]: "fônōχ" }, 3: { [IDS.CASE.S]: "tūχ", [IDS.CASE.O]: "tūħúχ" } }
         },
-        [GENDERS.MAP.MUN.NAME]: {
+        [IDS.GENDERS.MUN]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xerk", [IDS.CASE.O]: "χūrk" }, 2: { [IDS.CASE.S]: "surk", [IDS.CASE.O]: "thârk" }, 3: { [IDS.CASE.S]: "tork", [IDS.CASE.O]: "târk" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "herk", [IDS.CASE.O]: "hārk" }, 2: { [IDS.CASE.S]: "surk", [IDS.CASE.O]: "thârk" }, 3: { [IDS.CASE.S]: "tūrk", [IDS.CASE.O]: "tūrk" } }
         },
-        [GENDERS.MAP.A.NAME]: {
+        [IDS.GENDERS.A]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xyq̇", [IDS.CASE.O]: "xyq̇" }, 2: { [IDS.CASE.S]: "sūq̇", [IDS.CASE.O]: "sūq̇" }, 3: { [IDS.CASE.S]: "tōq̇", [IDS.CASE.O]: "tōħûq̇" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hyq̇", [IDS.CASE.O]: "hyq̇" }, 2: { [IDS.CASE.S]: "thâq̇", [IDS.CASE.O]: "thâq̇" }, 3: { [IDS.CASE.S]: "tūq̇", [IDS.CASE.O]: "tūq̇" } }
         }
@@ -1836,59 +1783,59 @@ WORDCLASSES = {
 
 CORRELATIVES = {
     MAP: {
-        [GENDERS.ANIMATES.NAME]: {
+        [IDS.GENDER_GROUPS.ANIMATES]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hā", [IDS.CASE.O]: "halláħ" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sē", [IDS.CASE.O]: "sēlláħ" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "thare", [IDS.CASE.O]: "tharlláħ" },
         },
-        [GENDERS.INANIMATES.NAME]: {
+        [IDS.GENDER_GROUPS.INANIMATES]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hox", [IDS.CASE.O]: "hóqħ" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "six", [IDS.CASE.O]: "sôqħ" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharx", [IDS.CASE.O]: "tharáqħ" },
         },
-        [GENDERS.MAP.E.NAME]: {
+        [IDS.GENDERS.E]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hālen", [IDS.CASE.O]: "hallħân" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sēlen", [IDS.CASE.O]: "sēllħân" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharlen", [IDS.CASE.O]: "tharħân" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sēn", [IDS.CASE.O]: "sōhyn" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lēn", [IDS.CASE.O]: "li'ōn" },
         },
-        [GENDERS.MAP.R.NAME]: {
+        [IDS.GENDERS.R]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hāllef", [IDS.CASE.O]: "hallħâf" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sēllef", [IDS.CASE.O]: "sēllħâf" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharllef", [IDS.CASE.O]: "tharħâf" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sēf", [IDS.CASE.O]: "sōhyf" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lēf", [IDS.CASE.O]: "li'ōf" },
         },
-        [GENDERS.MAP.MON.NAME]: {
+        [IDS.GENDERS.MON]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hālló", [IDS.CASE.O]: "hallħô" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sēlló", [IDS.CASE.O]: "sēllħô" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharlló", [IDS.CASE.O]: "tharħô" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sēħó", [IDS.CASE.O]: "sōħó" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lēħó", [IDS.CASE.O]: "li'ô" },
         },
-        [GENDERS.MAP.I.NAME]: {
+        [IDS.GENDERS.I]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hāllcīl", [IDS.CASE.O]: "hallħīl" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sēllcīl", [IDS.CASE.O]: "sēllħīl" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharcīl", [IDS.CASE.O]: "tharħīl" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sēllīl", [IDS.CASE.O]: "sōllīl" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lēllīl", [IDS.CASE.O]: "li'llīl" },
         },
-        [GENDERS.MAP.MAG.NAME]: {
+        [IDS.GENDERS.MAG]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "huχuχ", [IDS.CASE.O]: "hoqħôχ" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "siχuχ", [IDS.CASE.O]: "suqħôχ" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharχuχ", [IDS.CASE.O]: "tharqħôχ" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sēhuχ", [IDS.CASE.O]: "sōhuχ" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lēhuχ", [IDS.CASE.O]: "li'ōχ" },
         },
-        [GENDERS.MAP.MUN.NAME]: {
+        [IDS.GENDERS.MUN]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hotok", [IDS.CASE.O]: "hoqħárk" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sitok", [IDS.CASE.O]: "suqħárk" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "thartok", [IDS.CASE.O]: "tharqħárk" },
             [IDS.COR_TYPES.PDEM]: { [IDS.CASE.S]: "sērk", [IDS.CASE.O]: "sōthok" },
             [IDS.COR_TYPES.DDEM]: { [IDS.CASE.S]: "lērk", [IDS.CASE.O]: "li'ōk" },
         },
-        [GENDERS.MAP.A.NAME]: {
+        [IDS.GENDERS.A]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hoχoq̇", [IDS.CASE.O]: "hoqħôq̇" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "siχoq̇", [IDS.CASE.O]: "suqħôq̇" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharχoq̇", [IDS.CASE.O]: "tharqħôq̇" },
@@ -1903,74 +1850,74 @@ LUR = {
     MAP: {
         [IDS.ASPECT.E]: {
             [IDS.TENSE.P]: {
-                [GENDERS.MAP.E.NAME]: {
+                [IDS.GENDERS.E]: {
                     1: { [IDS.NUMBERS.S]: "xirōd", [IDS.NUMBERS.D]: "xynrōd", [IDS.NUMBERS.P]: "herōd" },
                     2: { [IDS.NUMBERS.S]: "syrōd", [IDS.NUMBERS.D]: "sórōd", [IDS.NUMBERS.P]: "thárōd" },
                     3: { [IDS.NUMBERS.S]: "terōd", [IDS.NUMBERS.D]: "q̇yrōd", [IDS.NUMBERS.P]: "tyrōd" }
                 },
-                [GENDERS.MAP.R.NAME]: {
+                [IDS.GENDERS.R]: {
                     1: { [IDS.NUMBERS.S]: "xirōd", [IDS.NUMBERS.D]: "xynrōd", [IDS.NUMBERS.P]: "herōd" },
                     2: { [IDS.NUMBERS.S]: "syrōd", [IDS.NUMBERS.D]: "súrōd", [IDS.NUMBERS.P]: "thórōd" },
                     3: { [IDS.NUMBERS.S]: "turōd", [IDS.NUMBERS.D]: "q̇yrōd", [IDS.NUMBERS.P]: "tyrōd" }
                 },
-                [GENDERS.MAP.MON.NAME]: {
+                [IDS.GENDERS.MON]: {
                     1: { [IDS.NUMBERS.S]: "χħórōd", [IDS.NUMBERS.D]: "xórōd", [IDS.NUMBERS.P]: "hôd" },
                     2: { [IDS.NUMBERS.S]: "sórôd", [IDS.NUMBERS.D]: "sórôd", [IDS.NUMBERS.P]: "thôrōd" },
                     3: { [IDS.NUMBERS.S]: "tórôd", [IDS.NUMBERS.D]: "q̇ħôd", [IDS.NUMBERS.P]: "tyrōd" }
                 },
-                [GENDERS.MAP.I.NAME]: {
+                [IDS.GENDERS.I]: {
                     1: { [IDS.NUMBERS.S]: "xerōd", [IDS.NUMBERS.D]: "llyrōd", [IDS.NUMBERS.P]: "llyrōd" },
                     2: { [IDS.NUMBERS.S]: "surōd", [IDS.NUMBERS.D]: "sórōd", [IDS.NUMBERS.P]: "thórōd" },
                     3: { [IDS.NUMBERS.S]: "túrōd", [IDS.NUMBERS.D]: "q̇órōd", [IDS.NUMBERS.P]: "turōd" }
                 },
-                [GENDERS.MAP.MAG.NAME]: {
+                [IDS.GENDERS.MAG]: {
                     1: { [IDS.NUMBERS.S]: "xyrōd", [IDS.NUMBERS.D]: "hyrōd", [IDS.NUMBERS.P]: "hyrōd" },
                     2: { [IDS.NUMBERS.S]: "sōd", [IDS.NUMBERS.D]: "thárōd", [IDS.NUMBERS.P]: "thárōd" },
                     3: { [IDS.NUMBERS.S]: "tórōd", [IDS.NUMBERS.D]: "tyrōd", [IDS.NUMBERS.P]: "tyrōd" }
                 },
-                [GENDERS.MAP.MUN.NAME]: {
+                [IDS.GENDERS.MUN]: {
                     1: { [IDS.NUMBERS.S]: "rōd", [IDS.NUMBERS.D]: "rōd", [IDS.NUMBERS.P]: "rōd" },
                     2: { [IDS.NUMBERS.S]: "syrōd", [IDS.NUMBERS.D]: "thárōd", [IDS.NUMBERS.P]: "thárōd" },
                     3: { [IDS.NUMBERS.S]: "tryrōd", [IDS.NUMBERS.D]: "tyrōd", [IDS.NUMBERS.P]: "tyrōd" }
                 },
-                [GENDERS.MAP.A.NAME]: {
+                [IDS.GENDERS.A]: {
                     1: { [IDS.NUMBERS.S]: "rōd", [IDS.NUMBERS.D]: "rōd", [IDS.NUMBERS.P]: "rōd" },
                     2: { [IDS.NUMBERS.S]: "syrōd", [IDS.NUMBERS.D]: "thárōd", [IDS.NUMBERS.P]: "thárōd" },
                     3: { [IDS.NUMBERS.S]: "trōd", [IDS.NUMBERS.D]: "trōd", [IDS.NUMBERS.P]: "trōd" }
                 },
             },
             [IDS.TENSE.NP]: {
-                [GENDERS.MAP.E.NAME]: {
+                [IDS.GENDERS.E]: {
                     1: { [IDS.NUMBERS.S]: "xelur", [IDS.NUMBERS.D]: "xylur", [IDS.NUMBERS.P]: "helur" },
                     2: { [IDS.NUMBERS.S]: "sylur", [IDS.NUMBERS.D]: "sólur", [IDS.NUMBERS.P]: "thálur" },
                     3: { [IDS.NUMBERS.S]: "telur", [IDS.NUMBERS.D]: "q̇ylur", [IDS.NUMBERS.P]: "tylur" }
                 },
-                [GENDERS.MAP.R.NAME]: {
+                [IDS.GENDERS.R]: {
                     1: { [IDS.NUMBERS.S]: "xilur", [IDS.NUMBERS.D]: "xylur", [IDS.NUMBERS.P]: "hilur" },
                     2: { [IDS.NUMBERS.S]: "sylur", [IDS.NUMBERS.D]: "sóllur", [IDS.NUMBERS.P]: "thállur" },
                     3: { [IDS.NUMBERS.S]: "tollur", [IDS.NUMBERS.D]: "q̇yllur", [IDS.NUMBERS.P]: "tylur" }
                 },
-                [GENDERS.MAP.MON.NAME]: {
+                [IDS.GENDERS.MON]: {
                     1: { [IDS.NUMBERS.S]: "χħólur", [IDS.NUMBERS.D]: "xólur", [IDS.NUMBERS.P]: "hôlur" },
                     2: { [IDS.NUMBERS.S]: "sôlur", [IDS.NUMBERS.D]: "sóq̇ħūr", [IDS.NUMBERS.P]: "tháq̇ħūr" },
                     3: { [IDS.NUMBERS.S]: "tôlur", [IDS.NUMBERS.D]: "q̇ħólur", [IDS.NUMBERS.P]: "tūr" }
                 },
-                [GENDERS.MAP.I.NAME]: {
+                [IDS.GENDERS.I]: {
                     1: { [IDS.NUMBERS.S]: "xellur", [IDS.NUMBERS.D]: "llūr", [IDS.NUMBERS.P]: "llūr" },
                     2: { [IDS.NUMBERS.S]: "sūlur", [IDS.NUMBERS.D]: "sócūr", [IDS.NUMBERS.P]: "thácūr" },
                     3: { [IDS.NUMBERS.S]: "tócūr", [IDS.NUMBERS.D]: "q̇ácūr", [IDS.NUMBERS.P]: "tillūr" }
                 },
-                [GENDERS.MAP.MAG.NAME]: {
+                [IDS.GENDERS.MAG]: {
                     1: { [IDS.NUMBERS.S]: "xolur", [IDS.NUMBERS.D]: "holur", [IDS.NUMBERS.P]: "holur" },
                     2: { [IDS.NUMBERS.S]: "sūr", [IDS.NUMBERS.D]: "thâlur", [IDS.NUMBERS.P]: "thâlur" },
                     3: { [IDS.NUMBERS.S]: "tólur", [IDS.NUMBERS.D]: "tūlur", [IDS.NUMBERS.P]: "tūlur" }
                 },
-                [GENDERS.MAP.MUN.NAME]: {
+                [IDS.GENDERS.MUN]: {
                     1: { [IDS.NUMBERS.S]: "xur", [IDS.NUMBERS.D]: "rur", [IDS.NUMBERS.P]: "rur" },
                     2: { [IDS.NUMBERS.S]: "sur", [IDS.NUMBERS.D]: "thûr", [IDS.NUMBERS.P]: "thûr" },
                     3: { [IDS.NUMBERS.S]: "trur", [IDS.NUMBERS.D]: "tūr", [IDS.NUMBERS.P]: "tūr" }
                 },
-                [GENDERS.MAP.A.NAME]: {
+                [IDS.GENDERS.A]: {
                     1: { [IDS.NUMBERS.S]: "lur", [IDS.NUMBERS.D]: "lur", [IDS.NUMBERS.P]: "lur" },
                     2: { [IDS.NUMBERS.S]: "sulur", [IDS.NUMBERS.D]: "thálur", [IDS.NUMBERS.P]: "thálur" },
                     3: { [IDS.NUMBERS.S]: "tolur", [IDS.NUMBERS.D]: "tulur", [IDS.NUMBERS.P]: "tulur" }
@@ -1980,74 +1927,74 @@ LUR = {
         [IDS.ASPECT.G]: {
 
             [IDS.TENSE.P]: {
-                [GENDERS.MAP.E.NAME]: {
+                [IDS.GENDERS.E]: {
                     1: { [IDS.NUMBERS.S]: "xelōd", [IDS.NUMBERS.D]: "xylōd", [IDS.NUMBERS.P]: "helōd" },
                     2: { [IDS.NUMBERS.S]: "sylōd", [IDS.NUMBERS.D]: "sólōd", [IDS.NUMBERS.P]: "thálōd" },
                     3: { [IDS.NUMBERS.S]: "telōd", [IDS.NUMBERS.D]: "q̇ylōd", [IDS.NUMBERS.P]: "tylōd" }
                 },
-                [GENDERS.MAP.R.NAME]: {
+                [IDS.GENDERS.R]: {
                     1: { [IDS.NUMBERS.S]: "xelōd", [IDS.NUMBERS.D]: "xylōd", [IDS.NUMBERS.P]: "helōd" },
                     2: { [IDS.NUMBERS.S]: "sylōd", [IDS.NUMBERS.D]: "sóllōd", [IDS.NUMBERS.P]: "thállōd" },
                     3: { [IDS.NUMBERS.S]: "tollōd", [IDS.NUMBERS.D]: "q̇yllōd", [IDS.NUMBERS.P]: "tylōd" }
                 },
-                [GENDERS.MAP.MON.NAME]: {
+                [IDS.GENDERS.MON]: {
                     1: { [IDS.NUMBERS.S]: "χħólōd", [IDS.NUMBERS.D]: "xólōd", [IDS.NUMBERS.P]: "hôlōd" },
                     2: { [IDS.NUMBERS.S]: "sólōd", [IDS.NUMBERS.D]: "súrōd", [IDS.NUMBERS.P]: "thórōd" },
                     3: { [IDS.NUMBERS.S]: "tólōd", [IDS.NUMBERS.D]: "q̇ħólōd", [IDS.NUMBERS.P]: "tulrōd" }
                 },
-                [GENDERS.MAP.I.NAME]: {
+                [IDS.GENDERS.I]: {
                     1: { [IDS.NUMBERS.S]: "xyrōd", [IDS.NUMBERS.D]: "llurōd", [IDS.NUMBERS.P]: "llurōd" },
                     2: { [IDS.NUMBERS.S]: "sūlōd", [IDS.NUMBERS.D]: "sūrōd", [IDS.NUMBERS.P]: "thûrōd" },
                     3: { [IDS.NUMBERS.S]: "tūrōd", [IDS.NUMBERS.D]: "q̇ūrōd", [IDS.NUMBERS.P]: "tīrōd" }
                 },
-                [GENDERS.MAP.MAG.NAME]: {
+                [IDS.GENDERS.MAG]: {
                     1: { [IDS.NUMBERS.S]: "xolrōd", [IDS.NUMBERS.D]: "holrōd", [IDS.NUMBERS.P]: "holrōd" },
                     2: { [IDS.NUMBERS.S]: "sūrōd", [IDS.NUMBERS.D]: "thâlrōd", [IDS.NUMBERS.P]: "thâlrōd" },
                     3: { [IDS.NUMBERS.S]: "tólrōd", [IDS.NUMBERS.D]: "tūlōd", [IDS.NUMBERS.P]: "tūlōd" }
                 },
-                [GENDERS.MAP.MUN.NAME]: {
+                [IDS.GENDERS.MUN]: {
                     1: { [IDS.NUMBERS.S]: "xurōd", [IDS.NUMBERS.D]: "rylōd", [IDS.NUMBERS.P]: "rylōd" },
                     2: { [IDS.NUMBERS.S]: "surōd", [IDS.NUMBERS.D]: "thûrōd", [IDS.NUMBERS.P]: "thûrōd" },
                     3: { [IDS.NUMBERS.S]: "trulōd", [IDS.NUMBERS.D]: "turōd", [IDS.NUMBERS.P]: "turōd" }
                 },
-                [GENDERS.MAP.A.NAME]: {
+                [IDS.GENDERS.A]: {
                     1: { [IDS.NUMBERS.S]: "lyrōd", [IDS.NUMBERS.D]: "lyrōd", [IDS.NUMBERS.P]: "lyrōd" },
                     2: { [IDS.NUMBERS.S]: "surōd", [IDS.NUMBERS.D]: "thálōd", [IDS.NUMBERS.P]: "thálōd" },
                     3: { [IDS.NUMBERS.S]: "tolōd", [IDS.NUMBERS.D]: "tulōd", [IDS.NUMBERS.P]: "tulōd" }
                 },
             },
             [IDS.TENSE.NP]: {
-                [GENDERS.MAP.E.NAME]: {
+                [IDS.GENDERS.E]: {
                     1: { [IDS.NUMBERS.S]: "xelūrχ", [IDS.NUMBERS.D]: "xylūrχ", [IDS.NUMBERS.P]: "helūrχ" },
                     2: { [IDS.NUMBERS.S]: "sylūrχ", [IDS.NUMBERS.D]: "sólūrχ", [IDS.NUMBERS.P]: "thálūrχ" },
                     3: { [IDS.NUMBERS.S]: "telūrχ", [IDS.NUMBERS.D]: "q̇ylūrχ", [IDS.NUMBERS.P]: "tylūrχ" }
                 },
-                [GENDERS.MAP.R.NAME]: {
+                [IDS.GENDERS.R]: {
                     1: { [IDS.NUMBERS.S]: "xilūrχ", [IDS.NUMBERS.D]: "xylūrχ", [IDS.NUMBERS.P]: "hilūrχ" },
                     2: { [IDS.NUMBERS.S]: "sylūrχ", [IDS.NUMBERS.D]: "sóllurχ", [IDS.NUMBERS.P]: "thállurχ" },
                     3: { [IDS.NUMBERS.S]: "tollurχ", [IDS.NUMBERS.D]: "q̇yllurχ", [IDS.NUMBERS.P]: "tylūrχ" }
                 },
-                [GENDERS.MAP.MON.NAME]: {
+                [IDS.GENDERS.MON]: {
                     1: { [IDS.NUMBERS.S]: "χħólurχ", [IDS.NUMBERS.D]: "xólūrχ", [IDS.NUMBERS.P]: "hólūrχ" },
                     2: { [IDS.NUMBERS.S]: "sólūrχ", [IDS.NUMBERS.D]: "sûryχ", [IDS.NUMBERS.P]: "thûryχ" },
                     3: { [IDS.NUMBERS.S]: "tólūrχ", [IDS.NUMBERS.D]: "q̇ħûrχ", [IDS.NUMBERS.P]: "turyχ" }
                 },
-                [GENDERS.MAP.I.NAME]: {
+                [IDS.GENDERS.I]: {
                     1: { [IDS.NUMBERS.S]: "xellurχ", [IDS.NUMBERS.D]: "llūryχ", [IDS.NUMBERS.P]: "llūryχ" },
                     2: { [IDS.NUMBERS.S]: "sulūrχ", [IDS.NUMBERS.D]: "sūryχ", [IDS.NUMBERS.P]: "thûryχ" },
                     3: { [IDS.NUMBERS.S]: "tûryχ", [IDS.NUMBERS.D]: "q̇ûryχ", [IDS.NUMBERS.P]: "tillūrχ" }
                 },
-                [GENDERS.MAP.MAG.NAME]: {
+                [IDS.GENDERS.MAG]: {
                     1: { [IDS.NUMBERS.S]: "xolūrχ", [IDS.NUMBERS.D]: "holūrχ", [IDS.NUMBERS.P]: "holūrχ" },
                     2: { [IDS.NUMBERS.S]: "sūryχ", [IDS.NUMBERS.D]: "thálūrχ", [IDS.NUMBERS.P]: "thálūrχ" },
                     3: { [IDS.NUMBERS.S]: "tólūrχ", [IDS.NUMBERS.D]: "tulūrχ", [IDS.NUMBERS.P]: "tulūrχ" }
                 },
-                [GENDERS.MAP.MUN.NAME]: {
+                [IDS.GENDERS.MUN]: {
                     1: { [IDS.NUMBERS.S]: "xūrχ", [IDS.NUMBERS.D]: "rūχ", [IDS.NUMBERS.P]: "rūχ" },
                     2: { [IDS.NUMBERS.S]: "sūrχ", [IDS.NUMBERS.D]: "thûryχ", [IDS.NUMBERS.P]: "thûryχ" },
                     3: { [IDS.NUMBERS.S]: "trūrχ", [IDS.NUMBERS.D]: "tūryχ", [IDS.NUMBERS.P]: "tūryχ" }
                 },
-                [GENDERS.MAP.A.NAME]: {
+                [IDS.GENDERS.A]: {
                     1: { [IDS.NUMBERS.S]: "lūrχ", [IDS.NUMBERS.D]: "lūrχ", [IDS.NUMBERS.P]: "lūrχ" },
                     2: { [IDS.NUMBERS.S]: "sulūrχ", [IDS.NUMBERS.D]: "thálūrχ", [IDS.NUMBERS.P]: "thálūrχ" },
                     3: { [IDS.NUMBERS.S]: "tolūrχ", [IDS.NUMBERS.D]: "tulūrχ", [IDS.NUMBERS.P]: "tulūrχ" }

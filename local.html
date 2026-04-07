@@ -17,24 +17,57 @@
         </div>
         <h2>TRANSLATING TOOL</h2>
         <div>
-            <input type="text" id="txtInput1" name="text" id="translator" placeholder="text in draconic" style="display: flex; width: 100%;">
+            <input type="text" id="txtInput1" name="text" placeholder="text in draconic" style="display: flex; width: 100%;">
             <button type="button" id="translate_button1" style="display: flex;">Parse words</button>
             <ul id="result1"></ul>
         </div>
         <div>
-            <input type="text" id="txtInput2" name="text" id="translator" placeholder="description in english (leave empty for most short defenitions)" style="display: flex; width: 100%;">
+            <input type="text" id="txtInput2" name="text" placeholder="description in english (leave empty for most short defenitions)" style="display: flex; width: 100%;">
             <input type="number" id="limit" placeholder="limit (default 10)" style="display: flex; width: 100%;">
             <button type="button" id="translate_button2" style="display: flex">Parse words by description</button>
             <ul id="result2"></ul>
         </div>
+        <h2>TRANSCRIBE TOOL</h2>
+        <div>
+            <button id="reeval">ReEvaluate</button>
+            <input type="text" id="transcribeInput0" placeholder="romanized" style="display: flex; width: 100%;">
+            <input type="text" id="transcribeInput1" placeholder="regular" style="display: flex; width: 100%;">
+            <input type="text" id="transcribeInput2" placeholder="glyphs" style="display: flex; width: 100%;">
+            <input type="text" id="transcribeInput3" placeholder="discord" style="display: flex; width: 100%;">
+        </div>
     </div>
 <style>
-    pr { color: cyan; }
-    sf { color: cyan; }
+    .pr { color: cyan; }
+    .sf { color: cyan; }
+    ul { white-space: nowrap; }
+    li { overflow-x: auto; height: 35px;}
     dc { color: lime; }
     type { color: orange; }
     word { color: darkblue; }
     def { color: gray; }
+    cyan { color: cyan; }
+    select.pr, select.sf {
+        background: white;
+        border: none;
+        color: cyan;
+        font: inherit;
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        -webkit-appearance: auto;
+        appearance: auto;
+    }
+    @font-face {
+    font-family: "Draconic";
+    src: url("./dialects/dr_dr/assets/font/font.ttf") format("truetype");
+    }
+
+
+    * {
+    font-family: "Draconic", sans-serif;
+    }
+
 </style>
 <script type="module">
     import { DIALECTS } from "./dialects/DialectLoader.js";
@@ -52,32 +85,67 @@
     const result2 = document.getElementById("result2")
     const limit = document.getElementById("limit")
 
-
     const numInput0 = document.getElementById("numInput0")
     const numInput1 = document.getElementById("numInput1")
     const numInput2 = document.getElementById("numInput2")
 
+    const reeval = document.getElementById("reeval");
+    const transcribeInput0 = document.getElementById("transcribeInput0")
+    const transcribeInput1 = document.getElementById("transcribeInput1")
+    const transcribeInput2 = document.getElementById("transcribeInput2")
+    const transcribeInput3 = document.getElementById("transcribeInput3")
+
+
+    function buildSelectOptions(allMap, selectedAffix) {
+        const emptySelected = selectedAffix === "" ? " selected" : "";
+        const emptyOption = `<option value=""${emptySelected}></option>`;
+        const options = Object.values(allMap).map(m => {
+            const title = (m.paths ?? []).map(p => p.join(" ")).join("\n");
+            const sel = m.affix === selectedAffix ? " selected" : "";
+            return `<option value="${m.affix}" title="${title}"${sel}>${m.affix}</option>`;
+        }).join("");
+        return emptyOption + options;
+    }
+
+    function makeSelect(cls, nameAttr, allMap, selectedAffix, wordType) {
+        if (!allMap || Object.keys(allMap).length === 0) return "";
+        const selectedMatch = allMap[selectedAffix];
+        const titleAttr = selectedMatch ? (selectedMatch.paths ?? []).map(p => p.join(" ")).join("\n") : "";
+        if (cls === "pr") return `<select class="${cls}" name="${nameAttr}" title="${titleAttr}" data-type="${wordType}" data-prev="${selectedAffix}">${buildSelectOptions(allMap, selectedAffix)}</select><cyan>-</cyan>`;
+        return `<cyan>-</cyan><select class="${cls}" name="${nameAttr}" title="${titleAttr}" data-type="${wordType}" data-prev="${selectedAffix}">${buildSelectOptions(allMap, selectedAffix)}</select>`;
+    }
+
     function test_translate1() {
         result1.innerHTML = "";
-        
-        txtInput1.value.split(/\s+/).filter(word => word.length > 0).forEach(word => {
+
+        txtInput1.value.split(/\s+/).filter(w => w.length > 0).forEach(word => {
             console.log(word)
-            const obj = DICTIONARY.fuzzyFetchByWord(word, 3);
+            const objs = DICTIONARY.fuzzyFetchByWord(word, 3);
 
             let r = "|||";
-            obj.forEach(obj => {
+            objs.forEach(obj => {
+                const sMap = AFFIXES.SUFFIXES[obj.type]?.MATCHES ?? {};
+                const pMap = AFFIXES.PREFIXES[obj.type]?.MATCHES ?? {};
+
+                let prefix = "";
+                let suffix = "";
+
                 if (word.replace(obj.word, "")) {
-                    var prefix = AFFIXES.PREFIXES.match(word, AFFIXES.PREFIXES.MATCHES)?.[0]?.affix ?? "";
-                    var suffix = AFFIXES.SUFFIXES.match(word, AFFIXES.SUFFIXES.MATCHES)?.[0]?.affix ?? "";
-                    if (prefix) prefix = `<pr>${prefix}- </pr>`
-                    if (suffix) suffix = `<sf> -${suffix}</sf>`
+                    const prefixMatches = AFFIXES.PREFIXES.match(word, pMap) ?? [];
+                    const suffixMatches = AFFIXES.SUFFIXES.match(word, sMap) ?? [];
+                    var pfx = prefixMatches[0]?.affix ?? "";
+                    var sfx = suffixMatches[0]?.affix ?? "";
+
+                    if (pMap && Object.keys(pMap).length > 0) prefix = makeSelect("pr", `${pfx}- `, pMap, pfx, obj.type);
+                    if (sMap && Object.keys(sMap).length > 0) suffix = makeSelect("sf", ` -${sfx}`, sMap, sfx, obj.type);
                 } else {
-                    var prefix = "";
-                    var suffix = "";
-                } 
-                var declension = obj[0]?.declension ?? "";
+                    if (pMap && Object.keys(pMap).length > 0) prefix = makeSelect("pr", "- ", pMap, "", obj.type);
+                    if (sMap && Object.keys(sMap).length > 0) suffix = makeSelect("sf", " -", sMap, "", obj.type);
+                }
+
+                var declension = obj.declension ?? "";
                 if (declension) declension = ` <dc>(${declension})</dc>`
-                r += ` <type>${obj.type}</type> | ${prefix}<word>${obj.text}${declension}</word>${suffix} - <def>${obj.definition}</def> |||`;
+                r += ` <span class="variant"><type>${obj.type}</type> | ${prefix}<word>${obj.text}</word>${declension}${suffix} <button class="copy-btn" data-word="${obj.text}">Copy</button> - <def>${obj.definition}</def></span> |||`;
             });
             result1.innerHTML += `<li>${r}</li>`;
         });
@@ -108,13 +176,84 @@
             const int = NUMBERS.textToNumberShort(numInput2.value);
             numInput0.value = int;
             numInput1.value = NUMBERS.numberToText(int);
-            
         }
     }
 
     numInput0.addEventListener("input", test_numbers0)
     numInput1.addEventListener("input", test_numbers1)
     numInput2.addEventListener("input", test_numbers2)
+
+
+    function test_transcrbe0() {
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        transcribeInput1.value = CHARACTERS.entriesToText(entries);
+        transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
+        transcribeInput3.value = CHARACTERS.entriesToDiscord(entries);
+    }
+
+    function test_transcrbe1() {
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput1.value);
+        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
+        transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
+        transcribeInput3.value = CHARACTERS.entriesToDiscord(entries);
+    }
+
+    function test_transcrbe2() {
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
+        transcribeInput1.value = CHARACTERS.entriesToText(entries);
+        transcribeInput3.value = CHARACTERS.entriesToDiscord(entries);
+    }
+
+    function test_transcrbe3() {
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
+        transcribeInput1.value = CHARACTERS.entriesToText(entries);
+        transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
+    }
+
+    function test_transcrbe_reeval() {
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
+        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
+        transcribeInput1.value = CHARACTERS.entriesToText(entries);
+        transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
+    }
+
+    reeval.addEventListener("click", test_transcrbe_reeval)
+    transcribeInput0.addEventListener("input", test_transcrbe0)
+    transcribeInput1.addEventListener("input", test_transcrbe1)
+    transcribeInput2.addEventListener("input", test_transcrbe2)
+    transcribeInput3.addEventListener("input", test_transcrbe3)
+
+
+    result1.addEventListener("change", e => {
+        if (e.target.matches("select.pr, select.sf")) {
+            const sel = e.target;
+            sel.dataset.prev = sel.value;
+            const wordType = sel.dataset.type;
+            const affix = sel.value;
+            const isPr = sel.classList.contains("pr");
+            const map = isPr ? (AFFIXES.PREFIXES[wordType]?.MATCHES ?? {}) : (AFFIXES.SUFFIXES[wordType]?.MATCHES ?? AFFIXES.SUFFIXES.MATCHES);
+            const match = map[affix];
+            sel.title = match ? (match.paths ?? []).map(p => p.join(" ")).join("\n") : "";
+        }
+    });
+
+    result1.addEventListener("click", e => {
+        if (e.target.matches("button.copy-btn")) {
+            const btn = e.target;
+            const variant = btn.closest("span.variant");
+            const word = btn.dataset.word;
+            const prSel = variant.querySelector("select.pr");
+            const sfSel = variant.querySelector("select.sf");
+            const pfx = prSel ? prSel.value : "";
+            const sfx = sfSel ? sfSel.value : "";
+            const entries = AFFIXES.connect(pfx, word, sfx);
+            const text = CHARACTERS.entriesToText(entries);
+            navigator.clipboard.writeText(text).catch(() => {});
+        }
+    });
 
     translate_button1.addEventListener("click", test_translate1);
     translate_button2.addEventListener("click", test_translate2);

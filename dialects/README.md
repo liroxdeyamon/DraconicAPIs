@@ -9,9 +9,8 @@ If you decide to include your dialect in here, you should comply with these rule
 - **Dependencies**: Do not rely on external modules/libraries as this may be again a security concern and may increase load time.
 - **Usage of AI and LLMs**: Any dialects created with the assistance of an AI or LLM will not be regarded as legitimate by me and my project team, and I will claim the right to refute access to hosting the dialect publicly through the APIs for any such case, given it surpasses a level of severity I myself will be the judge of. Assistance of an AI or LLM includes AI generated artwork*, music, text (phrases, words, definitions, etc.), or other assets. The only allowed usage of AI is through code generation, spell/grammar checks, and providence of advice or ideas in a more general sense. *(the amount of AI art is already sickening)
 
-You need a name for your dialect (ex Example Draconic, you could even remove "Draconic" from the name) and its unique abbreviated form. There are some rules that apply (would reform after Classic Draconic's release):
-- **Reserved names** (a big *, todo: edit): Do not use words like "extended", "reimagined", etc., as they be too generic and versatile. <!-- idk, prob remove that later -->
-- **Abbreviations** The abbreviated form must be unique, begin with `"dr_"` (the language family), and end with a two-letter code representing the dialect. (ex `"dr_ex"`)
+You need a name for your dialect (ex Example Draconic, you could even remove "Draconic" from the name) and its unique abbreviated form. Classic Draconic has abbreviated form `"dr_dr"` because it's the starting point of the language.
+
 #### Happy codding!
 
 # FILE STRUCTURE
