@@ -91,7 +91,7 @@ IDS = {
         E: "Exalted",
         R: "Rational",
         MON: "Monstrous",
-        I: "Inanimate",
+        I: "Irrational",
         MAG: "Magical",
         MUN: "Mundane",
         A: "Abstract",
