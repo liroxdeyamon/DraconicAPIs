@@ -1783,12 +1783,12 @@ WORDCLASSES = {
 
 CORRELATIVES = {
     MAP: {
-        [IDS.GENDER_GROUPS.ANIMATES]: {
+        [IDS.GENDER_GROUPS.ANIM]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hā", [IDS.CASE.O]: "halláħ" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "sē", [IDS.CASE.O]: "sēlláħ" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "thare", [IDS.CASE.O]: "tharlláħ" },
         },
-        [IDS.GENDER_GROUPS.INANIMATES]: {
+        [IDS.GENDER_GROUPS.INANIM]: {
             [IDS.COR_TYPES.INT]: { [IDS.CASE.S]: "hox", [IDS.CASE.O]: "hóqħ" },
             [IDS.COR_TYPES.R]: { [IDS.CASE.S]: "six", [IDS.CASE.O]: "sôqħ" },
             [IDS.COR_TYPES.COR]: { [IDS.CASE.S]: "tharx", [IDS.CASE.O]: "tharáqħ" },
