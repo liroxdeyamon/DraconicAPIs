@@ -1728,7 +1728,7 @@ NUMBERS = {
 
 PRONOUNS = {
     MAP: {
-        [IDS.GENDER_GROUPS.A.E]: {
+        [IDS.GENDERS.E]: {
             [IDS.NUMBERS.S]: { 1: { [IDS.CASE.S]: "xēn", [IDS.CASE.O]: "xon" }, 2: { [IDS.CASE.S]: "syn", [IDS.CASE.O]: "sun" }, 3: { [IDS.CASE.S]: "tēn", [IDS.CASE.O]: "tôn" } },
             [IDS.NUMBERS.D]: { 1: { [IDS.CASE.S]: "xefyn", [IDS.CASE.O]: "xō'æ­n" }, 2: { [IDS.CASE.S]: "sônen", [IDS.CASE.O]: "sônēn" }, 3: { [IDS.CASE.S]: "toq̇án", [IDS.CASE.O]: "toq̇ân" } },
             [IDS.NUMBERS.P]: { 1: { [IDS.CASE.S]: "hēn", [IDS.CASE.O]: "he'æ­n" }, 2: { [IDS.CASE.S]: "tháħán", [IDS.CASE.O]: "thâħen" }, 3: { [IDS.CASE.S]: "tun", [IDS.CASE.O]: "tūn" } }
