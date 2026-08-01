@@ -35,6 +35,14 @@
             <input type="text" id="transcribeInput2" placeholder="glyphs" style="display: flex; width: 100%;">
             <input type="text" id="transcribeInput3" placeholder="discord" style="display: flex; width: 100%;">
         </div>
+        <h2>CONNECT TOOL</h2>
+        <div>
+            <button id="reeval">ReEvaluate</button>
+            <input type="text" id="connectPrefixInput" placeholder="prefix">
+            <input type="text" id="connectStemInput" placeholder="stem">
+            <input type="text" id="connectSuffixInput" placeholder="suffix">
+            <input type="text" id="connectResultInput" placeholder="result" style="display: flex; width: 100%;">
+        </div>
     </div>
 <style>
     .pr { color: cyan; }
@@ -94,6 +102,11 @@
     const transcribeInput1 = document.getElementById("transcribeInput1")
     const transcribeInput2 = document.getElementById("transcribeInput2")
     const transcribeInput3 = document.getElementById("transcribeInput3")
+
+    const connectPrefixInput = document.getElementById("connectPrefixInput")
+    const connectStemInput = document.getElementById("connectStemInput")
+    const connectSuffixInput = document.getElementById("connectSuffixInput")
+    const connectResultInput = document.getElementById("connectResultInput")
 
 
     function buildSelectOptions(allMap, selectedAffix) {
@@ -199,14 +212,14 @@
     }
 
     function test_transcrbe2() {
-        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput2.value);
         transcribeInput0.value = CHARACTERS.entriesToRom(entries);
         transcribeInput1.value = CHARACTERS.entriesToText(entries);
         transcribeInput3.value = CHARACTERS.entriesToDiscord(entries);
     }
 
     function test_transcrbe3() {
-        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
+        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput3.value);
         transcribeInput0.value = CHARACTERS.entriesToRom(entries);
         transcribeInput1.value = CHARACTERS.entriesToText(entries);
         transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
@@ -226,6 +239,13 @@
     transcribeInput2.addEventListener("input", test_transcrbe2)
     transcribeInput3.addEventListener("input", test_transcrbe3)
 
+    function connect() {
+        connectResultInput.value = AFFIXES.connect(connectPrefixInput.value, connectStemInput.value, connectSuffixInput.value);
+    }
+
+    connectPrefixInput.addEventListener("input", connect)
+    connectStemInput.addEventListener("input", connect)
+    connectSuffixInput.addEventListener("input", connect)
 
     result1.addEventListener("change", e => {
         if (e.target.matches("select.pr, select.sf")) {

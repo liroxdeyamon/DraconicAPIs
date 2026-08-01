@@ -55,7 +55,13 @@ IDS = {
     },
     TENSE: {
         P: 'Past',
-        NP: 'Non-Past'
+        NP: 'Non-Past',
+        F: 'Future'
+    },
+    PERSON: {
+        1: 'First',
+        2: 'Second',
+        3: 'Third'
     },
     CHARACTERS: {
         V: "Vowel",
@@ -285,9 +291,123 @@ class Lexemic extends Grouped {
     }
 }
 
-/*
+class Conjugated {
+    constructor(word) {
+        this.word = word;
+    }
+}
 
-*/
+class ConjugatedNoun extends Conjugated {
+    constructor(word, mood = null, gender = null, count = null) {
+        super(word)
+        this.mood = mood || IDS.MOODS.D
+        this.gender = gender
+        this.count = count || IDS.NUMBERS.S
+    }
+
+    toAdjective() {
+        return new ConjugatedAdjective(this.word, this.mood, this.gender, this.count, true)
+    }
+
+    conjugate() {
+        if (!this.gender || !this.count || !this.mood) return this.word.text
+        return CHARACTERS.entriesToText(AFFIXES.SUFFIXES.connect(this.word.text, AFFIXES.SUFFIXES[this.word.type].MAP[this.mood][this.gender][this.count][this.word.declension])) 
+    }
+
+    definition(include_extras = true) {
+        extra = []
+        if (this.mood) extra.push(this.mood);
+        if (this.gender) extra.push(this.gender);
+        if (this.count) extra.push(this.count);
+        
+        var ret;
+        if (!this.gender) ret = this.word.definition
+        else ret = this.word.genders[this.gender]
+        
+        return ret + (extra.length > 0 && include_extras ? ` (${extra.join(", ")})` : "") 
+    }
+}
+
+class ConjugatedAdjective extends Conjugated {
+    constructor(word, original_mood = null, original_gender = null, original_count = null, from_noun = false) {
+        super(word)
+        this.original_gender = original_gender
+        this.from_noun = from_noun
+        this.original_mood = original_mood
+        this.original_count = original_count
+    }
+
+    toNoun() {
+        if (!this.from_noun) return null
+        return new ConjugatedNoun(this.word, this.original_mood, this.original_gender, this.original_count)
+    }
+
+    conjugate() {
+        return (this.from_noun ? "i" : "") + this.word.text
+    }
+
+    definition(include_extras = true) {
+        return this.word.definition + (include_extras && this.from_noun ? " (made from noun)" : "")
+    }
+}
+
+class ConjugatedVerb extends Conjugated {
+    constructor(word, tense = null, aspect = null, subject_gender = null, subject_count = null, subject_person = null, object_gender = null, object_count = null, object_person = null) {
+        super(word)
+        this.tense = tense || IDS.TENSE.NP
+        this.aspect = aspect || IDS.ASPECT.E
+        this.subject_gender = subject_gender
+        this.subject_count = subject_count || IDS.NUMBERS.S
+        this.subject_person = subject_person || 1
+        this.object_gender = object_gender
+        this.object_count = object_count || IDS.NUMBERS.S
+        this.object_person = object_person || 1
+    }
+
+    temp_form_map = {
+        [IDS.ASPECT.E+"-"+IDS.TENSE.NP]: 0,
+        [IDS.ASPECT.E+"-"+IDS.TENSE.P]: 1,
+        [IDS.ASPECT.G+"-"+IDS.TENSE.NP]: 2,
+        [IDS.ASPECT.G+"-"+IDS.TENSE.P]: 3
+    }
+
+    conjugate() {
+        var root;
+        if (this.tense == IDS.TENSE.F) root = "llo " + this.word.splitForms()[this.temp_form_map[this.aspect+"-"+IDS.TENSE.NP]]
+        else root = this.word.splitForms()[this.temp_form_map[this.aspect+"-"+this.tense]]
+
+        object_present = (this.object_gender && this.object_person && this.object_count)
+        subject_present = (this.subject_gender && this.subject_person && this.subject_count)
+
+        if (!object_present && !subject_present) return root
+        if (!object_present && subject_present) return AFFIXES.SUFFIXES.connect(root, AFFIXES.PREFIXES.Verb.MAP[this.object_person][this.object_count][this.object_gender])
+        if (object_present && !subject_present) return AFFIXES.PREFIXES.connect(root, AFFIXES.PREFIXES.Verb.MAP[this.subject_person][this.subject_count][this.subject_gender])
+        return AFFIXES.connect(AFFIXES.PREFIXES.Verb.MAP[this.subject_person][this.subject_count][this.subject_gender], root, AFFIXES.PREFIXES.Verb.MAP[this.object_person][this.object_count][this.object_gender])
+    }
+
+    definition(include_extras = true) {
+        extra_subject = []
+        extra_object = []
+        extra = []
+
+        extra_subject.push(IDS.PERSON[this.subject_person]+" person");
+        extra_subject.push(this.subject_count);
+        extra_subject.push(this.subject_gender);
+
+        extra_object.push(IDS.PERSON[this.object_person]+" person");
+        extra_object.push(this.object_count);
+        extra_object.push(this.object_gender);
+
+        if (this.tense) extra.push(this.tense+" tense");
+        if (this.aspect) extra.push(this.aspect);
+        if (!extra_subject.some(e => e === null)) extra.push(`subject: (${extra_subject.join(", ")})`);
+        else extra.push(`subject: self`);
+        if (!extra_object.some(e => e === null)) extra.push(`object: (${extra_object.join(", ")})`);
+
+        return this.word.definition + (extra.length > 0 && include_extras ? ` (${extra.join(", ")})` : "")
+
+    }
+}
 
 // ============================ MAPS ============================
 
@@ -1125,8 +1245,12 @@ AFFIXES = {
             return AFFIXES.match(input, map, false, returnAll)
         },
 
-        connect(text, suffix) {
+        connectGetEntries(text, suffix) {
             return AFFIXES.connect("", text, suffix)
+        },
+
+        connect(text, suffix) {
+            return CHARACTERS.entriesToText(AFFIXES.connect("", text, suffix))
         },
 
         MATCHES: {}
@@ -1158,8 +1282,12 @@ AFFIXES = {
             return AFFIXES.match(input, map, true, returnAll)
         },
 
-        connect(text, prefix) {
+        connectGetEntries(text, prefix) {
             return AFFIXES.connect(prefix, text, "")
+        },
+
+        connect(text, prefix) {
+            return CHARACTERS.entriesToText(AFFIXES.connect(prefix, text, ""))
         },
 
         MATCHES: {}
@@ -1225,8 +1353,8 @@ AFFIXES = {
         if (prefix_entries) {
             const first_text = text_entries[0];
             const last_prefix = prefix_entries[prefix_entries.length - 1];
-            if (last_prefix && last_prefix.prop.includes(IDS.CHARACTERS.V) && first_text.prop.includes(IDS.CHARACTERS.V)) {
-                prefix_entries.push(CHARACTERS.MAP["ax"])
+            if (last_prefix && (first_text.prop.includes(IDS.CHARACTERS.V) || last_prefix == first_text)) {
+                prefix_entries.push(CHARACTERS.MAP["ax"]);
             }
 
         }
@@ -1234,6 +1362,9 @@ AFFIXES = {
         if (suffix_entries) {
             const last_text = text_entries[text_entries.length - 1];
             let first_suffix = suffix_entries[0];
+            if (last_text == first_suffix) {
+                suffix_entries.unshift(CHARACTERS.MAP["ax"]);
+            }
 
             if (first_suffix) {
                 if (first_suffix.prop.includes(IDS.CHARACTERS.V)) {
@@ -1260,9 +1391,13 @@ AFFIXES = {
         return [prefix_entries, text_entries, suffix_entries];
     },
 
-    connect(prefix = "", text = "", suffix = "") {
+    connectGetEntries(prefix = "", text = "", suffix = "") {
         const entries = AFFIXES.connectSplit(prefix, text, suffix);
         return entries.flat();
+    },
+
+    connect(prefix = "", text = "", suffix = "") {
+        return CHARACTERS.entriesToText(AFFIXES.connectGetEntries(prefix, text, suffix));
     }
 }
 
