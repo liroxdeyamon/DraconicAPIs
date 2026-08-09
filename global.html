@@ -95,7 +95,6 @@
     const numInput1 = document.getElementById("numInput1")
     const numInput2 = document.getElementById("numInput2")
 
-    const reeval = document.getElementById("reeval");
     const transcribeInput0 = document.getElementById("transcribeInput0")
     const transcribeInput1 = document.getElementById("transcribeInput1")
     const transcribeInput2 = document.getElementById("transcribeInput2")
@@ -223,15 +222,6 @@
         transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
     }
 
-    function test_transcrbe_reeval() {
-        const entries = CHARACTERS.textToEntriesByAnyText(transcribeInput0.value);
-        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
-        transcribeInput0.value = CHARACTERS.entriesToRom(entries);
-        transcribeInput1.value = CHARACTERS.entriesToText(entries);
-        transcribeInput2.value = CHARACTERS.entriesToGlyphs(entries);
-    }
-
-    reeval.addEventListener("click", test_transcrbe_reeval)
     transcribeInput0.addEventListener("input", test_transcrbe0)
     transcribeInput1.addEventListener("input", test_transcrbe1)
     transcribeInput2.addEventListener("input", test_transcrbe2)
