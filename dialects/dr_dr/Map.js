@@ -899,6 +899,7 @@ CHARACTERS = {
         const result = [];
         let i = 0;
         let inParen = false;
+        text = text.replace(/<a?:([^:>]+):\d+>/g, ":$1:")
 
         while (i < text.length) {
             if (text[i] === '(') { inParen = true; i++; continue; }
@@ -964,7 +965,7 @@ CHARACTERS = {
 
     textToEntriesByRom(text) { return CHARACTERS.entriesFromField(text, ["letter_rom"]); },
 
-    textToEntriesByDiscord(text) { return CHARACTERS.entriesFromField(text.replace(/<a?:([^:>]+):\d+>/g, ":$1:"), ["letter_discord"]); },
+    textToEntriesByDiscord(text) { return CHARACTERS.entriesFromField(text, ["letter_discord"]); },
 
     textToEntriesByGlyph(text) { return CHARACTERS.entriesFromField(text, ["letter_glyph"]); },
 
