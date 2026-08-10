@@ -958,7 +958,7 @@ CHARACTERS = {
         return entries.filter(e => !(ignore_optional && e.prop?.includes(IDS.CHARACTERS.O))).map(e => Array.isArray(e[field]) ? e[field][0] || "" : e[field] || "").join("");
     },
 
-    textToEntriesByAnyText(text) { return CHARACTERS.entriesFromField(text, ["letter", "letter_rom", "letter_discord", "letter_glyph"]); },
+    textToEntriesByAnyText(text) { return CHARACTERS.entriesFromField(text, ["letter_discord", "letter", "letter_rom", "letter_glyph"]); },
 
     textToEntriesByText(text) { return CHARACTERS.entriesFromField(text, ["letter"]); },
 
