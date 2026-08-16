@@ -1294,11 +1294,11 @@ AFFIXES = {
         },
 
         connectGetEntries(text, suffix) {
-            return AFFIXES.connect("", text, suffix)
+            return AFFIXES.connectGetEntries("", text, suffix)
         },
 
         connect(text, suffix) {
-            return CHARACTERS.entriesToText(AFFIXES.connect("", text, suffix))
+            return AFFIXES.connect("", text, suffix)
         },
 
         MATCHES: {}
@@ -1331,11 +1331,11 @@ AFFIXES = {
         },
 
         connectGetEntries(text, prefix) {
-            return AFFIXES.connect(prefix, text, "")
+            return AFFIXES.connectGetEntries(prefix, text, "")
         },
 
         connect(text, prefix) {
-            return CHARACTERS.entriesToText(AFFIXES.connect(prefix, text, ""))
+            return AFFIXES.connect(prefix, text, "")
         },
 
         MATCHES: {}
