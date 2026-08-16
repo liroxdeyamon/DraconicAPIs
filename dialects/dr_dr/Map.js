@@ -130,6 +130,14 @@ IDS.GROUPS_UNPACKED = {
 
 // ============================ CLASSES ============================
 
+function choice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomWord(type) {
+    return choice(Object.values(DICTIONARY[type].MAP));
+}
+
 class Character {
     constructor({
         name, name_ipa, letter, letter_rom, letter_ipa,
@@ -326,6 +334,15 @@ class ConjugatedNoun extends Conjugated {
         
         return ret + (extra.length > 0 && include_extras ? ` (${extra.join(", ")})` : "") 
     }
+
+    random() {
+        this.word = randomWord(IDS.WORDS.N);
+        this.mood = choice(Object.values(IDS.MOODS));
+        const availableGenders = Object.keys(this.word.genders);
+        this.gender = availableGenders.length ? choice(availableGenders) : null;
+        this.count = choice(Object.values(IDS.NUMBERS));
+        return this;
+    }
 }
 
 class ConjugatedAdjective extends Conjugated {
@@ -348,6 +365,15 @@ class ConjugatedAdjective extends Conjugated {
 
     definition(include_extras = true) {
         return this.word.definition + (include_extras && this.from_noun ? " (made from noun)" : "")
+    }
+
+    random() {
+        this.word = randomWord(IDS.WORDS.ADJ);
+        this.from_noun = false;
+        this.original_mood = null;
+        this.original_gender = null;
+        this.original_count = null;
+        return this;
     }
 }
 
@@ -405,7 +431,28 @@ class ConjugatedVerb extends Conjugated {
         if (!extra_object.some(e => e === null)) extra.push(`object: (${extra_object.join(", ")})`);
 
         return this.word.definition + (extra.length > 0 && include_extras ? ` (${extra.join(", ")})` : "")
+    }
 
+    random() {
+        this.word = randomWord(IDS.WORDS.V);
+        this.tense = choice(Object.values(IDS.TENSE));
+        this.aspect = choice(Object.values(IDS.ASPECT));
+
+        this.subject_person = choice(Object.keys(IDS.PERSON).map(Number));
+        this.subject_count = choice(Object.values(IDS.NUMBERS));
+        this.subject_gender = choice(Object.values(IDS.GENDERS));
+
+        const hasObject = Math.random() < 0.5;
+        if (hasObject) {
+            this.object_person = choice(Object.keys(IDS.PERSON).map(Number));
+            this.object_count = choice(Object.values(IDS.NUMBERS));
+            this.object_gender = choice(Object.values(IDS.GENDERS));
+        } else {
+            this.object_person = null;
+            this.object_count = null;
+            this.object_gender = null;
+        }
+        return this;
     }
 }
 
