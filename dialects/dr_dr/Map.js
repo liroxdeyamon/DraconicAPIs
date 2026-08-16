@@ -319,7 +319,7 @@ class ConjugatedNoun extends Conjugated {
 
     conjugate() {
         if (!this.gender || !this.count || !this.mood) return this.word.text
-        return CHARACTERS.entriesToText(AFFIXES.SUFFIXES.connect(this.word.text, AFFIXES.SUFFIXES[this.word.type].MAP[this.mood][this.gender][this.count][this.word.declension])) 
+        return AFFIXES.SUFFIXES.connect(this.word.text, AFFIXES.SUFFIXES[this.word.type].MAP[this.mood][this.gender][this.count][this.word.declension])
     }
 
     definition(include_extras = true) {
