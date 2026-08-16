@@ -2,21 +2,22 @@
 A collection of JavaScript modules designed for smooth and easy usage of human1011’s conlang -- The Draconic Language.
 
 ## License
-© 2025 LiroxDeYamon  
+© 2026 Liirios  
 Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 This project includes usage of *The Draconic Language*, which is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).  
 All rights to *The Draconic Language* belong to [**human1011**](https://www.youtube.com/channel/UCNtThoaq14pIorP2OmArt5w).
 
 #### Made by:
-- LiroxDeYamon
-- SuPDuZz - CharacterMap.js data
+- Liirios
+- SuPDuZz - characters data
 - _eXeCutie - ideas & draconic font
+- rawrrhy - draconic icon
 
 #### Made for:
 - SuPDuZz' Draconic Learning Site
-- _eXeCutie's Dictionary tools' Github Pages
-- LiroxDeYamon's Draconic Games hosted on SuPDuZz' Github Pages
+- _eXeCutie's Revisioned Draconic Spreadsheet
+- Liirios' Draconic Games
 - Everyone who want to use it!
 
 #### Want to controbute?
@@ -25,7 +26,7 @@ You can ask to add new features, especially if you made one yourself!
 # Websites using the APIs:
 - https://SuPDuZz.github.io/Draconic/ - SuPDuZz' Draconic Learning Site & Draconic Alphabet iframe
 - https://executiettv.github.io/Draconic/ - _eXeCutie's Dictionary tools
-- https://supduzz.github.io/Draconic/lettrguessr.html - LiroxDeYamon's LettrGuessr
+- https://supduzz.github.io/Draconic/lettrguessr.html - Liirios' LettrGuessr
 
 #### Want to include your website?
 Open an issue/discussion!

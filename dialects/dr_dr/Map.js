@@ -5,7 +5,7 @@ META = {
     DESCRIPTION: "Unmodified version of the conlang.",
     // Attribution
     AUTHOR: "human1011", // in this case human1011 is author of the whole conlang
-    MAINTAINERS: ["_eXeCutie", "SuPDuZz", "LiroxDeYamon"], // people keeping dialect up to date
+    MAINTAINERS: ["_eXeCutie", "SuPDuZz", "Liirios"], // people keeping dialect up to date
     // Dependencies
     DEPENDENCIES: [
         // "Map.js": ["dr_ex", "dr_ex"], // executes code from another dialect on map load BEFORE this map
