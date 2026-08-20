@@ -1531,9 +1531,9 @@ function scoreTriples(qTrip, wordBoundaryRegex, query, text) {
     let common = 0;
     for (const tri of qTrip) if (tTrip.has(tri)) common++;
     let score = common / Math.max(1, qTrip.size) * 200;
-    if (text === query) score += 300;
-    if (text.startsWith(query)) score += 100;
-    if (text.endsWith(query)) score += 100;
+    if (text.startsWith(query)) {score += 150;}
+    if (text.endsWith(query)) {score += 150;}
+    if (score > 0) console.log(score)
     score += (text.match(wordBoundaryRegex) || []).length * 70;
     return score + 20 / Math.max(1, text.length);
 }
@@ -1544,10 +1544,10 @@ function fuzzyFetch(query, list, is_word, limit = 5) {
     const wordBoundaryRegex = new RegExp(`\\b${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
     const results = [];
     for (const item of list) {
-        let variants = is_word ? item.splitForms() : [item.definition];
+        let variants = is_word ? item.splitForms() : (item.type === IDS.WORDS.N) ? Object.values(item.genders) : [item.definition];
         if (!Array.isArray(variants)) variants = [variants];
         let score = 0;
-        for (const variant of variants) score = Math.max(score, scoreTriples(qTrip, wordBoundaryRegex, q, simplify(String(variant))));
+        for (const variant of variants) score = Math.max(score, scoreTriples(qTrip, wordBoundaryRegex, query, simplify(String(variant))));
         if (score > 0) results.push({ item, score });
     }
     results.sort((a, b) => b.score - a.score);
