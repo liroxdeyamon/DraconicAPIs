@@ -1494,82 +1494,60 @@ function mergedSearchByDefinition(definition, wordmap) {
         );
 }
 
-const VARIATION_MAP = (() => {
-    const couples = [
-        ["'", "`", "'"],
-        ["a", "ā", "á", "à", "â", "aa"],
-        ["o", "ō", "ó", "ò", "ô", "oo"],
-        ["u", "ū", "ú", "ù", "û", "uu"],
-        ["i", "ī", "ii"],
-        ["e", "ē", "ee"],
-        ["ae", "æ"],
-        ["ng", "ŋ"],
-        ["Q", "q̇"],
-        ["H", "ħ"],
-        ["X", "χ"]
-    ];
-    const map = new Map();
-    for (const g of couples) {
-        for (const c of g) map.set(c.toLowerCase(), g.map(x => x.toLowerCase()));
-    }
-    return map;
-})();
+const variants = {
+    "'": ["`", "'"],
+    "a": ["ā", "á", "à", "â", "aa"],
+    "o": ["ō", "ó", "ò", "ô", "oo"],
+    "u": ["ū", "ú", "ù", "û", "uu"],
+    "i": ["ī", "ii"],
+    "e": ["ē", "ee"],
+    "ae": ["æ"],
+    "ng": ["ŋ"],
+    "q": ["q̇"],
+    "h": ["ħ"],
+    "x": ["χ"]
+};
 
-function generateVariations(str) {
-    function expand(s, i = 0) {
-        if (i >= s.length) return [s];
-        for (let len = Math.min(3, s.length - i); len >= 1; len--) {
-            const sub = s.slice(i, i + len);
-            const group = VARIATION_MAP.get(sub);
-            if (group) {
-                const rest = expand(s, i + len);
-                return group.flatMap(v => rest.map(r => v + r));
-            }
+function simplify(str) {
+    str = str.toLowerCase()
+    for (const key in variants) {
+        const list = variants[key];
+        for (let i = list.length - 1; i >= 0; i--) {
+            str = str.split(list[i]).join(key);
         }
-        return expand(s, i + 1).map(r => s[i] + r);
     }
-    return expand(str);
+    return str;
 }
 
-function charTriples(str, accurate = false) {
+function charTriples(str) {
     const triples = new Set();
-    const variations = accurate ? generateVariations(str) : [str];
-    for (const v of variations) {
-        if (v.length > 3) {
-            for (let i = 0; i < v.length - 2; i++) triples.add(v.slice(i, i + 3));
-        } else triples.add(v);
-    }
+    if (str.length > 3) for (let i = 0; i < str.length - 2; i++) triples.add(str.slice(i, i + 3));
+    else triples.add(v);
     return triples;
 }
 
-function scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, text) {
+function scoreTriples(qTrip, wordBoundaryRegex, query, text) {
     const tTrip = charTriples(text);
     let common = 0;
-    for (const tri of qTrip) {
-        if (tTrip.has(tri)) common++;
-    }
-    let score = common / Math.max(1, qTripBasic.size) * 200;
-    if (text === q) score += 300;
-    else if (text.startsWith(q)) score += 100;
-    else {
-        const exactMatches = (text.match(wordBoundaryRegex) || []).length;
-        score += exactMatches * 70;
-        if (exactMatches === 0 && text.includes(q)) score += 10;
-    }
+    for (const tri of qTrip) if (tTrip.has(tri)) common++;
+    let score = common / Math.max(1, qTrip.size) * 200;
+    if (text === query) score += 300;
+    if (text.startsWith(query)) score += 100;
+    if (text.endsWith(query)) score += 100;
+    score += (text.match(wordBoundaryRegex) || []).length * 70;
     return score + 20 / Math.max(1, text.length);
 }
 
 function fuzzyFetch(query, list, is_word, limit = 5) {
-    const q = query.toLowerCase();
-    const qTrip = charTriples(q, true);
-    const qTripBasic = charTriples(q);
-    const wordBoundaryRegex = new RegExp(`\\b${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+    query = simplify(query)
+    const qTrip = charTriples(query);
+    const wordBoundaryRegex = new RegExp(`\\b${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
     const results = [];
     for (const item of list) {
         let variants = is_word ? item.splitForms() : [item.definition];
         if (!Array.isArray(variants)) variants = [variants];
         let score = 0;
-        for (const variant of variants) score = Math.max(score, scoreTriples(qTrip, qTripBasic, wordBoundaryRegex, q, String(variant).toLowerCase()));
+        for (const variant of variants) score = Math.max(score, scoreTriples(qTrip, wordBoundaryRegex, q, simplify(String(variant))));
         if (score > 0) results.push({ item, score });
     }
     results.sort((a, b) => b.score - a.score);
